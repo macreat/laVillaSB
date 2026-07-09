@@ -76,6 +76,15 @@ laVillaSB/
 - `https://lavillaskateboarding.com` — Next.js storefront.
 - OpenAPI specs published under `/docs/openapi/`.
 
+## MVP Focus (Current Merge Baseline)
+
+- Dark, skate-style storefront UX inspired by Creature/Santa Cruz references.
+- Catalog browsing + cart-to-WhatsApp manual checkout.
+- Admin-ready backend foundation via Laravel gateway + FastAPI services.
+- Google Drive product media sync strategy documented in:
+  - `docs/architecture/architecture.md`
+  - `docs/operations/development-runbook.md`
+
 ## Inputs
 
 - Customer actions (web, mobile).
@@ -116,3 +125,4 @@ laVillaSB/
 
 - `docs/` — Architecture decision records, runbooks, API guides.
 - Each `README.md` under `app/` describes a service or module.
+- `docs/architecture/design-system.md` — Visual design tokens and UI direction.
