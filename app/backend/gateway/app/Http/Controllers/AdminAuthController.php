@@ -46,4 +46,37 @@ class AdminAuthController extends Controller
     {
         return response()->json($request->user()->only('id', 'name', 'email'));
     }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'email', 'max:255', 'unique:users,email,'.$request->user()->id],
+            'current_password' => ['required_with:new_password', 'string'],
+            'new_password' => ['sometimes', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+
+        if ($request->filled('email')) {
+            $user->email = $request->email;
+        }
+
+        if ($request->filled('new_password')) {
+            if (! Hash::check($request->current_password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'current_password' => ['Current password is incorrect.'],
+                ]);
+            }
+            $user->password = Hash::make($request->new_password);
+        }
+
+        $user->save();
+
+        return response()->json($user->only('id', 'name', 'email'));
+    }
 }

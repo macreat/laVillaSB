@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+}
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #1f1f1f inset;
+  -webkit-text-fill-color: #f5f5f5;
+}
+
+::selection {
+  background-color: #84cc16;
+  color: #0a0a0a;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-bg transition-all hover:bg-accent-hover active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-md border border-border bg-surface px-4 py-2.5 text-sm font-medium text-text transition-all hover:bg-surface-elevated active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-md bg-danger px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-red-600 active:scale-[0.98];
+  }
+
+  .input-field {
+    @apply w-full rounded-md border border-border bg-surface-elevated px-3.5 py-2.5 text-sm text-text placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent;
+  }
+
+  .card {
+    @apply rounded-lg border border-border bg-surface p-5;
+  }
+
+  .card-elevated {
+    @apply rounded-lg border border-border bg-surface-elevated p-5;
+  }
+}
