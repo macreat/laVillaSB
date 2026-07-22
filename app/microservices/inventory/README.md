@@ -1,86 +1,57 @@
-# inventory
-
-Inventory management microservice for the laVillaSB platform.
+# Inventory Service — FastAPI
 
 ## Purpose
-
-Track stock levels across warehouses, reserve inventory during checkout, and prevent overselling.
+Tracks stock levels and availability for catalog products.
 
 ## Responsibilities
-
-- Maintain SKU-level stock quantities.
-- Reserve and release inventory for orders.
-- Manage warehouse locations and stock movements.
-- Provide availability checks to the catalog and orders services.
-- Emit low-stock and stock-movement events.
+- Stock level CRUD per SKU.
+- Availability queries.
+- Low-stock event publishing.
+- Consume product creation events to initialize stock records.
 
 ## Internal Structure
-
 ```
-inventory/
-├── README.md                 # This file
-├── app/
-│   ├── api/
-│   │   └── v1/
-│   │       ├── routes/       # Stock, reservations, warehouses
-│   │       └── schemas/      # Pydantic models
-│   ├── core/
-│   │   ├── config.py
-│   │   └── events.py
-│   ├── models/               # StockItem, Reservation, Warehouse, Movement
-│   ├── services/             # Reservation engine
-│   └── repositories/         # Data access
-├── alembic/
+services/inventory/
+├── src/
+│   ├── main.py
+│   ├── models.py
+│   ├── schemas.py
+│   ├── routers/
+│   │   ├── stock.py
+│   │   └── availability.py
+│   ├── services/
+│   │   └── stock_service.py
+│   └── events/
+│       └── handlers.py
 ├── tests/
-├── Dockerfile
-├── pyproject.toml
-└── .env.example
+└── requirements.txt
 ```
 
 ## Dependencies
-
-- FastAPI
-- SQLModel / SQLAlchemy
-- PostgreSQL (`inventory_db`)
-- Redis (distributed locks for reservations)
-- Message broker (RabbitMQ/Redis) for events
+- Python 3.12+
+- FastAPI, Uvicorn
+- SQLAlchemy, asyncpg
+- RabbitMQ client (aio-pika)
 
 ## Public Interfaces
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/v1/stock` | GET/POST | Query / adjust stock |
-| `/api/v1/stock/{sku}` | GET | Stock for SKU |
-| `/api/v1/reservations` | POST | Reserve inventory |
-| `/api/v1/reservations/{id}/commit` | POST | Commit reservation |
-| `/api/v1/reservations/{id}/release` | POST | Release reservation |
-| `/api/v1/warehouses` | GET/POST | Warehouse management |
-| `/api/v1/movements` | GET/POST | Stock movements |
-
-## Inputs
-
-- Gateway requests for availability and reservations.
-- Order events from orders service.
-- Admin stock adjustments.
-
-## Outputs
-
-- Stock availability responses.
-- Reservation results.
-- LowStock, StockAdjusted events.
+- `GET /inventory/{product_id}` — Get stock level.
+- `POST /inventory/{product_id}/adjust` — Adjust stock (admin).
+- `GET /availability?ids=...` — Batch availability check.
 
 ## Configuration
+- `DATABASE_URL`
+- `RABBITMQ_URL`
 
-| Variable | Purpose |
-|----------|---------|
-| `DATABASE_URL` | PostgreSQL connection |
-| `REDIS_URL` | Locking and cache |
-| `BROKER_URL` | Event broker |
-| `RESERVATION_TTL_SECONDS` | Reservation timeout |
+## Inputs
+- Admin stock adjustments.
+- `ProductCreated` events from Catalog Service.
+- Cart reservation requests (future).
+
+## Outputs
+- Stock JSON responses.
+- `LowStock` events to RabbitMQ.
 
 ## Future Extensions
-
-- Multi-warehouse fulfillment optimization.
-- Real-time inventory sync with POS systems.
-- Predictive reordering and demand forecasting.
-- Barcode/RFID integration.
+- Real-time reservations during checkout.
+- Multi-warehouse support.
+- Stock history and audit log.

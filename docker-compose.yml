@@ -1,0 +1,179 @@
+services:
+  # ============================================================
+  # INFRASTRUCTURE
+  # ============================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: lavilla_postgres
+    environment:
+      POSTGRES_USER: lavilla
+      POSTGRES_PASSWORD: lavilla
+      POSTGRES_DB: lavilla
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lavilla -d lavilla"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks: [lavilla]
+
+  redis:
+    image: redis:7-alpine
+    container_name: lavilla_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks: [lavilla]
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: lavilla_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: lavilla
+      RABBITMQ_DEFAULT_PASS: lavilla
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks: [lavilla]
+
+  meilisearch:
+    image: getmeili/meilisearch:v1
+    container_name: lavilla_meilisearch
+    environment:
+      MEILI_MASTER_KEY: lavilla-master-key
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks: [lavilla]
+
+  # ============================================================
+  # APPLICATION — GATEWAY
+  # ============================================================
+  gateway:
+    build:
+      context: ./app/backend/gateway
+      dockerfile: Dockerfile
+    container_name: lavilla_gateway
+    ports:
+      - "8010:8010"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:OeaGmut17Oy48ePZ6iU7XXlEAwi/4BkBlDCJYu77ZKk=
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_DATABASE: lavilla
+      DB_USERNAME: lavilla
+      DB_PASSWORD: lavilla
+      REDIS_HOST: redis
+      SERVICE_CATALOG_URL: http://catalog:9002
+      SERVICE_INVENTORY_URL: http://inventory:9003
+      SERVICE_CART_URL: http://orders:9004
+      SERVICE_DRIVE_SYNC_URL: ""
+      SERVICE_IMAGE_PROCESSOR_URL: ""
+      FRONTEND_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lavilla]
+
+  # ============================================================
+  # APPLICATION — MICROSERVICES
+  # ============================================================
+  catalog:
+    build:
+      context: ./app/microservices/catalog
+      dockerfile: Dockerfile
+    container_name: lavilla_catalog
+    ports:
+      - "9002:9002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lavilla]
+
+  inventory:
+    build:
+      context: ./app/microservices/inventory
+      dockerfile: Dockerfile
+    container_name: lavilla_inventory
+    ports:
+      - "9003:9003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lavilla]
+
+  orders:
+    build:
+      context: ./app/microservices/orders
+      dockerfile: Dockerfile
+    container_name: lavilla_orders
+    ports:
+      - "9004:9004"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lavilla]
+
+  # ============================================================
+  # APPLICATION — FRONTEND
+  # ============================================================
+  frontend:
+    build:
+      context: ./app/frontend
+      dockerfile: Dockerfile
+    container_name: lavilla_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8010
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      API_INTERNAL_URL: http://gateway:8010
+    depends_on:
+      gateway:
+        condition: service_started
+    restart: unless-stopped
+    networks: [lavilla]
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  meilisearch_data:
+
+networks:
+  lavilla:
+    driver: bridge

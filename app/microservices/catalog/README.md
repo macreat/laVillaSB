@@ -1,85 +1,68 @@
-# catalog
-
-Product catalog microservice for the laVillaSB platform.
+# Catalog Service — FastAPI
 
 ## Purpose
-
-Manage product information, categories, brands, variants, pricing, and media assets for the skateboarding store.
+Manages product and category information for the laVilla SB catalog.
 
 ## Responsibilities
-
-- CRUD operations for products, categories, and brands.
-- Manage product variants (size, color, edition).
-- Store pricing, descriptions, and SEO metadata.
-- Handle product media and asset references.
-- Publish catalog change events.
+- Product CRUD.
+- Category management.
+- Product attributes and variants.
+- Search index synchronization with Meilisearch.
+- Consume product discovery events from Drive Sync Service.
 
 ## Internal Structure
-
 ```
-catalog/
-├── README.md                 # This file
-├── app/
-│   ├── api/
-│   │   └── v1/
-│   │       ├── routes/       # Products, categories, brands, variants
-│   │       └── schemas/      # Pydantic models
-│   ├── core/
-│   │   ├── config.py
-│   │   └── events.py
-│   ├── models/               # Product, Category, Brand, Variant, Media
-│   ├── services/             # Business logic
-│   └── repositories/         # Data access
-├── alembic/
+services/catalog/
+├── src/
+│   ├── main.py             # FastAPI application entrypoint
+│   ├── config.py           # Settings and environment
+│   ├── models.py           # SQLAlchemy models
+│   ├── schemas.py          # Pydantic request/response models
+│   ├── routers/
+│   │   ├── products.py
+│   │   └── categories.py
+│   ├── services/
+│   │   └── product_service.py
+│   ├── events/
+│   │   └── handlers.py     # RabbitMQ consumers
+│   └── database.py         # PostgreSQL connection
 ├── tests/
-├── Dockerfile
-├── pyproject.toml
-└── .env.example
+└── requirements.txt
 ```
 
 ## Dependencies
-
-- FastAPI
-- SQLModel / SQLAlchemy
-- PostgreSQL (`catalog_db`)
-- Redis (product listing cache)
-- S3-compatible object storage (media)
+- Python 3.12+
+- FastAPI, Uvicorn
+- SQLAlchemy, asyncpg
+- Pydantic
+- Meilisearch Python client
+- RabbitMQ client (aio-pika)
 
 ## Public Interfaces
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/v1/products` | GET/POST | List / create products |
-| `/api/v1/products/{id}` | GET/PUT/DELETE | Product detail / update |
-| `/api/v1/products/{id}/variants` | GET/POST | Product variants |
-| `/api/v1/categories` | GET/POST | List / create categories |
-| `/api/v1/brands` | GET/POST | List / create brands |
-| `/api/v1/search` | GET | Full-text search |
-
-## Inputs
-
-- HTTP requests from the gateway.
-- Admin/staff product management actions.
-- Bulk import files (CSV/JSON).
-
-## Outputs
-
-- JSON product/category data.
-- Catalog change events (ProductCreated, PriceUpdated).
-- Media URLs for frontend.
+- `GET /products` — List products.
+- `GET /products/{id}` — Get product details.
+- `POST /products` — Create product (admin).
+- `PUT /products/{id}` — Update product (admin).
+- `DELETE /products/{id}` — Archive product (admin).
+- `GET /categories` — List categories.
+- `GET /search?q=...` — Search products.
 
 ## Configuration
+- `DATABASE_URL`
+- `MEILISEARCH_URL`, `MEILISEARCH_API_KEY`
+- `RABBITMQ_URL`
 
-| Variable | Purpose |
-|----------|---------|
-| `DATABASE_URL` | PostgreSQL connection |
-| `REDIS_URL` | Cache connection |
-| `S3_ENDPOINT`, `S3_BUCKET` | Object storage for media |
-| `SEARCH_INDEX_NAME` | Optional search index |
+## Inputs
+- Admin CRUD requests.
+- `ProductDiscovered` / `ProductUpdated` events from Drive Sync.
+- Search indexing commands.
+
+## Outputs
+- Product JSON responses.
+- Meilisearch index updates.
+- Domain events for inventory and image processing.
 
 ## Future Extensions
-
-- Elasticsearch/OpenSearch integration.
-- Product recommendation engine.
-- Digital asset provenance (blockchain-inspired) for limited editions.
-- Multi-language and multi-currency support.
+- Recommendation integration.
+- AI-generated descriptions.
+- Product reviews and ratings.

@@ -1,118 +1,99 @@
-# laVillaSB
+# laVillaSB — v0.1
 
 Software control and API platform for **La Villa Skateboarding**.
 
-## Purpose
+A modular, API-first digital backbone powering product catalog, inventory management, order processing, and storefront experience — all containerized and deployable via Docker Compose.
 
-Provide a scalable, modular, API-first digital backbone for La Villa Skateboarding business operations: product catalog, inventory, orders, payments, users, notifications, and storefront experience.
+---
 
-## Conceptual Architecture
-
-**Business domains**
-
-| Domain | Capability |
-|--------|------------|
-| Identity | User registration, authentication, profiles, roles |
-| Catalog | Product information, categories, media, pricing |
-| Inventory | Stock levels, reservations, warehouses |
-| Orders | Cart, checkout, order lifecycle, shipments |
-| Payments | Payment processing, refunds, receipts |
-| Notifications | Email, SMS, push notifications |
-| Storefront | Customer-facing web application |
-
-**Actors**
-
-- Customer: browse catalog, place orders, manage profile.
-- Staff: manage products, inventory, orders.
-- Admin: configure tenants, users, integrations.
-- External systems: payment providers, shipping carriers, analytics.
-
-## Logical Architecture
+## Architecture
 
 ```
-┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
-│   Next.js       │      │  Laravel Gateway │      │  FastAPI        │
-│   Frontend      │◄────►│  (API Gateway)   │◄────►│  Microservices  │
-│   (Storefront)  │      │  Auth/Routing    │      │  (Domain APIs)  │
-└─────────────────┘      └──────────────────┘      └─────────────────┘
-                                │                            │
-                                ▼                            ▼
-                        ┌──────────────┐            ┌──────────────┐
-                        │  PostgreSQL  │            │  PostgreSQL  │
-                        │  (Gateway)   │            │  (Services)  │
-                        └──────────────┘            └──────────────┘
+┌──────────────┐       ┌──────────────────┐       ┌──────────────────┐
+│  Next.js 14  │       │   Laravel 12     │       │   FastAPI        │
+│  Storefront  │◄─────►│   API Gateway    │◄─────►│   Microservices  │
+│  Admin Dash  │       │   Auth / Proxy   │       │   (Domain APIs)  │
+└──────────────┘       └──────────────────┘       └──────────────────┘
+                              │                           │
+                              ▼                           ▼
+                      ┌──────────────┐           ┌──────────────┐
+                      │  PostgreSQL  │           │  PostgreSQL  │
+                      │  (Gateway)   │           │  (Services)  │
+                      └──────────────┘           └──────────────┘
 ```
 
-The **gateway** centralizes authentication, routing, rate limiting, and protocol translation. Microservices are autonomous, domain-focused, and communicate with the gateway over HTTP/REST.
+**Infrastructure**: PostgreSQL 16, Redis 7, RabbitMQ 3, Meilisearch v1
 
-## Physical Architecture
+---
 
+## Services
+
+| Service | Tech | Port | Description |
+|---------|------|------|-------------|
+| `frontend` | Next.js 14 | `3000` | Storefront + admin dashboard |
+| `gateway` | Laravel 12 | `8010` | API gateway, auth, proxy to microservices |
+| `catalog` | FastAPI | `9002` | Products, categories, media |
+| `inventory` | FastAPI | `9003` | Stock levels, reservations |
+| `orders` | FastAPI | `9004` | Cart, checkout, order lifecycle |
+
+Full list: postgres, redis, rabbitmq, meilisearch, gateway, frontend, catalog, inventory, orders.
+
+---
+
+## Admin Dashboard
+
+Available at `/admin` after authentication:
+
+- **Dashboard** — System overview and service health
+- **Products** — Product listing and management
+- **Orders** — Order tracking with status badges
+- **Inventory** — Stock levels with low-stock alerts
+- **Settings** — Profile editor, password change, live microservice health
+
+**Default login**: `admin@lavillasb.com` / `password`
+
+---
+
+## Quick Start
+
+```bash
+git clone <repo-url> && cd laVillaSB
+docker compose up -d
 ```
-laVillaSB/
-├── app/
-│   ├── backend/gateway   # Laravel 12-13 API gateway
-│   ├── frontend          # Next.js storefront
-│   └── microservices/    # FastAPI domain services
-├── docs/                 # Architecture and runbook docs
-└── tools/                # Scripts, dev tools, CI helpers
-```
+
+Services and data are ready within 30 seconds. Visit `http://localhost:3000`.
+
+---
+
+## Deployment
+
+See [docs/reference/deployment.md](docs/reference/deployment.md) for:
+
+- Single VPS with Docker Compose + Caddy reverse proxy
+- Docker Swarm for high availability
+- Railway / Render / Fly.io PaaS deployment
+- Environment variable reference and backup guides
+
+---
 
 ## Technology Stack
 
-| Layer | Technology | Reason |
-|-------|------------|--------|
-| Gateway | Laravel 12-13 | Mature PHP ecosystem, robust auth, queues, migrations |
-| Frontend | Next.js | SSR/SSG, React ecosystem, Vercel-ready |
-| Microservices | FastAPI | Async Python, auto OpenAPI, high throughput |
-| API Style | REST + OpenAPI | Industry-standard, tool-rich |
-| Messaging | RabbitMQ / Redis | Async jobs, event-driven decoupling |
-| Primary DB | PostgreSQL | Relational consistency, JSON support |
-| Cache | Redis | Sessions, rate limits, hot data |
-| Object Storage | S3-compatible | Product media, exports |
+| Layer | Technology |
+|-------|------------|
+| Gateway | Laravel 12 (PHP 8.3) |
+| Frontend | Next.js 14 (Node 20) |
+| Microservices | FastAPI (Python 3.12) |
+| Database | PostgreSQL 16 |
+| Cache / Queue | Redis 7, RabbitMQ 3 |
+| Search | Meilisearch v1 |
+| Auth | Laravel Sanctum (Bearer tokens) |
+| Orchestration | Docker Compose v2 |
 
-## Public Interfaces
-
-- `https://api.lavillaskateboarding.com` — Gateway REST API.
-- `https://lavillaskateboarding.com` — Next.js storefront.
-- OpenAPI specs published under `/docs/openapi/`.
-
-## Inputs
-
-- Customer actions (web, mobile).
-- Admin/staff operations.
-- Webhooks from payment providers and shipping carriers.
-- Scheduled batch jobs (reports, cleanup).
-
-## Outputs
-
-- Web responses (HTML/JSON).
-- Email/SMS/push notifications.
-- Webhook callbacks to integrations.
-- Audit logs and analytics events.
-
-## Configuration
-
-- Environment variables per service (`.env.example` in each app).
-- Centralized feature flags via gateway configuration.
-- Docker Compose for local orchestration.
-
-## Future Extensions
-
-- Mobile app consuming gateway API.
-- GraphQL federation layer.
-- Event sourcing for order/payment history.
-- Blockchain-inspired provenance for limited-edition product authenticity.
-- AI-powered product recommendations.
-
-## Getting Started
-
-1. Clone the repository.
-2. Copy `.env.example` to `.env` in each service.
-3. Run `docker compose up` from the root.
-4. Open `http://localhost:3000` for the storefront.
-5. Gateway API available at `http://localhost:8080`.
+---
 
 ## Documentation
 
-- `docs/` — Architecture decision records, runbooks, API guides.
-- Each `README.md` under `app/` describes a service or module.
+- `docs/architecture/` — ADRs, design system, architecture overview
+- `docs/operations/` — Development runbook
+- `docs/reference/` — Deployment guide
+- `app/*/README.md` — Per-service documentation
