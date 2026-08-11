@@ -10,3 +10,4 @@ aio-pika==9.4.3
 meilisearch==0.31.6
 python-multipart==0.0.17
 boto3==1.35.63
+pytest==8.3.3
