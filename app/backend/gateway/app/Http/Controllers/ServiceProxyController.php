@@ -11,20 +11,30 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ServiceProxyController extends Controller
 {
     private const SERVICES = [
-        'catalog' => 'SERVICE_CATALOG_URL',
-        'inventory' => 'SERVICE_INVENTORY_URL',
-        'cart' => 'SERVICE_CART_URL',
-        'drive-sync' => 'SERVICE_DRIVE_SYNC_URL',
-        'image-processor' => 'SERVICE_IMAGE_PROCESSOR_URL',
+        'catalog' => 'catalog_url',
+        'inventory' => 'inventory_url',
+        'cart' => 'cart_url',
+        'drive-sync' => 'drive_sync_url',
+        'image-processor' => 'image_processor_url',
     ];
 
     public function proxy(Request $request, string $service, ?string $path = ''): JsonResponse
+    {
+        return $this->proxyToService($request, $service, $path);
+    }
+
+    public function proxyCatalog(Request $request, ?string $path = ''): JsonResponse
+    {
+        return $this->proxyToService($request, 'catalog', $path);
+    }
+
+    private function proxyToService(Request $request, string $service, ?string $path = ''): JsonResponse
     {
         if (! isset(self::SERVICES[$service])) {
             throw new NotFoundHttpException("Service {$service} not found");
         }
 
-        $baseUrl = env(self::SERVICES[$service]);
+        $baseUrl = config('services.internal.'.self::SERVICES[$service]);
         if (! $baseUrl) {
             return response()->json(['error' => "Service {$service} is not configured"], 503);
         }
@@ -35,9 +45,15 @@ class ServiceProxyController extends Controller
             $targetUrl .= '?'.$query;
         }
 
-        $response = Http::withHeaders($this->forwardHeaders($request))
-            ->withBody($request->getContent(), $request->header('Content-Type'))
-            ->send($request->getMethod(), $targetUrl);
+        $http = Http::withHeaders($this->forwardHeaders($request));
+        $body = $request->getContent();
+        $contentType = $request->header('Content-Type');
+
+        if ($body !== '' && is_string($contentType) && $contentType !== '') {
+            $http = $http->withBody($body, $contentType);
+        }
+
+        $response = $http->send($request->getMethod(), $targetUrl);
 
         return response()->json($response->json(), $response->status());
     }
@@ -49,7 +65,9 @@ class ServiceProxyController extends Controller
             ->except(['host', 'connection'])
             ->toArray();
 
-        $headers['X-Gateway-User-Id'] = $request->user()?->id;
+        if ($request->user()) {
+            $headers['X-Gateway-User-Id'] = (string) $request->user()->id;
+        }
 
         return $headers;
     }

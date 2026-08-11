@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'internal' => [
+        'catalog_url' => env('SERVICE_CATALOG_URL'),
+        'inventory_url' => env('SERVICE_INVENTORY_URL'),
+        'cart_url' => env('SERVICE_CART_URL'),
+        'drive_sync_url' => env('SERVICE_DRIVE_SYNC_URL'),
+        'image_processor_url' => env('SERVICE_IMAGE_PROCESSOR_URL'),
+    ],
+
 ];
