@@ -1,18 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { ProductCard } from '@/components/store/product/ProductCard';
-
-const FEATURED_PRODUCTS = [
-  { id: '1', name: 'Dark Realm Deck', price: 64.99, category: 'decks', image: '' },
-  { id: '2', name: 'Lurk Tee', price: 32.00, category: 'apparel', image: '' },
-  { id: '3', name: 'Hesh Wheels 54mm', price: 42.00, category: 'gear', image: '' },
-  { id: '4', name: 'Creature Grip Tape', price: 18.00, category: 'accessories', image: '' },
-  { id: '5', name: 'Prowler Deck 8.25', price: 68.00, category: 'decks', image: '' },
-  { id: '6', name: 'Skull Logo Hoodie', price: 58.00, category: 'apparel', image: '' },
-];
+import { fetchStoreProducts, type StoreProduct } from '@/lib/store-catalog';
 
 export default function StoreHomePage() {
+  const [featuredProducts, setFeaturedProducts] = useState<StoreProduct[]>([]);
+
+  useEffect(() => {
+    fetchStoreProducts().then((products) => setFeaturedProducts(products.slice(0, 6)));
+  }, []);
+
   return (
     <div>
       {/* Hero */}
@@ -60,7 +59,7 @@ export default function StoreHomePage() {
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 lg:gap-6">
-          {FEATURED_PRODUCTS.map((product) => (
+          {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

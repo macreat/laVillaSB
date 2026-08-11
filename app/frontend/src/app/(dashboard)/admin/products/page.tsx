@@ -15,8 +15,8 @@ export default function ProductsPage() {
 
   useEffect(() => {
     api
-      .proxyGet<{ data: Product[] }>('catalog', 'products')
-      .then((res) => setProducts(res.data ?? []))
+      .proxyGet<Product[] | { data?: Product[] }>('catalog', 'products')
+      .then((res) => setProducts(Array.isArray(res) ? res : (res.data ?? [])))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
