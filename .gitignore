@@ -19,6 +19,7 @@ __pycache__/
 # Logs/build
 *.log
 .next/
+*.tsbuildinfo
 dist/
 build/
 *.egg-info/

@@ -17,12 +17,13 @@ from .schemas import (
     MediaPresignResponse,
     ProductOut,
 )
-from .storage import build_public_url, build_put_url, build_storage_key
+from .storage import build_public_url, build_put_url, build_storage_key, ensure_public_bucket
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    ensure_public_bucket()
     yield
     # TODO: close connections
 
