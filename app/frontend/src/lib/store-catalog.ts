@@ -28,13 +28,15 @@ interface CatalogProduct {
 export async function fetchStoreProducts(): Promise<StoreProduct[]> {
   try {
     const data = await api.proxyGet<CatalogProduct[]>('catalog', 'products');
-    return data.map((item) => ({
+    const mapped = data.map((item) => ({
       id: String(item.id),
       name: item.name,
       price: Number(item.price),
       category: (item.category ?? 'uncategorized').toLowerCase(),
       image: item.imageUrl ?? '',
     }));
+
+    return mapped.length > 0 ? mapped : FALLBACK_PRODUCTS;
   } catch {
     return FALLBACK_PRODUCTS;
   }

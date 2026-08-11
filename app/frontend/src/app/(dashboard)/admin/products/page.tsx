@@ -16,7 +16,16 @@ export default function ProductsPage() {
   useEffect(() => {
     api
       .proxyGet<Product[] | { data?: Product[] }>('catalog', 'products')
-      .then((res) => setProducts(Array.isArray(res) ? res : (res.data ?? [])))
+      .then((res) => {
+        const raw = Array.isArray(res) ? res : (res.data ?? []);
+        const normalized = raw.map((item) => ({
+          ...item,
+          price: Number(item.price ?? 0),
+          category: item.category ?? 'Uncategorized',
+          sku: item.sku ?? 'N/A',
+        }));
+        setProducts(normalized);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -79,8 +88,8 @@ export default function ProductsPage() {
                 {products.map((product) => (
                   <tr key={product.id} className="transition-colors hover:bg-surface-elevated/50">
                     <td className="px-5 py-4 text-sm font-medium text-text">{product.name}</td>
-                    <td className="px-5 py-4 text-sm text-text-muted">{product.sku || '—'}</td>
-                    <td className="px-5 py-4 text-sm text-text-muted">{product.category || '—'}</td>
+                    <td className="px-5 py-4 text-sm text-text-muted">{product.sku || 'N/A'}</td>
+                    <td className="px-5 py-4 text-sm text-text-muted">{product.category || 'Uncategorized'}</td>
                     <td className="px-5 py-4 text-right text-sm text-text">${product.price.toFixed(2)}</td>
                     <td className="px-5 py-4 text-center">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
