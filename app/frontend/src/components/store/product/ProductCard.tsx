@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import { useState } from 'react';
 import { useCart } from '@/hooks/useCart';
 import { ShoppingCart } from 'lucide-react';
 
@@ -15,19 +15,22 @@ interface Product {
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
+  const [imageFailed, setImageFailed] = useState(false);
+  const imageSrc = !imageFailed ? product.image : '';
 
   return (
     <div className="group card-elevated relative overflow-hidden transition-all hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 p-0">
       {/* Image area */}
       <Link href={`/products/${product.id}`} className="block">
         <div className="flex aspect-square items-center justify-center bg-surface p-6">
-          {product.image ? (
-            <Image
-              src={product.image}
+          {imageSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageSrc}
               alt={product.name}
-              width={320}
-              height={320}
+              loading="lazy"
               className="h-full w-full rounded-lg object-cover"
+              onError={() => setImageFailed(true)}
             />
           ) : (
             <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-border text-text-muted">

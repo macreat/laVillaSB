@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { toSameOriginMediaUrl } from '@/lib/media-proxy';
 
 export interface StoreProduct {
   id: string;
@@ -33,7 +34,7 @@ export async function fetchStoreProducts(): Promise<StoreProduct[]> {
       name: item.name,
       price: Number(item.price),
       category: (item.category ?? 'uncategorized').toLowerCase(),
-      image: item.imageUrl ?? '',
+      image: toSameOriginMediaUrl(item.imageUrl),
     }));
 
     return mapped.length > 0 ? mapped : FALLBACK_PRODUCTS;
