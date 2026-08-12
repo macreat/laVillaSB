@@ -11,3 +11,5 @@ meilisearch==0.31.6
 python-multipart==0.0.17
 boto3==1.35.63
 pytest==8.3.3
+Pillow==11.1.0
+pytesseract==0.3.13

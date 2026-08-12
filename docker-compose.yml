@@ -150,6 +150,8 @@ services:
       minio:
         condition: service_healthy
     restart: unless-stopped
+    volumes:
+      - ../reference/database/drive/Catálogo La Villa:/data/catalog:ro
     networks: [lavilla]
 
   inventory:
