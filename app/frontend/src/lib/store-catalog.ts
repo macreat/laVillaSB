@@ -6,6 +6,7 @@ export interface StoreProduct {
   name: string;
   price: number;
   categoryGroup: string;
+  description?: string;
   image?: string;
 }
 
@@ -22,8 +23,13 @@ interface CatalogProduct {
   id: number;
   name: string;
   price: number | string;
+  description?: string | null;
   categoryGroup?: string | null;
   imageUrl?: string | null;
+}
+
+interface ApiError {
+  message?: string;
 }
 
 export function mapCatalogProduct(item: CatalogProduct): StoreProduct {
@@ -31,6 +37,7 @@ export function mapCatalogProduct(item: CatalogProduct): StoreProduct {
     id: String(item.id),
     name: item.name,
     price: Number(item.price),
+    description: item.description ?? undefined,
     categoryGroup: (item.categoryGroup ?? 'uncategorized').toLowerCase(),
     image: toSameOriginMediaUrl(item.imageUrl),
   };
@@ -62,5 +69,18 @@ export async function fetchStoreProducts(): Promise<StoreProduct[]> {
     return mapped.length > 0 ? mapped : FALLBACK_PRODUCTS;
   } catch {
     return FALLBACK_PRODUCTS;
+  }
+}
+
+export async function fetchStoreProduct(id: string): Promise<StoreProduct> {
+  try {
+    const data = await api.proxyGet<CatalogProduct>('catalog', `products/${id}`);
+    return mapCatalogProduct(data);
+  } catch (error: unknown) {
+    const maybeError = error as ApiError;
+    if ((maybeError.message || '').toLowerCase().includes('not found')) {
+      throw new Error('Product not found');
+    }
+    throw error;
   }
 }

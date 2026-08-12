@@ -1,11 +1,25 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { api } from '@/lib/api';
 
 import {
   displayCategoryGroup,
+  fetchStoreProduct,
+  fetchStoreProducts,
   filterByCategoryGroup,
   mapCatalogProduct,
   type StoreProduct,
 } from './store-catalog';
+
+vi.mock('@/lib/api', () => ({
+  api: {
+    proxyGet: vi.fn(),
+  },
+}));
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 const DECK: StoreProduct = {
   id: '1',
@@ -45,6 +59,7 @@ describe('mapCatalogProduct', () => {
       id: '1',
       name: 'Deck 8.0',
       price: 120,
+      description: undefined,
       categoryGroup: 'decks',
       image: '',
     });
@@ -87,5 +102,48 @@ describe('displayCategoryGroup', () => {
   it('falls back to Uncategorized when group is missing', () => {
     expect(displayCategoryGroup(undefined)).toBe('Uncategorized');
     expect(displayCategoryGroup('')).toBe('Uncategorized');
+  });
+});
+
+describe('fetchStoreProducts', () => {
+  it('preserves server ordering from catalog response', async () => {
+    vi.mocked(api.proxyGet).mockResolvedValueOnce([
+      { id: 15, name: 'Server order third', price: '10.00', categoryGroup: 'apparel' },
+      { id: 3, name: 'Server order first', price: '20.00', categoryGroup: 'decks' },
+      { id: 8, name: 'Server order second', price: '30.00', categoryGroup: 'gear' },
+    ]);
+
+    const products = await fetchStoreProducts();
+
+    expect(products.map((product) => product.id)).toEqual(['15', '3', '8']);
+  });
+});
+
+describe('fetchStoreProduct', () => {
+  it('maps live detail response using the same mapper contract', async () => {
+    vi.mocked(api.proxyGet).mockResolvedValueOnce({
+      id: 12,
+      name: 'Dark Side Deck 8.5',
+      price: '72.00',
+      categoryGroup: 'Decks',
+      imageUrl: 'http://localhost:9000/catalog-media/uploads/deck-12.png',
+    });
+
+    const product = await fetchStoreProduct('12');
+
+    expect(product).toEqual({
+      id: '12',
+      name: 'Dark Side Deck 8.5',
+      price: 72,
+      description: undefined,
+      categoryGroup: 'decks',
+      image: '/api/media/catalog-media/uploads/deck-12.png',
+    });
+  });
+
+  it('propagates not-found as Product not found error', async () => {
+    vi.mocked(api.proxyGet).mockRejectedValueOnce(new Error('Product not found'));
+
+    await expect(fetchStoreProduct('999')).rejects.toThrow('Product not found');
   });
 });

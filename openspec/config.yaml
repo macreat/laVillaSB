@@ -1,0 +1,49 @@
+schema: spec-driven
+
+context: |
+  Project: laVillaSB product catalog and storefront platform.
+  Stack: Next.js 14/TypeScript, Laravel 12/PHP 8.3, FastAPI/Python 3.12.
+  Infrastructure: Docker Compose, PostgreSQL 16, Redis 7, RabbitMQ 3, Meilisearch v1, MinIO.
+  Architecture: Next.js presentation, Laravel gateway, FastAPI domain services, shared infrastructure.
+  Testing: Vitest, PHPUnit, and Pytest are available; browser E2E tooling is not detected.
+  Style: Preserve existing service boundaries, TypeScript/Python/PHP conventions, and English technical artifacts.
+
+strict_tdd: true
+
+testing:
+  test_runner: "cd app/frontend && npx vitest run; cd app/backend/gateway && composer test; cd app/microservices/catalog && pytest"
+  frameworks: "Vitest, PHPUnit, Pytest"
+  unit: true
+  integration: true
+  e2e: false
+  coverage: false
+  linter: "cd app/frontend && npm run lint"
+  type_checker: "cd app/frontend && npm run typecheck"
+  formatter: "Laravel Pint; project frontend formatter not configured"
+
+rules:
+  proposal:
+    - State the user-visible impact and affected catalog/storefront boundaries.
+    - Include rollback considerations for media URL or category ordering changes.
+  specs:
+    - Use Given/When/Then scenarios.
+    - Use RFC 2119 keywords such as MUST, SHALL, SHOULD, and MAY.
+    - Preserve unchanged Accessories and Gear behavior explicitly.
+  design:
+    - Document architecture decisions with rationale and affected service boundaries.
+    - Include sequence diagrams for cross-service media flows when needed.
+  tasks:
+    - Group work by phase and use hierarchical numbering.
+    - Keep tasks independently verifiable and within the 400-line review budget where practical.
+  apply:
+    tdd: true
+    guidelines:
+      - Follow existing code patterns and preserve unrelated OpenSpec artifacts.
+      - Reproduce user-facing image failures in an E2E-like workflow before fixing them.
+    test_command: "cd app/frontend && npx vitest run; cd app/backend/gateway && composer test; cd app/microservices/catalog && pytest"
+  verify:
+    test_command: "cd app/frontend && npx vitest run; cd app/backend/gateway && composer test; cd app/microservices/catalog && pytest"
+    build_command: "cd app/frontend && npm run build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive specification deltas.

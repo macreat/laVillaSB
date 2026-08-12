@@ -12,8 +12,10 @@ Route::get('/admin/me', [AdminAuthController::class, 'me'])
 Route::put('/admin/me', [AdminAuthController::class, 'updateProfile'])
     ->middleware('auth:sanctum');
 
+// Public catalog allowlist - read-only endpoints only.
+// Explicitly allows list reads and numeric product detail reads.
 Route::get('/v1/catalog/{path?}', [ServiceProxyController::class, 'proxyCatalog'])
-    ->where('path', '(health|products|categories)(/.*)?');
+    ->where('path', 'health|categories|products|products/[0-9]+');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::any('/v1/{service}/{path?}', [ServiceProxyController::class, 'proxy'])

@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { toSameOriginMediaUrl } from '@/lib/media-proxy';
 
 export interface CartItem {
   id: string;
@@ -57,6 +58,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = useCallback((product: Omit<CartItem, 'quantity'>) => {
+    const normalizedImage = toSameOriginMediaUrl(product.image);
     setItems((prev) => {
       const existing = prev.find((i) => i.id === product.id);
       if (existing) {
@@ -64,7 +66,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...product, image: normalizedImage, quantity: 1 }];
     });
   }, []);
 

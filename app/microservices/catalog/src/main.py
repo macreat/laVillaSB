@@ -10,6 +10,7 @@ from sqlalchemy.orm import selectinload
 from .category_groups import resolve_group
 from .config import settings
 from .database import get_session, init_db
+from .merchandising import order_products
 from .models import Category, Media, Product
 from .schemas import (
     MediaCompleteRequest,
@@ -70,8 +71,23 @@ async def list_products(session: AsyncSession = Depends(get_session)):
         .order_by(Product.id.asc())
     )
     products = result.scalars().all()
+    ordered_products = order_products(products)
 
-    return [to_product_out(product) for product in products]
+    return [to_product_out(product) for product in ordered_products]
+
+
+@app.get("/products/{product_id}", response_model=ProductOut)
+async def get_product(product_id: int, session: AsyncSession = Depends(get_session)):
+    product = await session.get(
+        Product,
+        product_id,
+        options=[selectinload(Product.category), selectinload(Product.media)],
+    )
+
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    return to_product_out(product)
 
 
 @app.post("/media/presign", response_model=MediaPresignResponse)

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCart } from '@/hooks/useCart';
 import { Trash2, Plus, Minus } from 'lucide-react';
+import { ProductImage } from '@/components/store/product/ProductImage';
 
 export default function CartPage() {
   const { items, total, removeItem, updateQuantity, clearCart } = useCart();
@@ -43,12 +44,13 @@ export default function CartPage() {
             key={item.id}
             className="card-elevated flex items-center gap-4 sm:gap-6"
           >
-            {/* Image placeholder */}
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-border bg-surface sm:h-20 sm:w-20">
-              <svg className="h-6 w-6 text-text-muted opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
+            <ProductImage
+              src={item.image}
+              alt={item.name}
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-border bg-surface sm:h-20 sm:w-20"
+              fallbackClassName="flex h-10 w-10 items-center justify-center rounded-md border border-border text-text-muted"
+              imageClassName="h-full w-full rounded-md object-cover"
+            />
 
             {/* Info */}
             <div className="flex-1 min-w-0">

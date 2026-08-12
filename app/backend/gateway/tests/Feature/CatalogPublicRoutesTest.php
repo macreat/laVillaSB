@@ -36,6 +36,29 @@ class CatalogPublicRoutesTest extends TestCase
         $response->assertUnauthorized();
     }
 
+    public function test_public_product_detail_route_is_proxied_without_authentication(): void
+    {
+        Http::fake(fn () => Http::response([
+            'id' => 12,
+            'name' => 'Dark Side Deck 8.5',
+            'price' => '72.00',
+            'categoryGroup' => 'decks',
+        ], 200));
+
+        $response = $this->getJson('/api/v1/catalog/products/12');
+
+        $response->assertOk();
+        $response->assertJsonPath('id', 12);
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/products/12'));
+    }
+
+    public function test_non_numeric_product_detail_route_is_not_allowlisted(): void
+    {
+        $response = $this->getJson('/api/v1/catalog/products/deck-8-25');
+
+        $response->assertUnauthorized();
+    }
+
     public function test_only_explicit_read_routes_are_public(): void
     {
         Http::fake(fn () => Http::response(['status' => 'ok'], 200));

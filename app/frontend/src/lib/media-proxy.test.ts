@@ -19,4 +19,14 @@ describe('toSameOriginMediaUrl', () => {
     expect(toSameOriginMediaUrl(null)).toBe('');
     expect(toSameOriginMediaUrl('')).toBe('');
   });
+
+  it('rejects unsafe javascript and data URLs', () => {
+    expect(toSameOriginMediaUrl('javascript:alert(1)')).toBe('');
+    expect(toSameOriginMediaUrl('data:image/svg+xml;base64,PHN2Zy8+')).toBe('');
+  });
+
+  it('rejects relative traversal segments', () => {
+    expect(toSameOriginMediaUrl('../secrets.png')).toBe('');
+    expect(toSameOriginMediaUrl('/catalog-media/../secrets.png')).toBe('');
+  });
 });
