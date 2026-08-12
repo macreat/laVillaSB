@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
 import type { Product } from '@/lib/admin-types';
+import { displayCategoryGroup } from '@/lib/store-catalog';
 import { Package, Plus, Search } from 'lucide-react';
 
 export default function ProductsPage() {
@@ -80,6 +81,7 @@ export default function ProductsPage() {
                   <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Name</th>
                   <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">SKU</th>
                   <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Category</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Group</th>
                   <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-text-muted">Price</th>
                   <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-text-muted">Status</th>
                 </tr>
@@ -90,6 +92,7 @@ export default function ProductsPage() {
                     <td className="px-5 py-4 text-sm font-medium text-text">{product.name}</td>
                     <td className="px-5 py-4 text-sm text-text-muted">{product.sku || 'N/A'}</td>
                     <td className="px-5 py-4 text-sm text-text-muted">{product.category || 'Uncategorized'}</td>
+                    <td className="px-5 py-4 text-sm text-text-muted">{displayCategoryGroup(product.categoryGroup)}</td>
                     <td className="px-5 py-4 text-right text-sm text-text">${product.price.toFixed(2)}</td>
                     <td className="px-5 py-4 text-center">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${

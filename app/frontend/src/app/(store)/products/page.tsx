@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { ProductCard } from '@/components/store/product/ProductCard';
-import { fetchStoreProducts, type StoreProduct } from '@/lib/store-catalog';
+import { fetchStoreProducts, filterByCategoryGroup, type StoreProduct } from '@/lib/store-catalog';
 
 const CATEGORIES = ['all', 'decks', 'apparel', 'accessories', 'gear'] as const;
 
@@ -16,10 +16,7 @@ function ProductsContent() {
     fetchStoreProducts().then(setAllProducts);
   }, []);
 
-  const filtered =
-    activeCategory === 'all'
-      ? allProducts
-      : allProducts.filter((p) => p.category === activeCategory);
+  const filtered = filterByCategoryGroup(allProducts, activeCategory);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
