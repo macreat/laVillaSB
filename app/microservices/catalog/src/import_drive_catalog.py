@@ -11,11 +11,16 @@ import boto3
 from botocore.exceptions import ClientError
 from sqlalchemy import select
 
+from .category_groups import map_category_name
 from .config import settings
 from .database import AsyncSessionLocal, init_db
 from .models import Category, Media, Product
 
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tif", ".tiff"}
+
+
+def build_category(slug: str, label: str) -> Category:
+    return Category(slug=slug, name=label, category_group=map_category_name(label))
 
 
 @dataclass(frozen=True)
@@ -120,7 +125,7 @@ async def import_catalog(source_root: Path, dry_run: bool = False) -> dict[str, 
                     await session.execute(select(Category).where(Category.slug == category_slug))
                 ).scalar_one_or_none()
                 if category is None:
-                    category = Category(slug=category_slug, name=item.category_label)
+                    category = build_category(category_slug, item.category_label)
                     session.add(category)
                     await session.flush()
                     created_categories += 1

@@ -14,6 +14,7 @@ class CatalogPublicRoutesTest extends TestCase
                 'id' => 1,
                 'name' => 'Deck 8.0',
                 'price' => '120.00',
+                'categoryGroup' => 'decks',
             ],
         ], 200));
 
@@ -21,6 +22,7 @@ class CatalogPublicRoutesTest extends TestCase
 
         $response->assertOk();
         $response->assertJsonPath('0.name', 'Deck 8.0');
+        $response->assertJsonPath('0.categoryGroup', 'decks');
         Http::assertSent(fn ($request) => str_contains($request->url(), '/products'));
     }
 

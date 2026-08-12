@@ -7,9 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from .category_groups import resolve_group
 from .config import settings
 from .database import get_session, init_db
-from .models import Media, Product
+from .models import Category, Media, Product
 from .schemas import (
     MediaCompleteRequest,
     MediaCompleteResponse,
@@ -41,6 +42,26 @@ async def health_check():
     return {"status": "ok", "service": "catalog"}
 
 
+def to_product_out(product: Product) -> ProductOut:
+    image_url = None
+    if product.media and product.media.status == "ready":
+        image_url = build_public_url(product.media.storage_key)
+
+    return ProductOut(
+        id=product.id,
+        name=product.name,
+        description=product.description,
+        sku=product.sku,
+        price=product.price,
+        category=product.category.name if product.category else None,
+        categoryGroup=resolve_group(product.category.category_group if product.category else None),
+        active=product.active,
+        created_at=product.created_at,
+        updated_at=product.updated_at,
+        imageUrl=image_url,
+    )
+
+
 @app.get("/products", response_model=list[ProductOut])
 async def list_products(session: AsyncSession = Depends(get_session)):
     result = await session.execute(
@@ -50,28 +71,7 @@ async def list_products(session: AsyncSession = Depends(get_session)):
     )
     products = result.scalars().all()
 
-    response_items = []
-    for product in products:
-        image_url = None
-        if product.media and product.media.status == "ready":
-            image_url = build_public_url(product.media.storage_key)
-
-        response_items.append(
-            ProductOut(
-                id=product.id,
-                name=product.name,
-                description=product.description,
-                sku=product.sku,
-                price=product.price,
-                category=product.category.name if product.category else None,
-                active=product.active,
-                created_at=product.created_at,
-                updated_at=product.updated_at,
-                imageUrl=image_url,
-            )
-        )
-
-    return response_items
+    return [to_product_out(product) for product in products]
 
 
 @app.post("/media/presign", response_model=MediaPresignResponse)

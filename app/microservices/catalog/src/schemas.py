@@ -13,6 +13,7 @@ class ProductOut(BaseModel):
     sku: str | None = None
     price: Decimal
     category: str | None = None
+    categoryGroup: str
     active: bool
     created_at: datetime
     updated_at: datetime
