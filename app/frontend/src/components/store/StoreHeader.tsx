@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { clsx } from 'clsx';
-import { ShoppingCart, Menu, X, Search } from 'lucide-react';
+import { ShoppingCart, Menu, X } from 'lucide-react';
+import { BrandWordmark } from '@/components/brand/BrandWordmark';
 import { useCart } from '@/hooks/useCart';
 
 const NAV_LINKS = [
@@ -40,12 +41,7 @@ export function StoreHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent font-display text-xl font-bold text-bg">
-              LV
-            </div>
-            <span className="font-display text-2xl tracking-wider text-text hidden sm:block">
-              LA VILLA
-            </span>
+            <BrandWordmark width={120} priority />
           </Link>
 
           {/* Center nav (desktop) */}

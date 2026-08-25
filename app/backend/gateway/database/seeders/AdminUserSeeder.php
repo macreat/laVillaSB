@@ -5,16 +5,30 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
+        $email = env('ADMIN_EMAIL', 'admin@lavillasb.com');
+        $password = env('ADMIN_PASSWORD');
+
+        if (! $password) {
+            $password = Str::password(24);
+            Log::warning('Generated admin password for seeding. Store it securely.', [
+                'email' => $email,
+                'password' => $password,
+            ]);
+        }
+
         User::updateOrCreate(
-            ['email' => 'admin@lavillasb.com'],
+            ['email' => $email],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make($password),
+                'is_admin' => true,
             ]
         );
     }

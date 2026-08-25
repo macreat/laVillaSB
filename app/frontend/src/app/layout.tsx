@@ -19,11 +19,17 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
     default: 'La Villa Skateboarding',
     template: '%s — La Villa Skateboarding',
   },
   description: 'La Villa Skateboarding — The darker side of skateboarding. Shop decks, apparel, and gear.',
+  openGraph: {
+    title: 'La Villa Skateboarding',
+    description: 'La Villa Skateboarding — The darker side of skateboarding. Shop decks, apparel, and gear.',
+    images: ['/brand/villa-scene.webp'],
+  },
 };
 
 export default function RootLayout({

@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { BrandWordmark } from '@/components/brand/BrandWordmark';
+import { MacreatScript } from '@/components/brand/MacreatScript';
 
 const FOOTER_LINKS = [
   {
@@ -39,17 +41,21 @@ export function StoreFooter() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-display text-sm font-bold text-bg">
-                LV
-              </div>
-              <span className="font-display text-lg tracking-wider text-text">
-                LA VILLA
-              </span>
+            <Link href="/" className="mb-4 block w-fit">
+              <BrandWordmark width={150} />
             </Link>
             <p className="text-sm text-text-muted leading-relaxed">
               La Villa Skateboarding &mdash; The darker side of skateboarding.
             </p>
+            <div className="mt-4">
+              <a
+                href="https://macreat.com"
+                aria-label="Developed by Macreat"
+                className="inline-block"
+              >
+                <MacreatScript width={90} />
+              </a>
+            </div>
           </div>
 
           {/* Link columns */}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { FoxMark } from '@/components/brand/FoxMark';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,9 +34,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-accent text-bg font-display text-2xl font-bold">
-            LV
-          </div>
+          <FoxMark size={48} className="mx-auto mb-4" />
           <h1 className="font-display text-3xl tracking-wide text-text">
             LA VILLA SB
           </h1>

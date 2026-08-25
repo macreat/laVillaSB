@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react';
+import { FoxMark } from '@/components/brand/FoxMark';
 import { useAuth } from '@/hooks/useAuth';
 
 const NAV_ITEMS = [
@@ -28,11 +29,9 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-surface">
       <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-bg font-display text-lg font-bold">
-          LV
-        </div>
+        <FoxMark size={28} />
         <span className="font-display text-xl tracking-wide text-text">
-          LA VILLA
+          Admin
         </span>
       </div>
 

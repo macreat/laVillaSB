@@ -21,13 +21,13 @@ class AdminAuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password) || ! $user->is_admin) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $token = $user->createToken($request->device_name)->plainTextToken;
+        $token = $user->createToken($request->device_name, ['admin'])->plainTextToken;
 
         return response()->json([
             'token' => $token,
@@ -38,6 +38,10 @@ class AdminAuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()
+            ->whereNotNull('expires_at')
+            ->where('expires_at', '<', now())
+            ->delete();
 
         return response()->json(['message' => 'Logged out']);
     }
