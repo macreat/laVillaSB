@@ -1,3 +1,4 @@
+import { IntroOverlay } from '@/components/brand/IntroOverlay';
 import { StoreHeader } from '@/components/store/StoreHeader';
 import { StoreFooter } from '@/components/store/StoreFooter';
 
@@ -8,6 +9,7 @@ export default function StoreLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
+      <IntroOverlay />
       <StoreHeader />
       <main className="flex-1">{children}</main>
       <StoreFooter />

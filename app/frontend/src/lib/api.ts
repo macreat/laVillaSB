@@ -16,20 +16,6 @@ class ApiClient {
     }
   }
 
-  private setSessionCookie() {
-    if (typeof window === 'undefined') return;
-
-    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
-    document.cookie = `lavilla_session=1; Path=/; SameSite=Lax${secure}`;
-  }
-
-  private clearSessionCookie() {
-    if (typeof window === 'undefined') return;
-
-    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
-    document.cookie = `lavilla_session=; Path=/; SameSite=Lax; Max-Age=0${secure}`;
-  }
-
   getToken(): string | null {
     if (this.token) return this.token;
     if (typeof window !== 'undefined') {
@@ -77,17 +63,12 @@ class ApiClient {
       payload,
     );
     this.setToken(data.token);
-    this.setSessionCookie();
     return data;
   }
 
   async logout(): Promise<void> {
-    try {
-      await this.request('POST', '/api/admin/logout');
-    } finally {
-      this.setToken(null);
-      this.clearSessionCookie();
-    }
+    await this.request('POST', '/api/admin/logout');
+    this.setToken(null);
   }
 
   async me(): Promise<User> {
