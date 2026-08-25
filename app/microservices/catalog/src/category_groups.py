@@ -1,8 +1,8 @@
 """Shared category-group taxonomy for the catalog service.
 
 Single source of truth for mapping category names to display groups.
-Reused by the backfill script, the Drive importer, and nowhere else at
-serialization time (the API reads the stored group).
+ Reused by the backfill script, the Drive importer, API serialization, and
+ subcategory classification.
 """
 
 GROUPS: tuple[str, ...] = ("decks", "apparel", "gear", "accessories", "uncategorized")
@@ -31,4 +31,5 @@ def map_category_name(name: str) -> str:
 
 def resolve_group(stored: str | None) -> str:
     """Resolve a stored group value to a canonical group string."""
-    return stored.lower() if stored else "uncategorized"
+    normalized = (stored or "").strip().lower()
+    return normalized if normalized in GROUPS else "uncategorized"

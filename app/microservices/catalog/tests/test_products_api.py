@@ -66,6 +66,9 @@ def test_get_product_detail_returns_live_product_with_ready_media_url() -> None:
     assert payload["name"] == "Product 10"
     assert payload["description"] == "Live catalog description"
     assert payload["imageUrl"] == build_public_url("uploads/deck-1.png")
+    assert payload["category"] == "Skate / Maderos / 8.25"
+    assert payload["categoryGroup"] == "decks"
+    assert payload["categorySubcategory"] == "8.25"
 
 
 def test_get_product_detail_returns_null_image_for_unusable_media() -> None:

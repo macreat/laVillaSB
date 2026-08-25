@@ -20,6 +20,7 @@ from .schemas import (
     ProductOut,
 )
 from .storage import build_public_url, build_put_url, build_storage_key, ensure_public_bucket
+from .subcategory import classify_subcategory
 
 
 @asynccontextmanager
@@ -48,14 +49,23 @@ def to_product_out(product: Product) -> ProductOut:
     if product.media and product.media.status == "ready":
         image_url = build_public_url(product.media.storage_key)
 
+    category_name = product.category.name if product.category else None
+    stored_category_group = product.category.category_group if product.category else None
+    category_group = resolve_group(stored_category_group)
+
     return ProductOut(
         id=product.id,
         name=product.name,
         description=product.description,
         sku=product.sku,
         price=product.price,
-        category=product.category.name if product.category else None,
-        categoryGroup=resolve_group(product.category.category_group if product.category else None),
+        category=category_name,
+        categoryGroup=category_group,
+        categorySubcategory=(
+            classify_subcategory(category_name, product.name, stored_category_group)
+            if category_group != "uncategorized"
+            else None
+        ),
         active=product.active,
         created_at=product.created_at,
         updated_at=product.updated_at,

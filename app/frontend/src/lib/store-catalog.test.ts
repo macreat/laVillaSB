@@ -4,10 +4,15 @@ import { api } from '@/lib/api';
 
 import {
   displayCategoryGroup,
+  deriveSubcategoryTabs,
   fetchStoreProduct,
   fetchStoreProducts,
+  filterByCategoryAndSubcategory,
   filterByCategoryGroup,
   mapCatalogProduct,
+  buildCategoryHref,
+  normalizeCategory,
+  resolveSubcategorySelection,
   type StoreProduct,
 } from './store-catalog';
 
@@ -61,6 +66,8 @@ describe('mapCatalogProduct', () => {
       price: 120,
       description: undefined,
       categoryGroup: 'decks',
+      category: undefined,
+      categorySubcategory: undefined,
       image: '',
     });
   });
@@ -69,6 +76,31 @@ describe('mapCatalogProduct', () => {
     const mapped = mapCatalogProduct({ id: 2, name: 'Tee', price: '30.00' });
 
     expect(mapped.categoryGroup).toBe('uncategorized');
+  });
+
+  it('keeps raw category and additive subcategory values', () => {
+    const mapped = mapCatalogProduct({
+      id: 3,
+      name: 'Hoddie',
+      price: 50,
+      category: 'Ropa / Talla M',
+      categoryGroup: 'apparel',
+      categorySubcategory: 'Hoodies',
+    });
+
+    expect(mapped.category).toBe('Ropa / Talla M');
+    expect(mapped.categorySubcategory).toBe('Hoodies');
+
+    const uncategorized = mapCatalogProduct({
+      id: 4,
+      name: 'Mystery item',
+      price: 10,
+      category: null,
+      categoryGroup: null,
+      categorySubcategory: null,
+    });
+
+    expect(uncategorized.categorySubcategory).toBeNull();
   });
 });
 
@@ -90,6 +122,109 @@ describe('filterByCategoryGroup', () => {
 
     expect(filtered).toHaveLength(3);
     expect(filtered.map((p) => p.id)).toEqual(['1', '2', '7']);
+  });
+});
+
+describe('subcategory derivation and filtering', () => {
+  const products: StoreProduct[] = [
+    { ...DECK, categorySubcategory: '8.25', category: 'Skate / Maderos / 8.25' },
+    {
+      ...APPAREL,
+      id: '3',
+      categorySubcategory: 'Hoodies',
+      category: 'Ropa / Talla M',
+    },
+    {
+      ...APPAREL,
+      id: '4',
+      categorySubcategory: 'Shoes',
+      category: 'Tenis / Talla 8Us',
+    },
+    {
+      ...APPAREL,
+      id: '5',
+      categorySubcategory: 'Future Family',
+      category: 'Ropa / Unknown',
+    },
+    { ...APPAREL, id: '6', categorySubcategory: null, category: undefined },
+  ];
+
+  it('returns All plus populated known labels in the specified order', () => {
+    expect(deriveSubcategoryTabs(products, 'apparel')).toEqual([
+      'All',
+      'Shoes',
+      'Hoodies',
+    ]);
+  });
+
+  it('orders deck sizes numerically and omits unsupported or empty labels', () => {
+    const deckProducts = ['8.5', '7.75', 'Long Board', '8.125', 'Future Size'].map(
+      (subcategory, index) => ({
+        ...DECK,
+        id: `deck-${index}`,
+        categorySubcategory: subcategory,
+      }),
+    );
+
+    expect(deriveSubcategoryTabs(deckProducts, 'decks')).toEqual([
+      'All',
+      '7.75',
+      '8.125',
+      '8.5',
+      'Long Board',
+    ]);
+  });
+
+  it('omits an empty known accessory label while keeping All discoverable', () => {
+    const accessoryProducts: StoreProduct[] = [
+      {
+        id: 'accessory-bag',
+        name: 'Waist Pack',
+        price: 24,
+        categoryGroup: 'accessories',
+        categorySubcategory: 'Bags & Waist Packs',
+      },
+    ];
+
+    expect(deriveSubcategoryTabs(accessoryProducts, 'accessories')).toEqual([
+      'All',
+      'Bags & Waist Packs',
+    ]);
+  });
+
+  it('keeps unknown and uncategorized products in the group All result', () => {
+    expect(filterByCategoryAndSubcategory(products, 'apparel', 'All').map((p) => p.id)).toEqual([
+      '3',
+      '4',
+      '5',
+      '6',
+    ]);
+  });
+
+  it('filters by group and known subcategory in original order', () => {
+    expect(filterByCategoryAndSubcategory(products, 'apparel', 'Hoodies').map((p) => p.id)).toEqual([
+      '3',
+    ]);
+  });
+
+  it('falls back to the group when a subcategory is stale or unknown', () => {
+    expect(filterByCategoryAndSubcategory(products, 'apparel', 'Stale').map((p) => p.id)).toEqual([
+      '3',
+      '4',
+      '5',
+      '6',
+    ]);
+    expect(resolveSubcategorySelection(products, 'apparel', 'Stale')).toBe('All');
+  });
+});
+
+describe('category URL state', () => {
+  it('normalizes unsupported categories to all and encodes subcategory labels', () => {
+    expect(normalizeCategory('not-a-group')).toBe('all');
+    expect(buildCategoryHref('all')).toBe('/products');
+    expect(buildCategoryHref('apparel', 'Jackets & Outerwear')).toBe(
+      '/products?category=apparel&subcategory=Jackets+%26+Outerwear',
+    );
   });
 });
 

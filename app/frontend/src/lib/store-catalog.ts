@@ -6,9 +6,28 @@ export interface StoreProduct {
   name: string;
   price: number;
   categoryGroup: string;
+  category?: string;
+  categorySubcategory?: string | null;
   description?: string;
   image?: string;
 }
+
+export const CATEGORIES = ['all', 'decks', 'apparel', 'accessories', 'gear'] as const;
+
+const SUBCATEGORY_LABELS: Record<string, readonly string[]> = {
+  decks: ['7.75', '8.0', '8.125', '8.25', '8.4', '8.5', 'Long Board'],
+  apparel: [
+    'Shoes',
+    'Hoodies',
+    'Sweatshirts',
+    'T-Shirts',
+    'Jackets & Outerwear',
+    'Pants',
+    'Other Apparel',
+  ],
+  accessories: ['Bags & Waist Packs', 'Grip Tape'],
+  gear: ['Trucks', 'Wheels', 'Bearings', 'Hardware & Accessories'],
+};
 
 const FALLBACK_PRODUCTS: StoreProduct[] = [
   { id: '1', name: 'Dark Realm Deck', price: 64.99, categoryGroup: 'decks', image: '' },
@@ -24,7 +43,9 @@ interface CatalogProduct {
   name: string;
   price: number | string;
   description?: string | null;
+  category?: string | null;
   categoryGroup?: string | null;
+  categorySubcategory?: string | null;
   imageUrl?: string | null;
 }
 
@@ -37,6 +58,8 @@ export function mapCatalogProduct(item: CatalogProduct): StoreProduct {
     id: String(item.id),
     name: item.name,
     price: Number(item.price),
+    category: item.category ?? undefined,
+    categorySubcategory: item.categorySubcategory,
     description: item.description ?? undefined,
     categoryGroup: (item.categoryGroup ?? 'uncategorized').toLowerCase(),
     image: toSameOriginMediaUrl(item.imageUrl),
@@ -51,6 +74,74 @@ export function filterByCategoryGroup(
     return products;
   }
   return products.filter((product) => product.categoryGroup === group);
+}
+
+export function normalizeCategory(group: string | null | undefined): string {
+  const normalized = (group ?? '').trim().toLowerCase();
+  return CATEGORIES.includes(normalized as (typeof CATEGORIES)[number]) ? normalized : 'all';
+}
+
+export function deriveSubcategoryTabs(products: StoreProduct[], group: string): string[] {
+  const normalizedGroup = normalizeCategory(group);
+  if (normalizedGroup === 'all') {
+    return ['All'];
+  }
+
+  const populated = new Set(
+    products
+      .filter((product) => product.categoryGroup.toLowerCase() === normalizedGroup)
+      .map((product) => product.categorySubcategory)
+      .filter((subcategory): subcategory is string => Boolean(subcategory)),
+  );
+
+  return [
+    'All',
+    ...(SUBCATEGORY_LABELS[normalizedGroup] ?? []).filter((label) => populated.has(label)),
+  ];
+}
+
+export function resolveSubcategorySelection(
+  products: StoreProduct[],
+  group: string,
+  requestedSubcategory: string | null | undefined,
+): string {
+  if (!requestedSubcategory || requestedSubcategory === 'All') {
+    return 'All';
+  }
+  return deriveSubcategoryTabs(products, group).includes(requestedSubcategory)
+    ? requestedSubcategory
+    : 'All';
+}
+
+export function filterByCategoryAndSubcategory(
+  products: StoreProduct[],
+  group: string,
+  requestedSubcategory?: string | null,
+): StoreProduct[] {
+  const normalizedGroup = normalizeCategory(group);
+  const groupProducts = filterByCategoryGroup(products, normalizedGroup);
+  if (normalizedGroup === 'all') {
+    return groupProducts;
+  }
+
+  const subcategory = resolveSubcategorySelection(products, normalizedGroup, requestedSubcategory);
+  if (subcategory === 'All') {
+    return groupProducts;
+  }
+  return groupProducts.filter((product) => product.categorySubcategory === subcategory);
+}
+
+export function buildCategoryHref(group: string, subcategory?: string): string {
+  const normalizedGroup = normalizeCategory(group);
+  if (normalizedGroup === 'all') {
+    return '/products';
+  }
+
+  const params = new URLSearchParams({ category: normalizedGroup });
+  if (subcategory && subcategory !== 'All') {
+    params.set('subcategory', subcategory);
+  }
+  return `/products?${params.toString()}`;
 }
 
 export function displayCategoryGroup(group: string | undefined): string {

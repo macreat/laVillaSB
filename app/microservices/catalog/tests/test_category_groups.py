@@ -61,6 +61,7 @@ def test_groups_include_uncategorized_last():
         ("", "uncategorized"),
         ("gear", "gear"),
         ("DeckS", "decks"),
+        ("not-a-group", "uncategorized"),
     ],
 )
 def test_resolve_group_maps_null_to_uncategorized(stored, expected):

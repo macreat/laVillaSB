@@ -11,18 +11,32 @@ class CatalogPublicRoutesTest extends TestCase
     {
         Http::fake(fn () => Http::response([
             [
-                'id' => 1,
+                'id' => 9,
+                'name' => 'Deck 7.75',
+                'price' => '118.00',
+                'category' => 'Skate / Maderos / 7.75',
+                'categoryGroup' => 'decks',
+                'categorySubcategory' => '7.75',
+            ],
+            [
+                'id' => 10,
                 'name' => 'Deck 8.0',
                 'price' => '120.00',
+                'category' => 'Skate / Maderos / 8.0',
                 'categoryGroup' => 'decks',
+                'categorySubcategory' => '8.0',
             ],
         ], 200));
 
         $response = $this->getJson('/api/v1/catalog/products');
 
         $response->assertOk();
-        $response->assertJsonPath('0.name', 'Deck 8.0');
+        $response->assertJsonPath('0.id', 9);
+        $response->assertJsonPath('0.category', 'Skate / Maderos / 7.75');
         $response->assertJsonPath('0.categoryGroup', 'decks');
+        $response->assertJsonPath('0.categorySubcategory', '7.75');
+        $response->assertJsonPath('1.id', 10);
+        $response->assertJsonPath('1.categorySubcategory', '8.0');
         Http::assertSent(fn ($request) => str_contains($request->url(), '/products'));
     }
 

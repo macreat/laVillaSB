@@ -2,27 +2,47 @@
 
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { CategorySubtabs } from '@/components/store/CategorySubtabs';
 import { ProductCard } from '@/components/store/product/ProductCard';
-import { fetchStoreProducts, filterByCategoryGroup, type StoreProduct } from '@/lib/store-catalog';
-
-const CATEGORIES = ['all', 'decks', 'apparel', 'accessories', 'gear'] as const;
+import {
+  buildCategoryHref,
+  CATEGORIES,
+  deriveSubcategoryTabs,
+  displayCategoryGroup,
+  fetchStoreProducts,
+  filterByCategoryAndSubcategory,
+  normalizeCategory,
+  resolveSubcategorySelection,
+  type StoreProduct,
+} from '@/lib/store-catalog';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
-  const activeCategory = searchParams.get('category') || 'all';
+  const activeCategory = normalizeCategory(searchParams.get('category'));
+  const requestedSubcategory = searchParams.get('subcategory');
   const [allProducts, setAllProducts] = useState<StoreProduct[]>([]);
 
   useEffect(() => {
     fetchStoreProducts().then(setAllProducts);
   }, []);
 
-  const filtered = filterByCategoryGroup(allProducts, activeCategory);
+  const activeSubcategory = resolveSubcategorySelection(
+    allProducts,
+    activeCategory,
+    requestedSubcategory,
+  );
+  const subcategoryTabs = deriveSubcategoryTabs(allProducts, activeCategory);
+  const filtered = filterByCategoryAndSubcategory(
+    allProducts,
+    activeCategory,
+    activeSubcategory,
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
       <div className="mb-8 text-center">
         <h1 className="font-display text-4xl uppercase tracking-wider text-text">
-          {activeCategory === 'all' ? 'All Products' : activeCategory}
+          {activeCategory === 'all' ? 'All Products' : displayCategoryGroup(activeCategory)}
         </h1>
         <p className="mt-2 text-sm text-text-muted">
           {filtered.length} product{filtered.length !== 1 ? 's' : ''}
@@ -34,17 +54,24 @@ function ProductsContent() {
         {CATEGORIES.map((cat) => (
           <a
             key={cat}
-            href={cat === 'all' ? '/products' : `/products?category=${cat}`}
+            href={buildCategoryHref(cat)}
             className={
               activeCategory === cat
                 ? 'btn-primary px-4 py-2 text-xs uppercase'
                 : 'btn-secondary px-4 py-2 text-xs uppercase'
             }
+            aria-current={activeCategory === cat ? 'page' : undefined}
           >
             {cat}
           </a>
         ))}
       </div>
+
+      <CategorySubtabs
+        group={activeCategory}
+        tabs={subcategoryTabs}
+        activeSubcategory={activeSubcategory}
+      />
 
       {/* Product grid */}
       {filtered.length > 0 ? (

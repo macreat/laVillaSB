@@ -72,3 +72,4 @@ def test_get_products_returns_catalog_merchandising_order() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert [item["id"] for item in payload] == [9, 10, 11]
+    assert [item["categorySubcategory"] for item in payload] == ["7.75", "8.25", "Other Apparel"]

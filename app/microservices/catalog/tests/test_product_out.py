@@ -51,6 +51,7 @@ def test_to_product_out_serializes_stored_category_group():
     out = to_product_out(product)
 
     assert out.categoryGroup == "decks"
+    assert out.categorySubcategory == "8.25"
 
 
 def test_to_product_out_serializes_uncategorized_when_stored_group_is_null():
@@ -59,6 +60,7 @@ def test_to_product_out_serializes_uncategorized_when_stored_group_is_null():
     out = to_product_out(product)
 
     assert out.categoryGroup == "uncategorized"
+    assert out.categorySubcategory is None
 
 
 def test_to_product_out_serializes_uncategorized_when_no_category():
@@ -67,6 +69,25 @@ def test_to_product_out_serializes_uncategorized_when_no_category():
     out = to_product_out(product)
 
     assert out.categoryGroup == "uncategorized"
+    assert out.categorySubcategory is None
+
+
+def test_to_product_out_serializes_null_subcategory_for_unknown_non_apparel_category():
+    product = make_product(category=make_category("Unmapped category", None))
+
+    out = to_product_out(product)
+
+    assert out.categoryGroup == "uncategorized"
+    assert out.categorySubcategory is None
+
+
+def test_to_product_out_serializes_uncategorized_and_null_for_unrecognized_stored_group():
+    product = make_product(category=make_category("Ropa / Talla L", "not-a-group"))
+
+    out = to_product_out(product)
+
+    assert out.categoryGroup == "uncategorized"
+    assert out.categorySubcategory is None
 
 
 def test_to_product_out_preserves_existing_fields():

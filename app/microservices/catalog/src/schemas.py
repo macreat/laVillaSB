@@ -14,6 +14,7 @@ class ProductOut(BaseModel):
     price: Decimal
     category: str | None = None
     categoryGroup: str
+    categorySubcategory: str | None = None
     active: bool
     created_at: datetime
     updated_at: datetime
