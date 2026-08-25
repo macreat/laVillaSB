@@ -1,7 +1,22 @@
 import type { Metadata } from 'next';
+import { Anton, Archivo } from 'next/font/google';
 import { AuthProvider } from '@/lib/auth';
 import { CartProvider } from '@/lib/cart';
 import './globals.css';
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-archivo',
+  display: 'swap',
+});
+
+const anton = Anton({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-anton',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -17,16 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="min-h-screen bg-bg text-text antialiased">
+    <html lang="en" className={`dark ${archivo.variable} ${anton.variable}`}>
+      <body className="min-h-screen bg-bg font-sans text-text antialiased">
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>

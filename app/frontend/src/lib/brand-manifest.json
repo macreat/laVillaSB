@@ -1,0 +1,61 @@
+{
+  "wordmark": {
+    "src": "/brand/wordmark.png",
+    "width": 391,
+    "height": 230
+  },
+  "wordmarkFire": {
+    "src": "/brand/wordmark-fire.webp",
+    "width": 611,
+    "height": 316
+  },
+  "wordmarkCamo": {
+    "src": "/brand/wordmark-camo.webp",
+    "width": 657,
+    "height": 385
+  },
+  "foxMark": {
+    "src": "/brand/fox-mark.png",
+    "width": 427,
+    "height": 640
+  },
+  "foxSornero": {
+    "src": "/brand/fox-sornero.webp",
+    "width": 1097,
+    "height": 1600,
+    "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAABQBACdASoQABcAPu1iqU2ppaOiMAgBMB2JbACdAYtA33lcZullDfAZPvDAAP70JyNjDJ27Q8WrGUeK6ItYpMXub5LbMHmypWg0CQVykcskCZa50rjGkdoKlHLc6o6BL1R2qbtcL/StmE/PsOh4s/kvRaFq5I/OiAA="
+  },
+  "villaScene": {
+    "src": "/brand/villa-scene.webp",
+    "width": 1600,
+    "height": 1600,
+    "blurDataURL": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwAgCdASoQABAAA4BaJZgCdAYt9wn3KGGcgAD+3Jloz+dPClAiAvtYAcvtBK7Z7A6eKZjHzy7tufde15Wh0fuFH8T3dJlcM9/3ZU4QF4kDLtDbCjgsgyAImgoJX+DxAqxKWiGwAAA="
+  },
+  "kunst": {
+    "src": "/brand/kunst.webp",
+    "width": 1163,
+    "height": 1200,
+    "blurDataURL": "data:image/webp;base64,UklGRo4BAABXRUJQVlA4WAoAAAAQAAAADwAAEAAAQUxQSPMAAAABgGPb2rHn+fjbZmxVtm07nY3eZpmVKdi27czATmn/3yAiYgJAl6AxTW3tXCOkKEqB2dcsrs5t9VTQqfT229Lq+7PtCAKj4CTGCNz4KIYhoItgBkGlpgKFSo4DggJgmMjFS2OhknCNAUdwnCDFZlIjSxIVchgEi87UGlobyW2lDBCoSIKUGqpYpFvRzHOwQKMHqEosIjR1Lz8/j4ZGWhUIREokc+Kmwqqhk2cmQkBlbT/43mXCE3maMVkoADBcKksARWVZZQqaDqhNNb4TTWcHxxsFQGk0fNB9Pji61h5O5T/ZO3Jbd97HBmokIrqcBkw66AIAVlA4IHQAAACwAwCdASoQABEAPu1iqU2ppaOiMAgBMB2JQAB8eDa2YMWThXcUIAD+cZ5i7Map+Ll6yBVL2P7wUgUOVDAwjitA6rlH6wPrcBkHxbw4GPf+/Mj5LN6XuSbVRcj7+vLKWXiLW8pX7Y2V4TmubJfQMQgRyaYgAA=="
+  },
+  "lavirgen": {
+    "src": "/brand/lavirgen.webp",
+    "width": 569,
+    "height": 784,
+    "blurDataURL": "data:image/webp;base64,UklGRs4BAABXRUJQVlA4WAoAAAAQAAAADwAAFQAAQUxQSPIAAAABkLtt2/G3+p/fFNv2Zidrjt8UZ7ZtO6vtdLQ79TjczfakyTa/77nqNiImQH4bdejF+Xz5S48HgBaI1y/Rwc7Tn7fumnpzwxInXmITn+zw+sWxW7c/Yk0Tq+SEhBWBqsKWTLEGltvkHwQUeF0mRTPOGzXvAQPgSEjXZd+zDcAHvgFGxsibp4XjwPX9J0yFlZPvyDgFvDv8EBQ+3mGHgup9fvtwG7+qwe8vx375BUX1lwXZjaKg+lIxmZZ+Q1FF1QQ1G0WyrqGgqsrTShERS5sJxo2jk9k28vsxAD0uf86Hl9x6/xcOJQnN4xavvxARG4v8Z1ZQOCC2AAAAcAQAnQEqEAAWAD7tYqlNqaWjojAIATAdiWwAsO8sGlzjXKbscXmmtFjl1ywA/NfuhVCaqgdkbB/ajEfUP8EIXF4vdJb7kB42pjsNxshOdP0Lx6RYpzgOto5jj6p1Z/x42ZjqSEbG3kQdfzZbRsEYtRWCwuvUsyDDGzMrEWE3gbULvIlF3s4uXK1oD4yRuVMWNirGwZcwf1SsirkocqXfqv2gDj9ROP6WH6lgaL52Ymbgu6R0kAA="
+  },
+  "stickerFox": {
+    "src": "/brand/sticker-fox.webp",
+    "width": 480,
+    "height": 480
+  },
+  "stickerBubble": {
+    "src": "/brand/sticker-bubble.webp",
+    "width": 480,
+    "height": 480
+  },
+  "macreatScript": {
+    "src": "/brand/macreat-script.png",
+    "width": 851,
+    "height": 993
+  }
+}
