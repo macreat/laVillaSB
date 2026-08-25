@@ -8,7 +8,9 @@
     "start": "next start --port 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "smoke:category-subtabs": "node scripts/category-subtabs-smoke.mjs"
+    "smoke:category-subtabs": "node scripts/category-subtabs-smoke.mjs",
+    "test": "vitest run",
+    "build:brand": "node scripts/build-brand-assets.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
