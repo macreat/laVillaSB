@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '@/hooks/useCart';
 import { ProductImage } from '@/components/store/product/ProductImage';
 import { displayCategoryGroup, fetchStoreProduct, type StoreProduct } from '@/lib/store-catalog';
+import { EXTERNAL_LINK_REL, WHATSAPP_URL } from '@/lib/site-links';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -63,6 +64,7 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+  const whatsappText = encodeURIComponent(`Hi, I'm interested in ${product.name} ($${product.price.toFixed(2)})`);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 lg:px-8">
@@ -121,9 +123,9 @@ export default function ProductDetailPage() {
             <p className="text-sm text-text-muted">
               Prefer to order via WhatsApp?{' '}
               <a
-                href="https://wa.me/"
+                href={WHATSAPP_URL === '#' ? '#' : `${WHATSAPP_URL}?text=${whatsappText}`}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={EXTERNAL_LINK_REL}
                 className="font-semibold text-accent hover:text-accent-hover transition-colors"
               >
                 Message us directly &rarr;

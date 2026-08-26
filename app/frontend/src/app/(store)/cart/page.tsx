@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/useCart';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { ProductImage } from '@/components/store/product/ProductImage';
+import { EXTERNAL_LINK_REL, WHATSAPP_URL } from '@/lib/site-links';
 
 export default function CartPage() {
   const { items, total, removeItem, updateQuantity, clearCart } = useCart();
@@ -113,9 +114,9 @@ export default function CartPage() {
       {/* Actions */}
       <div className="mt-6 flex flex-col gap-3">
         <a
-          href={`https://wa.me/?text=${whatsappText}`}
+          href={WHATSAPP_URL === '#' ? '#' : `${WHATSAPP_URL}?text=${whatsappText}`}
           target="_blank"
-          rel="noopener noreferrer"
+          rel={EXTERNAL_LINK_REL}
           className="btn-primary w-full py-3.5 text-base text-center"
         >
           Order via WhatsApp
