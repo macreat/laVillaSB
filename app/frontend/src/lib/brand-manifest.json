@@ -57,5 +57,35 @@
     "src": "/brand/macreat-script.png",
     "width": 851,
     "height": 993
+  },
+  "sorneroLogo": {
+    "src": "/brand/Sornero-La Villa Logo.png",
+    "width": 400,
+    "height": 400
+  },
+  "sorneroFox": {
+    "src": "/brand/Sornero zorror.png",
+    "width": 1200,
+    "height": 1200
+  },
+  "lavillaSb": {
+    "src": "/brand/lavillasb.png",
+    "width": 1200,
+    "height": 1200
+  },
+  "logoOG": {
+    "src": "/brand/logoOG.png",
+    "width": 200,
+    "height": 200
+  },
+  "logoFuego": {
+    "src": "/brand/logo fuego SI.png",
+    "width": 600,
+    "height": 600
+  },
+  "azulCamo": {
+    "src": "/brand/Azul.png",
+    "width": 800,
+    "height": 800
   }
 }
