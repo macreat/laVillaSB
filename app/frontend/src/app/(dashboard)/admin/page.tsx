@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { TopBar } from '@/components/layout/TopBar';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Card } from '@/components/ui/Card';
+import { api } from '@/lib/api';
 
 const STATS = [
   {
@@ -33,6 +35,14 @@ const STATS = [
     change: 'Awaiting data',
     changeType: 'neutral' as const,
   },
+];
+
+type ServiceCheck = () => Promise<unknown>;
+
+const SYSTEM_SERVICES: ReadonlyArray<{ name: string; check: ServiceCheck }> = [
+  { name: 'Laravel Gateway', check: () => api.me() },
+  { name: 'Catalog Service', check: () => api.proxyGet('catalog', 'health') },
+  { name: 'Inventory Service', check: () => api.proxyGet('inventory', 'health') },
 ];
 
 export default function DashboardPage() {
@@ -81,16 +91,12 @@ export default function DashboardPage() {
         </div>
 
         <Card className="mt-6">
-          <h3 className="mb-3 font-display text-lg tracking-wide text-text">
-            SYSTEM STATUS
+          <h3 className="mb-3 font-display text-lg uppercase tracking-wide text-text">
+            System Status
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { name: 'Laravel Gateway', url: 'http://localhost:8010/api/admin/me' },
-              { name: 'Catalog Service', url: 'http://localhost:9002/health' },
-              { name: 'Inventory Service', url: 'http://localhost:9003/health' },
-            ].map((svc) => (
-              <ServiceStatus key={svc.name} name={svc.name} url={svc.url} />
+            {SYSTEM_SERVICES.map((svc) => (
+              <ServiceStatus key={svc.name} name={svc.name} check={svc.check} />
             ))}
           </div>
         </Card>
@@ -99,11 +105,51 @@ export default function DashboardPage() {
   );
 }
 
-function ServiceStatus({ name, url }: { name: string; url: string }) {
+type PingState = 'checking' | 'online' | 'offline';
+
+function ServiceStatus({ name, check }: { name: string; check: ServiceCheck }) {
+  const [state, setState] = useState<PingState>('checking');
+
+  useEffect(() => {
+    let cancelled = false;
+    setState('checking');
+    check()
+      .then(() => {
+        if (!cancelled) setState('online');
+      })
+      .catch(() => {
+        if (!cancelled) setState('offline');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [check]);
+
+  const label = state === 'checking' ? 'Checking' : state === 'online' ? 'Online' : 'Offline';
+  const textClass =
+    state === 'online' ? 'text-green-500' :
+    state === 'offline' ? 'text-danger' :
+    'text-text-muted';
+
   return (
-    <div className="flex items-center justify-between rounded-md bg-surface-elevated px-4 py-3">
-      <span className="text-sm font-medium text-text">{name}</span>
-      <span className="text-xs text-text-muted">Check manually</span>
+    <div className="flex items-center justify-between border border-villa-smoke/25 bg-surface-elevated px-4 py-2.5">
+      <span className="text-xs font-semibold uppercase tracking-[0.12em] text-text">
+        {name}
+      </span>
+      <span
+        role="status"
+        className={`inline-flex items-center gap-2 text-xs font-medium ${textClass}`}
+      >
+        <span
+          aria-hidden="true"
+          className={`h-2 w-2 ${
+            state === 'online' ? 'bg-green-500' :
+            state === 'offline' ? 'bg-danger' :
+            'animate-pulse bg-text-muted'
+          }`}
+        />
+        {label}
+      </span>
     </div>
   );
 }
