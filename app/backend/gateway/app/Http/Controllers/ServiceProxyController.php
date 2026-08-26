@@ -14,6 +14,7 @@ class ServiceProxyController extends Controller
         'catalog' => 'catalog_url',
         'inventory' => 'inventory_url',
         'cart' => 'cart_url',
+        'orders' => 'cart_url',
         'users' => 'users_url',
         'payments' => 'payments_url',
         'notifications' => 'notifications_url',

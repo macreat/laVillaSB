@@ -11,6 +11,24 @@ body {
   font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url('/brand/villa-camo-blue.png');
+  background-size: 320px auto;
+  background-repeat: repeat;
+  background-position: center;
+  background-blend-mode: soft-light;
+  background-color: #0a0a0a;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('/brand/villa-camo-blue.png');
+  background-size: 280px auto;
+  background-repeat: repeat;
+  opacity: 0.04;
+  pointer-events: none;
 }
 
 input:-webkit-autofill,

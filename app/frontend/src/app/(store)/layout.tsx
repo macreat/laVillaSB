@@ -1,6 +1,7 @@
 import { IntroOverlay } from '@/components/brand/IntroOverlay';
 import { StoreHeader } from '@/components/store/StoreHeader';
 import { StoreFooter } from '@/components/store/StoreFooter';
+import { CookiesConsent } from '@/components/store/CookiesConsent';
 
 export default function StoreLayout({
   children,
@@ -13,6 +14,7 @@ export default function StoreLayout({
       <StoreHeader />
       <main className="flex-1">{children}</main>
       <StoreFooter />
+      <CookiesConsent />
     </div>
   );
 }
