@@ -29,8 +29,8 @@ export function StatCard({ label, value, change, changeType = 'neutral', icon }:
     <Card className="transition-all hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-text-muted">{label}</p>
-          <p className="font-display text-3xl tracking-wide text-text">{value}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">{label}</p>
+          <p className="font-display text-3xl tracking-wide tabular-nums text-text">{value}</p>
           {change && (
             <p
               className={clsx(

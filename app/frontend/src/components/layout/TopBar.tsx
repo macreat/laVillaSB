@@ -1,23 +1,32 @@
 'use client';
 
+import { Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { Bell } from 'lucide-react';
+import { useAdminChrome } from '@/components/layout/AdminChrome';
 
 export function TopBar({ title }: { title: string }) {
   const { user } = useAuth();
+  const { navOpen, openNav } = useAdminChrome();
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-bg/80 px-6 backdrop-blur-sm">
-      <h1 className="font-display text-2xl tracking-wide text-text">
-        {title}
-      </h1>
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-villa-smoke/25 bg-bg/80 px-4 backdrop-blur-sm sm:px-6">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={openNav}
+          aria-expanded={navOpen}
+          aria-controls="admin-sidebar"
+          aria-label="Open navigation"
+          className="-ml-1 rounded-[2px] p-2 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text lg:hidden"
+        >
+          <Menu aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+        <h1 className="font-display text-xl uppercase tracking-wide text-text sm:text-2xl">
+          {title}
+        </h1>
+      </div>
 
       <div className="flex items-center gap-4">
-        <button className="relative rounded-md p-2 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent" />
-        </button>
-
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-elevated text-sm font-semibold text-accent">
             {user?.name?.charAt(0).toUpperCase() || 'A'}

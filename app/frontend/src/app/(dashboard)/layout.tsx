@@ -1,9 +1,10 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { AdminChromeProvider } from '@/components/layout/AdminChrome';
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,9 @@ export default function DashboardLayout({
 }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const [navOpen, setNavOpen] = useState(false);
+  const openNav = useCallback(() => setNavOpen(true), []);
+  const closeNav = useCallback(() => setNavOpen(false), []);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -30,9 +34,11 @@ export default function DashboardLayout({
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-bg">
-      <Sidebar />
-      <main className="ml-64">{children}</main>
-    </div>
+    <AdminChromeProvider value={{ navOpen, openNav, closeNav }}>
+      <div className="min-h-screen bg-bg">
+        <Sidebar open={navOpen} onClose={closeNav} />
+        <div className="flex min-h-screen flex-col lg:pl-64">{children}</div>
+      </div>
+    </AdminChromeProvider>
   );
 }
