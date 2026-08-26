@@ -12,8 +12,10 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = env('ADMIN_EMAIL', 'admin@lavillasb.com');
-        $password = env('ADMIN_PASSWORD');
+        // Use ?: instead of env() default: an empty-string env var (e.g.
+        // ADMIN_EMAIL= passed through docker-compose) must fall back too.
+        $email = env('ADMIN_EMAIL') ?: 'admin@lavillasb.com';
+        $password = env('ADMIN_PASSWORD') ?: null;
 
         if (! $password) {
             $password = Str::password(24);
