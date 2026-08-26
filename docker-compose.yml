@@ -121,8 +121,8 @@ services:
       SERVICE_DRIVE_SYNC_URL: ""
       SERVICE_IMAGE_PROCESSOR_URL: ""
       FRONTEND_URL: http://localhost:3000
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@lavillasb.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-VillaAdmin2026!}
     depends_on:
       postgres:
         condition: service_healthy
