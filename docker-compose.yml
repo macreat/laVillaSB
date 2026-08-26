@@ -115,6 +115,9 @@ services:
       SERVICE_CATALOG_URL: http://catalog:9002
       SERVICE_INVENTORY_URL: http://inventory:9003
       SERVICE_CART_URL: http://orders:9004
+      SERVICE_USERS_URL: http://users:9007
+      SERVICE_PAYMENTS_URL: http://payments:9005
+      SERVICE_NOTIFICATIONS_URL: http://notifications:9006
       SERVICE_DRIVE_SYNC_URL: ""
       SERVICE_IMAGE_PROCESSOR_URL: ""
       FRONTEND_URL: http://localhost:3000
@@ -178,6 +181,54 @@ services:
       - "9004:9004"
     depends_on:
       redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lavilla]
+
+  notifications:
+    build:
+      context: ./app/microservices/notifications
+      dockerfile: Dockerfile
+    container_name: lavilla_notifications
+    ports:
+      - "9006:9006"
+    environment:
+      CATALOG_SERVICE_URL: http://catalog:9002
+    depends_on:
+      catalog:
+        condition: service_started
+    restart: unless-stopped
+    networks: [lavilla]
+
+  payments:
+    build:
+      context: ./app/microservices/payments
+      dockerfile: Dockerfile
+    container_name: lavilla_payments
+    ports:
+      - "9005:9005"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:lavilla@postgres:5432/lavilla
+      REDIS_URL: redis://redis:6379/4
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lavilla]
+
+  users:
+    build:
+      context: ./app/microservices/users
+      dockerfile: Dockerfile
+    container_name: lavilla_users
+    ports:
+      - "9007:9007"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:lavilla@postgres:5432/lavilla
+    depends_on:
+      postgres:
         condition: service_healthy
     restart: unless-stopped
     networks: [lavilla]
