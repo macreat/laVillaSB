@@ -52,7 +52,7 @@ export function Sidebar() {
                   : 'text-text-muted hover:bg-surface-elevated hover:text-text',
               )}
             >
-              <item.icon className="h-4.5 w-4.5 shrink-0" />
+              <item.icon className="h-5 w-5 shrink-0" />
               {item.label}
             </Link>
           );
@@ -64,7 +64,7 @@ export function Sidebar() {
           onClick={() => logout()}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-elevated hover:text-danger"
         >
-          <LogOut className="h-4.5 w-4.5" />
+          <LogOut className="h-5 w-5" />
           Sign out
         </button>
       </div>
