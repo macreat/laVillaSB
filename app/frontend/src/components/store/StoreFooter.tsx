@@ -55,7 +55,7 @@ export function StoreFooter() {
             </p>
             <div className="mt-6">
               <a
-                href="https://macreat.com"
+                href="https://github.com/Macreat"
                 aria-label="Developed by Macreat"
                 className="inline-block opacity-80 hover:opacity-100 transition-opacity"
               >
