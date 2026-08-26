@@ -1,20 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/components/layout/TopBar';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { api } from '@/lib/api';
+import { api, ApiError } from '@/lib/api';
 import type { Product } from '@/lib/admin-types';
 import { displayCategoryGroup } from '@/lib/store-catalog';
-import { Package, Plus, Search } from 'lucide-react';
+import { isServiceUnavailable, resolveAdminDataState } from '@/lib/service-state';
+import {
+  EmptyStatePanel,
+  ServiceOfflinePanel,
+  SkeletonRows,
+} from '@/components/admin/DataStates';
+import { Plus, Search } from 'lucide-react';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [offline, setOffline] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchProducts = useCallback(() => {
+    setLoading(true);
+    setOffline(false);
+    setError(null);
     api
       .proxyGet<Product[] | { data?: Product[] }>('catalog', 'products')
       .then((res) => {
@@ -27,21 +37,38 @@ export default function ProductsPage() {
         }));
         setProducts(normalized);
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => {
+        if (isServiceUnavailable(e instanceof ApiError ? e.status : null)) {
+          setOffline(true);
+        } else {
+          setError(e instanceof Error ? e.message : 'Failed to load products');
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const state = resolveAdminDataState({
+    loading,
+    unavailable: offline,
+    itemCount: products.length,
+  });
 
   return (
     <div>
       <TopBar title="Products" />
 
-      <div className="p-6 space-y-6">
+      <div className="space-y-6 p-6">
         <div className="flex items-center justify-between">
           <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
             <input
               className="input-field pl-9"
               placeholder="Search products..."
+              aria-label="Search products"
             />
           </div>
           <Button>
@@ -50,52 +77,58 @@ export default function ProductsPage() {
           </Button>
         </div>
 
-        {loading ? (
-          <div className="flex h-48 items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-          </div>
+        {state === 'loading' ? (
+          <SkeletonRows label="Loading products" />
+        ) : state === 'offline' ? (
+          <ServiceOfflinePanel
+            description="The catalog service is not responding right now. Products will appear here once it is back online."
+            onRetry={fetchProducts}
+          />
         ) : error ? (
           <Card>
             <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <Package className="h-12 w-12 text-text-muted" />
-              <p className="text-lg font-medium text-text-muted">Could not load products</p>
-              <p className="text-sm text-text-muted">{error}</p>
-              <Button variant="secondary" onClick={() => window.location.reload()}>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
+                Request Failed
+              </p>
+              <p aria-live="polite" className="text-sm text-text-muted">
+                {error}
+              </p>
+              <Button variant="secondary" onClick={fetchProducts}>
                 Retry
               </Button>
             </div>
           </Card>
-        ) : products.length === 0 ? (
-          <Card>
-            <div className="flex flex-col items-center gap-3 py-12 text-center">
-              <Package className="h-12 w-12 text-text-muted" />
-              <p className="text-lg font-medium text-text-muted">No products yet</p>
-              <p className="text-sm text-text-muted">Products added through the catalog service will appear here.</p>
-            </div>
-          </Card>
+        ) : state === 'empty' ? (
+          <EmptyStatePanel
+            title="No products yet"
+            description="Products added through the catalog service will appear here."
+          />
         ) : (
           <Card className="overflow-hidden p-0">
             <table className="w-full">
+              <caption className="sr-only">
+                Catalog products with SKU, category, group, price, and status
+              </caption>
               <thead>
-                <tr className="border-b border-border">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Name</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">SKU</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Category</th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Group</th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-text-muted">Price</th>
-                  <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                <tr className="border-b border-villa-smoke/25">
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Name</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">SKU</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Category</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Group</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Price</th>
+                  <th scope="col" className="px-5 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-villa-smoke/25">
                 {products.map((product) => (
                   <tr key={product.id} className="transition-colors hover:bg-surface-elevated/50">
-                    <td className="px-5 py-4 text-sm font-medium text-text">{product.name}</td>
-                    <td className="px-5 py-4 text-sm text-text-muted">{product.sku || 'N/A'}</td>
-                    <td className="px-5 py-4 text-sm text-text-muted">{product.category || 'Uncategorized'}</td>
-                    <td className="px-5 py-4 text-sm text-text-muted">{displayCategoryGroup(product.categoryGroup)}</td>
-                    <td className="px-5 py-4 text-right text-sm text-text">${product.price.toFixed(2)}</td>
-                    <td className="px-5 py-4 text-center">
-                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    <td className="px-5 py-2.5 text-sm font-medium text-text">{product.name}</td>
+                    <td className="whitespace-nowrap px-5 py-2.5 text-sm text-text-muted">{product.sku || 'N/A'}</td>
+                    <td className="px-5 py-2.5 text-sm text-text-muted">{product.category || 'Uncategorized'}</td>
+                    <td className="px-5 py-2.5 text-sm text-text-muted">{displayCategoryGroup(product.categoryGroup)}</td>
+                    <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text">${product.price.toFixed(2)}</td>
+                    <td className="px-5 py-2.5 text-center">
+                      <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium ${
                         product.active !== false
                           ? 'bg-accent/10 text-accent'
                           : 'bg-surface-elevated text-text-muted'
