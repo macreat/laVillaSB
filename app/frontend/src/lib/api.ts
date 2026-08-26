@@ -2,6 +2,16 @@ import type { LoginPayload, LoginResponse, User } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
 
+export class ApiError extends Error {
+  readonly status: number | null;
+
+  constructor(message: string, status: number | null) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 class ApiClient {
   private token: string | null = null;
 
@@ -59,12 +69,28 @@ class ApiClient {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    const data = await res.json();
+    const contentType = res.headers.get('content-type') ?? '';
+    const contentLength = Number(res.headers.get('content-length') ?? '0');
+    const hasBody =
+      res.status !== 204 &&
+      res.status !== 304 &&
+      (contentType.includes('application/json') || contentLength > 0);
+
+    let data: unknown = null;
+    if (hasBody) {
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+    }
 
     if (!res.ok) {
       const message =
-        data?.message || data?.error || `Request failed (${res.status})`;
-      throw new Error(message);
+        (data as { message?: string; error?: string } | null)?.message ||
+        (data as { message?: string; error?: string } | null)?.error ||
+        `Request failed (${res.status})`;
+      throw new ApiError(message, res.status);
     }
 
     return data as T;
