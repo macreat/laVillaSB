@@ -9,6 +9,18 @@ import { useAuth } from '@/hooks/useAuth';
 import { Settings, Save } from 'lucide-react';
 import { api } from '@/lib/api';
 
+type ServiceHealth = { name: string; url: string; status: string };
+
+const ADMIN_SERVICES: ReadonlyArray<{ name: string; url: string }> = [
+  { name: 'Catalog Service', url: 'catalog' },
+  { name: 'Inventory Service', url: 'inventory' },
+  { name: 'Orders Service', url: 'cart' },
+];
+
+function toInitialServiceHealth(): ServiceHealth[] {
+  return ADMIN_SERVICES.map((svc) => ({ ...svc, status: 'Unknown' }));
+}
+
 export default function SettingsPage() {
   const { user } = useAuth();
 
@@ -19,27 +31,33 @@ export default function SettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [services, setServices] = useState<{ name: string; url: string; status: string }[]>([]);
+  const [services, setServices] = useState<ServiceHealth[]>(toInitialServiceHealth);
 
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
     }
-    setServices([
-      { name: 'Catalog Service', url: 'catalog', status: 'Unknown' },
-      { name: 'Inventory Service', url: 'inventory', status: 'Unknown' },
-      { name: 'Orders Service', url: 'cart', status: 'Unknown' },
-    ]);
   }, [user]);
 
   useEffect(() => {
-    services.forEach((svc, i) => {
+    let cancelled = false;
+    const markStatus = (url: string, status: string) => {
+      setServices((prev) => prev.map((s) => (s.url === url ? { ...s, status } : s)));
+    };
+    ADMIN_SERVICES.forEach((svc) => {
       api
         .proxyGet<{ status: string }>(svc.url, 'health')
-        .then((res) => setServices((prev) => prev.map((s, j) => j === i ? { ...s, status: res.status } : s)))
-        .catch(() => setServices((prev) => prev.map((s, j) => j === i ? { ...s, status: 'Unreachable' } : s)));
+        .then((res) => {
+          if (!cancelled) markStatus(svc.url, res.status);
+        })
+        .catch(() => {
+          if (!cancelled) markStatus(svc.url, 'Unreachable');
+        });
     });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
