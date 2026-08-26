@@ -128,3 +128,38 @@ input:-webkit-autofill:focus {
     transition: none;
   }
 }
+
+.category-tile {
+  position: relative;
+  border: 1px solid rgba(140, 133, 119, 0.25);
+}
+
+.category-tile__label {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.category-tile__label::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #d96830;
+  content: '';
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.category-tile:hover .category-tile__label::after,
+.category-tile:focus-visible .category-tile__label::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-tile__label::after {
+    transition: none;
+  }
+}
