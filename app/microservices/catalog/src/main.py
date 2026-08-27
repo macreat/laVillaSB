@@ -94,13 +94,7 @@ async def list_products(
         needle = search.strip().lower()
         if needle:
             if needle.isdigit():
-                products = [
-                    p
-                    for p in products
-                    if needle in p.name.lower()
-                    or (p.sku and needle in p.sku.lower())
-                    or str(p.id) == needle
-                ]
+                products = [p for p in products if str(p.id) == needle]
             else:
                 products = [
                     p
