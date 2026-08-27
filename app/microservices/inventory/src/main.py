@@ -1,16 +1,42 @@
 from contextlib import asynccontextmanager
 from typing import List
+import httpx
 from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from .database import get_db, init_db
 from .models import StockLevel
 from .schemas import StockLevelOut, StockAdjust, AvailabilityItem
+from .config import settings
+
+async def seed_stock():
+    try:
+        async for session in get_db():
+            count = (await session.execute(select(func.count(StockLevel.id)))).scalar_one()
+            if count > 0:
+                return
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(f"{settings.CATALOG_URL}/products")
+                resp.raise_for_status()
+                products = resp.json()
+            rows = []
+            for idx, p in enumerate(products):
+                rows.append(StockLevel(
+                    product_id=int(p["id"]),
+                    sku=p.get("sku"),
+                    quantity=2 if idx % 7 == 0 else 12,
+                    low_stock_threshold=5,
+                ))
+            session.add_all(rows)
+            await session.commit()
+    except Exception:
+        pass
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    await seed_stock()
     yield
 
 app = FastAPI(lifespan=lifespan)

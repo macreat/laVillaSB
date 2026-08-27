@@ -1,15 +1,41 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/hooks/useCart';
-import { Trash2, Plus, Minus } from 'lucide-react';
+import { Trash2, Plus, Minus, Check } from 'lucide-react';
 import { ProductImage } from '@/components/store/product/ProductImage';
 import { buildWhatsAppHref, EXTERNAL_LINK_REL } from '@/lib/site-links';
+import { api } from '@/lib/api';
 
 export default function CartPage() {
   const { items, total, removeItem, updateQuantity, clearCart } = useCart();
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [placed, setPlaced] = useState(false);
 
   if (items.length === 0) {
+    if (placed) {
+      return (
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full border border-border bg-surface">
+            <Check className="h-8 w-8 text-green-500" />
+          </div>
+          <h1 className="font-display text-2xl uppercase tracking-wider text-text">
+            Order Placed
+          </h1>
+          <p className="text-sm text-text-muted">
+            Your WhatsApp is open with the order details. We will confirm it there.
+          </p>
+          <Link href="/products" className="btn-primary mt-2 px-8 py-3">
+            Shop More
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4">
         <div className="flex h-20 w-20 items-center justify-center rounded-full border border-border bg-surface">
@@ -32,6 +58,44 @@ export default function CartPage() {
     items.map((i) => `${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`).join('\n'),
     `Total: $${total.toFixed(2)}`,
   ].join('\n\n');
+
+  const handleOrder = async () => {
+    if (!customerName.trim() || !customerPhone.trim()) {
+      setError('Enter your name and phone to place the order.');
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      const order = await api.proxyPost<{ id: number; total: number; status: string }>(
+        'cart',
+        'orders',
+        {
+          customer_name: customerName.trim(),
+          customer_phone: customerPhone.trim(),
+          items: items.map((i) => ({
+            product_id: Number(i.id),
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+          })),
+        },
+      );
+      const orderText = `New order #${order.id} for ${customerName}:\n${items
+        .map((i) => `- ${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`)
+        .join('\n')}\n\nTotal: $${order.total.toFixed(2)}\nPhone: ${customerPhone}`;
+      window.open(buildWhatsAppHref(orderText), '_blank', 'noopener,noreferrer');
+      clearCart();
+      setPlaced(true);
+      setCustomerName('');
+      setCustomerPhone('');
+    } catch {
+      setError('Could not place the order. Opening WhatsApp with your cart summary instead.');
+      window.open(buildWhatsAppHref(whatsappText), '_blank', 'noopener,noreferrer');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 lg:px-8">
@@ -113,14 +177,32 @@ export default function CartPage() {
 
       {/* Actions */}
       <div className="mt-6 flex flex-col gap-3">
-        <a
-          href={buildWhatsAppHref(whatsappText)}
-          target="_blank"
-          rel={EXTERNAL_LINK_REL}
-          className="btn-primary w-full py-3.5 text-base text-center"
+        {error && <p className="text-sm text-danger">{error}</p>}
+        {placed && (
+          <p className="text-sm text-green-600">Order placed! Your WhatsApp is open with the details.</p>
+        )}
+        <input
+          type="text"
+          placeholder="Your name"
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent"
+        />
+        <input
+          type="tel"
+          placeholder="Your phone (WhatsApp)"
+          value={customerPhone}
+          onChange={(e) => setCustomerPhone(e.target.value)}
+          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent"
+        />
+        <button
+          type="button"
+          disabled={submitting || items.length === 0}
+          onClick={handleOrder}
+          className="btn-primary w-full py-3.5 text-base text-center disabled:opacity-50"
         >
           Order via WhatsApp
-        </a>
+        </button>
         <div className="flex gap-3">
           <Link href="/products" className="btn-secondary flex-1 py-3 text-center">
             Continue Shopping

@@ -21,9 +21,7 @@ const SYSTEM_SERVICES: ReadonlyArray<{ name: string; check: ServiceCheck }> = [
   { name: 'Catalog Service', check: () => api.proxyGet('catalog', 'health') },
   { name: 'Inventory Service', check: () => api.proxyGet('inventory', 'health') },
   { name: 'Orders Service', check: () => api.proxyGet('cart', 'health') },
-  { name: 'Payments Service', check: () => api.proxyGet('payments', 'health') },
   { name: 'Notifications Service', check: () => api.proxyGet('notifications', 'health') },
-  { name: 'Users Service', check: () => api.proxyGet('users', 'health') },
 ];
 
 type OrderSummary = {

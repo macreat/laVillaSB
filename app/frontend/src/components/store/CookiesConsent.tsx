@@ -15,11 +15,24 @@ export function CookiesConsent() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!show) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        localStorage.setItem('lavilla_cookies_accepted', 'true');
+        setShow(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [show]);
+
   if (!show) return null;
 
   return (
-    <div className="cookies-consent fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
-      <div className="relative bg-surface-elevated border border-border max-w-[264px] w-full p-3 shadow-2xl flex flex-col items-center text-center space-y-2 rounded-lg">
+    <div className="cookies-consent fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40" />
+      <div className="relative bg-surface-elevated border border-border w-[min(90vw,300px)] p-4 shadow-2xl rounded-lg flex flex-col items-center text-center space-y-3">
         <button
           onClick={() => {
             localStorage.setItem('lavilla_cookies_accepted', 'true');
@@ -40,9 +53,9 @@ export function CookiesConsent() {
         />
         <div>
           <p className="text-[9px] font-semibold tracking-[0.15em] text-text-muted uppercase">
-            Performance, Created, Designed
+            Performance, Designed and Maintained
           </p>
-          <p className="text-[9px] text-text-muted/60 mt-1 tracking-widest uppercase">
+          <p className="text-[9px] text-text-muted/60 mt-1 uppercase">
             by Macreat
           </p>
         </div>
@@ -57,17 +70,17 @@ export function CookiesConsent() {
 
       <style jsx>{`
         .cookies-consent {
-          animation: cookies-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: cookies-pop-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        @keyframes cookies-slide-up {
+        @keyframes cookies-pop-in {
           from {
+            transform: scale(0.96);
             opacity: 0;
-            transform: translateY(24px);
           }
           to {
+            transform: scale(1);
             opacity: 1;
-            transform: translateY(0);
           }
         }
 
