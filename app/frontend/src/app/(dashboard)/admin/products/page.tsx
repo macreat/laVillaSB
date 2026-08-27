@@ -98,7 +98,7 @@ export default function ProductsPage() {
               <p aria-live="polite" className="text-sm text-text-muted">
                 {error}
               </p>
-              <Button variant="secondary" onClick={fetchProducts}>
+              <Button variant="secondary" onClick={() => fetchProducts()}>
                 Retry
               </Button>
             </div>
