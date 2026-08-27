@@ -1,5 +1,7 @@
+import asyncio
 import json
 from datetime import datetime, timedelta, timezone
+import httpx
 import redis.asyncio as redis
 from contextlib import asynccontextmanager
 from typing import List, Optional
@@ -40,6 +42,26 @@ def serialize_order(order: Order) -> dict:
         "created_at": order.created_at,
     }
 
+async def notify_order_created(order: Order):
+    """Fire-and-forget: notify the notifications service (Twilio WhatsApp) about a new order."""
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            await client.post(
+                f"{settings.NOTIFICATIONS_URL}/notify-order",
+                json={
+                    "order_id": order.id,
+                    "customer_name": order.customer_name,
+                    "customer_phone": order.customer_phone,
+                    "items_count": len(json.loads(order.items_json)),
+                    "total": order.total,
+                    "status": order.status,
+                },
+            )
+    except Exception:
+        # Never block or fail order creation because of a notification hiccup.
+        pass
+
+
 @app.post("/orders", response_model=OrderOut)
 async def create_order(order_in: OrderCreate, db: AsyncSession = Depends(get_db)):
     total = sum(item.price * item.quantity for item in order_in.items)
@@ -52,6 +74,7 @@ async def create_order(order_in: OrderCreate, db: AsyncSession = Depends(get_db)
     db.add(order)
     await db.commit()
     await db.refresh(order)
+    asyncio.create_task(notify_order_created(order))
     return serialize_order(order)
 
 @app.get("/orders", response_model=List[OrderOut])
@@ -70,7 +93,7 @@ async def orders_summary(db: AsyncSession = Depends(get_db)):
     yesterday_start = today_start - timedelta(days=1)
 
     total_orders = len(orders)
-    total_revenue = sum(o.total for o in orders)
+    total_revenue = sum(o.total for o in orders if o.status == "delivered")
     orders_today = 0
     revenue_today = 0.0
     orders_yesterday = 0
@@ -83,7 +106,8 @@ async def orders_summary(db: AsyncSession = Depends(get_db)):
             dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
         if dt >= today_start:
             orders_today += 1
-            revenue_today += o.total
+            if o.status == "delivered":
+                revenue_today += o.total
         elif dt >= yesterday_start:
             orders_yesterday += 1
 
@@ -223,6 +247,7 @@ async def checkout(
     db.add(order)
     await db.commit()
     await db.refresh(order)
-    
+    asyncio.create_task(notify_order_created(order))
+
     await redis_client.delete(key)
     return serialize_order(order)

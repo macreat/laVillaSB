@@ -179,6 +179,8 @@ services:
     container_name: lavilla_orders
     ports:
       - "9004:9004"
+    environment:
+      NOTIFICATIONS_URL: http://notifications:9006
     depends_on:
       redis:
         condition: service_healthy
@@ -194,6 +196,10 @@ services:
       - "9006:9006"
     environment:
       CATALOG_SERVICE_URL: http://catalog:9002
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM: ${TWILIO_FROM:-whatsapp:+14155238886}
+      TWILIO_TO: ${TWILIO_TO:-+15715683120}
     depends_on:
       catalog:
         condition: service_started
