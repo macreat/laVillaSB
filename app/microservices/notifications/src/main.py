@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 import httpx
 from pydantic import BaseModel
@@ -5,6 +6,14 @@ from .config import settings
 from .whatsapp import send_whatsapp_message, format_catalog_message
 
 app = FastAPI(title="Notifications Service")
+
+
+class DeliveryLog(BaseModel):
+    phone: str
+    timestamp: datetime
+    products_sent: int
+    status: str
+
 
 class WhatsAppMessageRequest(BaseModel):
     phone: str
@@ -33,12 +42,21 @@ async def send_catalog():
     # Send via WhatsApp to configured recipient
     recipient = settings.whatsapp_recipient
     result = await send_whatsapp_message(recipient, message, settings)
-    
+
+    delivery_status = "success" if result.get("status") != "error" else "error"
+    delivery_log = DeliveryLog(
+        phone=recipient,
+        timestamp=datetime.now(),
+        products_sent=len(products),
+        status=delivery_status,
+    )
+
     return {
-        "status": "success" if result.get("status") != "error" else "error",
+        "status": delivery_status,
         "message_count": len(products),
         "recipient": recipient,
-        "whatsapp_response": result
+        "delivery_log": delivery_log.model_dump(mode="json"),
+        "whatsapp_response": result,
     }
 
 @app.post("/send-whatsapp")
