@@ -248,6 +248,8 @@ services:
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       API_INTERNAL_URL: http://gateway:8010
       MEDIA_ORIGIN_BASE_URL: http://minio:9000
+      NEXT_PUBLIC_INSTAGRAM_URL: https://www.instagram.com/lavillaskateboarding
+      NEXT_PUBLIC_WHATSAPP_URL: https://wa.me/573245710972
     depends_on:
       gateway:
         condition: service_started
