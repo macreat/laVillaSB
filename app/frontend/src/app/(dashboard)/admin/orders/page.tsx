@@ -14,14 +14,6 @@ import {
 } from '@/components/admin/DataStates';
 import { RefreshCw } from 'lucide-react';
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-accent/10 text-accent',
-  confirmed: 'bg-villa-teal/10 text-villa-teal',
-  shipped: 'bg-villa-teal/10 text-villa-teal',
-  delivered: 'bg-green-500/10 text-green-500',
-  cancelled: 'bg-danger/10 text-danger',
-};
-
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +49,16 @@ export default function OrdersPage() {
     unavailable: offline,
     itemCount: orders.length,
   });
+
+  const handleStatusChange = async (orderId: number, status: Order['status']) => {
+    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status } : o)));
+    try {
+      const updated = await api.proxyPost<Order>('cart', `orders/${orderId}/status`, { status });
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
+    } catch {
+      fetchOrders();
+    }
+  };
 
   return (
     <div>
@@ -127,9 +129,18 @@ export default function OrdersPage() {
                       <p className="text-xs text-text-muted">{order.customer_phone}</p>
                     </td>
                     <td className="px-5 py-2.5">
-                      <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[order.status] || 'bg-surface-elevated text-text-muted'}`}>
-                        {order.status}
-                      </span>
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
+                        aria-label={`Change status for order #${order.id}`}
+                        className="rounded-[2px] border border-border bg-surface px-2 py-1 text-xs font-medium capitalize text-text outline-none transition-colors hover:border-text-muted/50 focus:ring-2 focus:ring-accent"
+                      >
+                        {(['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'] as const).map((s) => (
+                          <option key={s} value={s} className="bg-surface text-text">
+                            {s}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text">${order.total.toFixed(2)}</td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text-muted">

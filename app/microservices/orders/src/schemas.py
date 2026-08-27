@@ -33,3 +33,6 @@ class OrderOut(BaseModel):
 class CheckoutRequest(BaseModel):
     customer_name: str
     customer_phone: str
+
+class StatusUpdate(BaseModel):
+    status: str

@@ -10,7 +10,7 @@ from sqlalchemy import select
 from src.config import settings
 from src.database import engine, get_db, init_db
 from src.models import Order
-from src.schemas import CartItem, CartOut, OrderCreate, OrderOut, CheckoutRequest
+from src.schemas import CartItem, CartOut, OrderCreate, OrderOut, CheckoutRequest, StatusUpdate
 
 redis_client = None
 
@@ -110,6 +110,28 @@ async def cancel_order(order_id: int, db: AsyncSession = Depends(get_db)):
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     order.status = "cancelled"
+    await db.commit()
+    await db.refresh(order)
+    return serialize_order(order)
+
+ALLOWED_ORDER_STATUSES = {"pending", "confirmed", "shipped", "delivered", "cancelled"}
+
+@app.post("/orders/{order_id}/status", response_model=OrderOut)
+async def update_order_status(
+    order_id: int,
+    status_update: StatusUpdate,
+    db: AsyncSession = Depends(get_db),
+):
+    if status_update.status not in ALLOWED_ORDER_STATUSES:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid status. Allowed: {sorted(ALLOWED_ORDER_STATUSES)}",
+        )
+    result = await db.execute(select(Order).where(Order.id == order_id))
+    order = result.scalar_one_or_none()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    order.status = status_update.status
     await db.commit()
     await db.refresh(order)
     return serialize_order(order)
