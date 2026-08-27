@@ -17,7 +17,7 @@ Route::get('/v1/catalog/{path?}', [ServiceProxyController::class, 'proxyCatalog'
     ->where('path', 'health|categories|products|products/[0-9]+');
 
 // Public health checks for all microservices (non-sensitive, useful for monitoring).
-Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxy'])
+Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxyHealth'])
     ->whereIn('service', ['catalog', 'inventory', 'orders', 'cart', 'notifications', 'payments', 'users'])
     ->name('health.{service}');
 

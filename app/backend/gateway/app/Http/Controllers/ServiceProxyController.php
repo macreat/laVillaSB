@@ -32,6 +32,11 @@ class ServiceProxyController extends Controller
         return $this->proxyToService($request, 'catalog', $path);
     }
 
+    public function proxyHealth(Request $request, string $service): JsonResponse
+    {
+        return $this->proxyToService($request, $service, 'health');
+    }
+
     private function proxyToService(Request $request, string $service, ?string $path = ''): JsonResponse
     {
         if (! isset(self::SERVICES[$service])) {
