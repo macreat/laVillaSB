@@ -249,7 +249,7 @@ services:
       API_INTERNAL_URL: http://gateway:8010
       MEDIA_ORIGIN_BASE_URL: http://minio:9000
       NEXT_PUBLIC_INSTAGRAM_URL: https://www.instagram.com/la_villa_sb/
-      NEXT_PUBLIC_WHATSAPP_URL: https://api.whatsapp.com/send/?phone=573017602493&app_absent=0&utm_source=ig
+      NEXT_PUBLIC_WHATSAPP_URL: https://api.whatsapp.com/send/?phone=573245710972&app_absent=0&utm_source=ig
     depends_on:
       gateway:
         condition: service_started
