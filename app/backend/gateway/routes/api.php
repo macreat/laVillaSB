@@ -13,7 +13,6 @@ Route::put('/admin/me', [AdminAuthController::class, 'updateProfile'])
     ->middleware(['auth:sanctum', \App\Http\Middleware\EnsureAdmin::class]);
 
 // Public catalog allowlist - read-only endpoints only.
-// Explicitly allows list reads and numeric product detail reads.
 Route::get('/v1/catalog/{path?}', [ServiceProxyController::class, 'proxyCatalog'])
     ->where('path', 'health|categories|products|products/[0-9]+');
 

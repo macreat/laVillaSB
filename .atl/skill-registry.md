@@ -36,11 +36,11 @@ The referenced `SKILL.md` files are the source of truth and must be read before 
 | platform-api-designer | Designing or reviewing APIs, backend services, or scalable platforms | `/home/lnxmacreat/.agents/skills/skills/swDesigner/SKILL.md` | user |
 | pptx | Creating, reading, or editing slide presentations | `/home/lnxmacreat/.agents/skills/skills/pptx/SKILL.md` | user |
 | repo-scaffolder | Bootstrapping or structuring a new repository | `/home/lnxmacreat/.agents/skills/skills/repo-scaffolder/SKILL.md` | user |
-| repository-architecture | Creating or documenting repository structures and README files | `/home/lnxmacreat/.agents/skills/skills/repositoryArch/SKILL.md` | user |
+| repository-architecture | Creating or documenting repository structures and README files | `/home/lnxmacreat/.opencode/skills/repositoryArch/SKILL.md` | user |
 | skill-creator | Creating, modifying, or evaluating agent skills | `/home/lnxmacreat/.agents/skills/skills/skill-creator/SKILL.md` | user |
 | skill-improver | Auditing or improving existing skills | `/home/lnxmacreat/.config/opencode/skills/skill-improver/SKILL.md` | user |
 | slack-gif-creator | Creating animated GIFs optimized for Slack | `/home/lnxmacreat/.agents/skills/skills/slack-gif-creator/SKILL.md` | user |
-| sw-developer | Implementing, building, deploying, or maintaining application code | `/home/lnxmacreat/.agents/skills/skills/swDeveloper/SKILL.md` | user |
+| sw-developer | Implementing, building, deploying, or maintaining application code | `/home/lnxmacreat/.opencode/skills/swDeveloper/SKILL.md` | user |
 | theme-factory | Applying or creating themes for visual artifacts and HTML pages | `/home/lnxmacreat/.agents/skills/skills/theme-factory/SKILL.md` | user |
 | token-optimization | Reducing LLM API costs, prompt size, or retrieval overhead | `/home/lnxmacreat/.agents/skills/skills/token-optimization/SKILL.md` | user |
 | web-artifacts-builder | Building complex multi-component HTML/React web artifacts | `/home/lnxmacreat/.agents/skills/skills/web-artifacts-builder/SKILL.md` | user |
