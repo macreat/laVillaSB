@@ -22,8 +22,9 @@ Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxyHealth'
     ->name('health.{service}');
 
 // Public order creation for storefront checkout (no auth, rate-limited).
-Route::post('/v1/{service}/orders', [ServiceProxyController::class, 'proxy'])
+Route::post('/v1/{service}/{path}', [ServiceProxyController::class, 'proxy'])
     ->whereIn('service', ['cart', 'orders'])
+    ->where('path', 'orders')
     ->middleware('throttle:20,1');
 
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureAdmin::class])->group(function () {
