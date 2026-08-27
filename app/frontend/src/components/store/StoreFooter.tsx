@@ -38,6 +38,12 @@ const FOOTER_LINKS = [
       { label: 'Dealers', href: '/' },
     ],
   },
+  {
+    title: 'Developer',
+    links: [
+      { label: 'MacreatScript', href: 'https://github.com/Macreat', isExternal: true },
+    ],
+  },
 ];
 
 export function StoreFooter() {
@@ -73,12 +79,23 @@ export function StoreFooter() {
               <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="font-sans text-sm text-villa-smoke hover:text-villa-fox transition-colors"
-                    >
-                      {link.label}
-                    </Link>
+                    {'isExternal' in link && link.isExternal ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel={EXTERNAL_LINK_REL}
+                        className="font-sans text-sm text-villa-smoke hover:text-villa-fox transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="font-sans text-sm text-villa-smoke hover:text-villa-fox transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
