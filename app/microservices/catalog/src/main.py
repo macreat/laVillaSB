@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
+from typing import Optional
 
 import boto3
 from botocore.config import Config
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -74,13 +75,40 @@ def to_product_out(product: Product) -> ProductOut:
 
 
 @app.get("/products", response_model=list[ProductOut])
-async def list_products(session: AsyncSession = Depends(get_session)):
+async def list_products(
+    search: Optional[str] = Query(None, description="Search by name, SKU, or numeric product ID"),
+    id: Optional[int] = Query(None, description="Exact product ID filter"),
+    session: AsyncSession = Depends(get_session),
+):
     result = await session.execute(
         select(Product)
         .options(selectinload(Product.category), selectinload(Product.media))
         .order_by(Product.id.asc())
     )
     products = result.scalars().all()
+
+    if id is not None:
+        products = [p for p in products if p.id == id]
+
+    if search:
+        needle = search.strip().lower()
+        if needle:
+            if needle.isdigit():
+                products = [
+                    p
+                    for p in products
+                    if needle in p.name.lower()
+                    or (p.sku and needle in p.sku.lower())
+                    or str(p.id) == needle
+                ]
+            else:
+                products = [
+                    p
+                    for p in products
+                    if needle in p.name.lower()
+                    or (p.sku and needle in p.sku.lower())
+                ]
+
     ordered_products = order_products(products)
 
     return [to_product_out(product) for product in ordered_products]

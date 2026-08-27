@@ -20,13 +20,15 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const fetchProducts = useCallback(() => {
+  const fetchProducts = useCallback((search = '') => {
     setLoading(true);
     setOffline(false);
     setError(null);
+    const path = search.trim() ? `products?search=${encodeURIComponent(search.trim())}` : 'products';
     api
-      .proxyGet<Product[] | { data?: Product[] }>('catalog', 'products')
+      .proxyGet<Product[] | { data?: Product[] }>('catalog', path)
       .then((res) => {
         const raw = Array.isArray(res) ? res : (res.data ?? []);
         const normalized = raw.map((item) => ({
@@ -48,8 +50,9 @@ export default function ProductsPage() {
   }, []);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    const timer = setTimeout(() => fetchProducts(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery, fetchProducts]);
 
   const state = resolveAdminDataState({
     loading,
@@ -67,8 +70,10 @@ export default function ProductsPage() {
             <Search aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
             <input
               className="input-field pl-9"
-              placeholder="Search products..."
+              placeholder="Search by name, SKU or ID..."
               aria-label="Search products"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <Button>
@@ -111,6 +116,7 @@ export default function ProductsPage() {
               </caption>
               <thead>
                 <tr className="border-b border-villa-smoke/25">
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">ID</th>
                   <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Name</th>
                   <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">SKU</th>
                   <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Category</th>
@@ -122,6 +128,7 @@ export default function ProductsPage() {
               <tbody className="divide-y divide-villa-smoke/25">
                 {products.map((product) => (
                   <tr key={product.id} className="transition-colors hover:bg-surface-elevated/50">
+                    <td className="whitespace-nowrap px-5 py-2.5 text-sm tabular-nums text-text-muted">{product.id}</td>
                     <td className="px-5 py-2.5 text-sm font-medium text-text">{product.name}</td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-sm text-text-muted">{product.sku || 'N/A'}</td>
                     <td className="px-5 py-2.5 text-sm text-text-muted">{product.category || 'Uncategorized'}</td>

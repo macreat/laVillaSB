@@ -56,7 +56,7 @@ async def create_order(order_in: OrderCreate, db: AsyncSession = Depends(get_db)
 
 @app.get("/orders", response_model=List[OrderOut])
 async def list_orders(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Order).offset(skip).limit(limit))
+    result = await db.execute(select(Order).order_by(Order.created_at.desc()).offset(skip).limit(limit))
     orders = result.scalars().all()
     return [serialize_order(o) for o in orders]
 
