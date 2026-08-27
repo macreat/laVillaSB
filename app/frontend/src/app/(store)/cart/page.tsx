@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/useCart';
 import { Trash2, Plus, Minus } from 'lucide-react';
 import { ProductImage } from '@/components/store/product/ProductImage';
-import { EXTERNAL_LINK_REL, WHATSAPP_URL } from '@/lib/site-links';
+import { buildWhatsAppHref, EXTERNAL_LINK_REL } from '@/lib/site-links';
 
 export default function CartPage() {
   const { items, total, removeItem, updateQuantity, clearCart } = useCart();
@@ -28,10 +28,10 @@ export default function CartPage() {
     );
   }
 
-  const whatsappText = encodeURIComponent(
-    items.map((i) => `${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`).join('\n') +
-    `\n\nTotal: $${total.toFixed(2)}`,
-  );
+  const whatsappText = [
+    items.map((i) => `${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`).join('\n'),
+    `Total: $${total.toFixed(2)}`,
+  ].join('\n\n');
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 lg:px-8">
@@ -114,7 +114,7 @@ export default function CartPage() {
       {/* Actions */}
       <div className="mt-6 flex flex-col gap-3">
         <a
-          href={WHATSAPP_URL === '#' ? '#' : `${WHATSAPP_URL}?text=${whatsappText}`}
+          href={buildWhatsAppHref(whatsappText)}
           target="_blank"
           rel={EXTERNAL_LINK_REL}
           className="btn-primary w-full py-3.5 text-base text-center"

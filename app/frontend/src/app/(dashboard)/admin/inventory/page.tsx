@@ -25,8 +25,11 @@ export default function InventoryPage() {
     setOffline(false);
     setError(null);
     api
-      .proxyGet<{ data: InventoryItem[] }>('inventory', 'stock')
-      .then((res) => setItems(res.data ?? []))
+      .proxyGet<InventoryItem[] | { data?: InventoryItem[] }>('inventory', 'inventory')
+      .then((res) => {
+        const raw = Array.isArray(res) ? res : (res.data ?? []);
+        setItems(raw);
+      })
       .catch((e) => {
         if (isServiceUnavailable(e instanceof ApiError ? e.status : null)) {
           setOffline(true);
@@ -47,7 +50,7 @@ export default function InventoryPage() {
     itemCount: items.length,
   });
   const ready = state === 'ready';
-  const lowStock = items.filter((i) => i.available <= 5);
+  const lowStock = items.filter((i) => i.is_low_stock);
 
   return (
     <div>
@@ -116,29 +119,29 @@ export default function InventoryPage() {
           <Card className="overflow-hidden p-0">
             <table className="w-full">
               <caption className="sr-only">
-                Inventory stock levels with on-hand, reserved, and available units per SKU
+                Inventory stock levels with quantity, threshold, and low-stock status per product
               </caption>
               <thead>
                 <tr className="border-b border-villa-smoke/25">
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Product ID</th>
                   <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">SKU</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Product</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">On Hand</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Reserved</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Available</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Quantity</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Low Stock Threshold</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-villa-smoke/25">
                 {items.map((item) => (
-                  <tr key={item.id} className="transition-colors hover:bg-surface-elevated/50">
-                    <td className="whitespace-nowrap px-5 py-2.5 text-sm font-medium text-text">{item.sku}</td>
-                    <td className="px-5 py-2.5 text-sm text-text-muted">{item.product_name || '\u2014'}</td>
+                  <tr key={item.product_id} className="transition-colors hover:bg-surface-elevated/50">
+                    <td className="whitespace-nowrap px-5 py-2.5 text-sm font-medium text-text">{item.product_id}</td>
+                    <td className="whitespace-nowrap px-5 py-2.5 text-sm font-medium text-text-muted">{item.sku || '\u2014'}</td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text">{item.quantity}</td>
-                    <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text-muted">{item.reserved}</td>
-                    <td className="whitespace-nowrap px-5 py-2.5 text-right">
-                      <span className={`text-sm font-medium tabular-nums ${
-                        item.available <= 0 ? 'text-danger' : 'text-accent'
+                    <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text-muted">{item.low_stock_threshold}</td>
+                    <td className="whitespace-nowrap px-5 py-2.5">
+                      <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium ${
+                        item.is_low_stock ? 'bg-danger/10 text-danger' : 'bg-green-500/10 text-green-500'
                       }`}>
-                        {item.available}
+                        {item.is_low_stock ? 'Low Stock' : 'In Stock'}
                       </span>
                     </td>
                   </tr>

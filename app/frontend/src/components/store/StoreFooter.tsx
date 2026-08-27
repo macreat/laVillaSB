@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { BrandWordmark } from '@/components/brand/BrandWordmark';
-import { MacreatScript } from '@/components/brand/MacreatScript';
 import { INSTAGRAM_URL, WHATSAPP_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
 
 const SOCIAL_LINKS = [
@@ -36,12 +35,7 @@ const FOOTER_LINKS = [
       { label: 'Team', href: '/' },
       { label: 'Events', href: '/' },
       { label: 'Dealers', href: '/' },
-    ],
-  },
-  {
-    title: 'Developer',
-    links: [
-      { label: 'MacreatScript', href: 'https://github.com/Macreat', isExternal: true },
+      { label: 'Developer', href: 'https://github.com/Macreat', isExternal: true },
     ],
   },
 ];
@@ -59,15 +53,6 @@ export function StoreFooter() {
             <p className="font-sans text-sm text-villa-smoke leading-relaxed max-w-xs">
               La Villa Skateboarding &mdash; The darker side of skateboarding.
             </p>
-            <div className="mt-6">
-              <a
-                href="https://github.com/Macreat"
-                aria-label="Developed by Macreat"
-                className="inline-block opacity-80 hover:opacity-100 transition-opacity"
-              >
-                <MacreatScript width={100} />
-              </a>
-            </div>
           </div>
 
           {/* Link columns */}

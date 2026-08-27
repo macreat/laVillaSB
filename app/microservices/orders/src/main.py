@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta, timezone
 import redis.asyncio as redis
 from contextlib import asynccontextmanager
 from typing import List, Optional
@@ -58,6 +59,41 @@ async def list_orders(skip: int = 0, limit: int = 10, db: AsyncSession = Depends
     result = await db.execute(select(Order).offset(skip).limit(limit))
     orders = result.scalars().all()
     return [serialize_order(o) for o in orders]
+
+@app.get("/orders/summary")
+async def orders_summary(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Order).order_by(Order.created_at.desc()))
+    orders = result.scalars().all()
+
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    yesterday_start = today_start - timedelta(days=1)
+
+    total_orders = len(orders)
+    total_revenue = sum(o.total for o in orders)
+    orders_today = 0
+    revenue_today = 0.0
+    orders_yesterday = 0
+
+    for o in orders:
+        dt = o.created_at
+        if dt is None:
+            continue
+        if dt.tzinfo is not None:
+            dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+        if dt >= today_start:
+            orders_today += 1
+            revenue_today += o.total
+        elif dt >= yesterday_start:
+            orders_yesterday += 1
+
+    return {
+        "total_orders": total_orders,
+        "total_revenue": round(total_revenue, 2),
+        "orders_today": orders_today,
+        "revenue_today": round(revenue_today, 2),
+        "orders_yesterday": orders_yesterday,
+    }
 
 @app.get("/orders/{order_id}", response_model=OrderOut)
 async def get_order(order_id: int, db: AsyncSession = Depends(get_db)):

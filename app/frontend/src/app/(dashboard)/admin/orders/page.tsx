@@ -33,8 +33,11 @@ export default function OrdersPage() {
     setOffline(false);
     setError(null);
     api
-      .proxyGet<{ data: Order[] }>('cart', 'orders')
-      .then((res) => setOrders(res.data ?? []))
+      .proxyGet<Order[] | { data?: Order[] }>('cart', 'orders')
+      .then((res) => {
+        const raw = Array.isArray(res) ? res : (res.data ?? []);
+        setOrders(raw);
+      })
       .catch((e) => {
         if (isServiceUnavailable(e instanceof ApiError ? e.status : null)) {
           setOffline(true);
@@ -121,7 +124,7 @@ export default function OrdersPage() {
                     <td className="whitespace-nowrap px-5 py-2.5 text-sm font-medium tabular-nums text-text">#{order.id}</td>
                     <td className="px-5 py-2.5">
                       <p className="text-sm font-medium text-text">{order.customer_name}</p>
-                      <p className="text-xs text-text-muted">{order.email}</p>
+                      <p className="text-xs text-text-muted">{order.customer_phone}</p>
                     </td>
                     <td className="px-5 py-2.5">
                       <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[order.status] || 'bg-surface-elevated text-text-muted'}`}>

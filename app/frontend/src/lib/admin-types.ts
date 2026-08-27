@@ -15,12 +15,12 @@ export interface Product {
 export interface Order {
   id: number;
   customer_name: string;
-  email: string;
+  customer_phone: string;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
   total: number;
   items: OrderItem[];
+  whatsapp_sent: boolean;
   created_at: string;
-  updated_at: string;
 }
 
 export interface OrderItem {
@@ -31,15 +31,11 @@ export interface OrderItem {
 }
 
 export interface InventoryItem {
-  id: number;
   product_id: number;
-  product_name?: string;
-  sku: string;
+  sku: string | null;
   quantity: number;
-  reserved: number;
-  available: number;
-  location?: string;
-  updated_at: string;
+  low_stock_threshold: number;
+  is_low_stock: boolean;
 }
 
 export interface PaginatedResponse<T> {
