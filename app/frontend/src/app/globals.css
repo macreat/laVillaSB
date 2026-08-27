@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 html {
-  background-color: #0a0a0a;
-  color: #ede6d6;
+  background-color: #050b18;
+  color: #e9eef8;
 }
 
 body {
@@ -16,7 +16,7 @@ body {
   background-repeat: repeat;
   background-position: center;
   background-blend-mode: soft-light;
-  background-color: #0a0a0a;
+  background-color: #050b18;
 }
 
 body::before {
@@ -34,17 +34,17 @@ body::before {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #211d19 inset;
-  -webkit-text-fill-color: #ede6d6;
+  -webkit-box-shadow: 0 0 0 1000px #11213f inset;
+  -webkit-text-fill-color: #e9eef8;
 }
 
 ::selection {
-  background-color: #d96830;
-  color: #0a0a0a;
+  background-color: #4f83f1;
+  color: #050b18;
 }
 
 :focus-visible {
-  outline: 2px solid #d96830;
+  outline: 2px solid #4f83f1;
   outline-offset: 2px;
 }
 
@@ -80,7 +80,7 @@ input:-webkit-autofill:focus {
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scroll-behavior: smooth;
-  scrollbar-color: #8c8577 transparent;
+  scrollbar-color: #93a5c9 transparent;
   scrollbar-width: thin;
 }
 
@@ -89,7 +89,7 @@ input:-webkit-autofill:focus {
   flex-wrap: nowrap;
   gap: 1.5rem;
   min-width: max-content;
-  border-bottom: 1px solid #2a2622;
+  border-bottom: 1px solid #1d3057;
   padding: 0 0.25rem;
 }
 
@@ -97,7 +97,7 @@ input:-webkit-autofill:focus {
   position: relative;
   flex: 0 0 auto;
   padding: 0.75rem 0.25rem 0.9rem;
-  color: #8c8577;
+  color: #93a5c9;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -113,7 +113,7 @@ input:-webkit-autofill:focus {
   bottom: -1px;
   left: 0.25rem;
   height: 2px;
-  background: #d96830;
+  background: #4f83f1;
   content: '';
   opacity: 0;
   transform: scaleX(0.35);
@@ -122,7 +122,7 @@ input:-webkit-autofill:focus {
 
 .category-subtabs__link:hover,
 .category-subtabs__link[aria-current='page'] {
-  color: #ede6d6;
+  color: #e9eef8;
 }
 
 .category-subtabs__link[aria-current='page']::after {
@@ -132,7 +132,7 @@ input:-webkit-autofill:focus {
 
 .category-subtabs__link:focus-visible {
   border-radius: 0.2rem;
-  outline: 2px solid #d96830;
+  outline: 2px solid #4f83f1;
   outline-offset: 3px;
 }
 
@@ -149,7 +149,7 @@ input:-webkit-autofill:focus {
 
 .category-tile {
   position: relative;
-  border: 1px solid rgba(140, 133, 119, 0.25);
+  border: 1px solid rgba(147, 165, 201, 0.25);
 }
 
 .category-tile__label {
@@ -163,7 +163,7 @@ input:-webkit-autofill:focus {
   bottom: 0;
   left: 0;
   height: 2px;
-  background: #d96830;
+  background: #4f83f1;
   content: '';
   opacity: 0;
   transform: scaleX(0.35);

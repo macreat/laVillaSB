@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { MacreatScript } from '@/components/brand/MacreatScript';
+import { X } from 'lucide-react';
 import brandManifest from '@/lib/brand-manifest.json';
 
 export function CookiesConsent() {
@@ -15,39 +15,44 @@ export function CookiesConsent() {
     }
   }, []);
 
-  const handleAccept = () => {
-    localStorage.setItem('lavilla_cookies_accepted', 'true');
-    setShow(false);
-  };
-
   if (!show) return null;
 
   return (
     <div className="cookies-consent fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
-      <div className="bg-surface-elevated border border-border max-w-md w-full p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
+      <div className="relative bg-surface-elevated border border-border max-w-[264px] w-full p-3 shadow-2xl flex flex-col items-center text-center space-y-2 rounded-lg">
+        <button
+          onClick={() => {
+            localStorage.setItem('lavilla_cookies_accepted', 'true');
+            setShow(false);
+          }}
+          aria-label="Close"
+          className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-border hover:text-text"
+        >
+          <X size={14} />
+        </button>
         <Image
           src={brandManifest.logoOG.src}
           width={brandManifest.logoOG.width}
           height={brandManifest.logoOG.height}
           alt="La Villa Skateboarding"
-          className="w-16 h-16 object-contain"
+          className="w-10 h-10 object-contain"
           priority
         />
-        <MacreatScript width={100} />
         <div>
-          <p className="text-xs font-semibold tracking-[0.15em] text-text-muted uppercase">
+          <p className="text-[9px] font-semibold tracking-[0.15em] text-text-muted uppercase">
             Performance, Created, Designed
           </p>
-          <p className="text-[10px] text-text-muted/60 mt-1.5 tracking-widest uppercase">
+          <p className="text-[9px] text-text-muted/60 mt-1 tracking-widest uppercase">
             by Macreat
           </p>
         </div>
-        <button
-          onClick={handleAccept}
-          className="btn-primary w-full mt-2 py-2.5 text-xs"
-        >
-          Accept
-        </button>
+        <Image
+          src={brandManifest.macreat.src}
+          width={64}
+          height={Math.round((64 * brandManifest.macreat.height) / brandManifest.macreat.width)}
+          alt="Macreat"
+          className="object-contain"
+        />
       </div>
 
       <style jsx>{`
