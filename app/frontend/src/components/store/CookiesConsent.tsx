@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { MacreatScript } from '@/components/brand/MacreatScript';
+import brandManifest from '@/lib/brand-manifest.json';
 
 export function CookiesConsent() {
   const [show, setShow] = useState(false);
@@ -22,14 +24,22 @@ export function CookiesConsent() {
 
   return (
     <div className="cookies-consent fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
-      <div className="bg-surface-elevated border border-border max-w-sm w-full p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
-        <MacreatScript width={120} />
+      <div className="bg-surface-elevated border border-border max-w-md w-full p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
+        <Image
+          src={brandManifest.logoOG.src}
+          width={brandManifest.logoOG.width}
+          height={brandManifest.logoOG.height}
+          alt="La Villa Skateboarding"
+          className="w-16 h-16 object-contain"
+          priority
+        />
+        <MacreatScript width={100} />
         <div>
           <p className="text-xs font-semibold tracking-[0.15em] text-text-muted uppercase">
-            Performance · Created · Designed
+            Performance, Created, Designed
           </p>
           <p className="text-[10px] text-text-muted/60 mt-1.5 tracking-widest uppercase">
-            Macreat
+            by Macreat
           </p>
         </div>
         <button
