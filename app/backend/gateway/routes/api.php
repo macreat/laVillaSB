@@ -18,7 +18,7 @@ Route::get('/v1/catalog/{path?}', [ServiceProxyController::class, 'proxyCatalog'
 
 // Public health checks for all microservices (non-sensitive, useful for monitoring).
 Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxyHealth'])
-    ->whereIn('service', ['catalog', 'inventory', 'orders', 'cart', 'notifications', 'payments', 'users'])
+    ->whereIn('service', ['catalog', 'products', 'inventory', 'orders', 'cart', 'notifications', 'payments', 'users'])
     ->name('health.{service}');
 
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureAdmin::class])->group(function () {

@@ -31,14 +31,12 @@ export default function StoreHomePage() {
           {/* Image zone */}
           <div className="relative order-1 h-[62vh] min-h-[420px] lg:order-2 lg:col-span-3 lg:h-auto lg:min-h-[640px]">
             <Image
-              src={villaScene.src}
-              alt="La Villa skater tearing through a night street scene"
+              src={lavillaSb.src}
+              alt="La Villa SB full brand logo"
               fill
               priority
-              placeholder="blur"
-              blurDataURL={villaScene.blurDataURL}
               sizes="(min-width: 1024px) 60vw, 100vw"
-              className="object-cover object-[70%_30%]"
+              className="object-contain object-center"
             />
           </div>
 
