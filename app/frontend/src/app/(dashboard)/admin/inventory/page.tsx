@@ -19,6 +19,8 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Record<number, string>>({});
+  const [savingId, setSavingId] = useState<number | null>(null);
 
   const fetchStock = useCallback(() => {
     setLoading(true);
@@ -51,6 +53,29 @@ export default function InventoryPage() {
   });
   const ready = state === 'ready';
   const lowStock = items.filter((i) => i.is_low_stock);
+
+  const handleSave = async (productId: number) => {
+    const raw = drafts[productId];
+    if (raw === undefined) return;
+    const qty = Number(raw);
+    if (Number.isNaN(qty) || qty < 0) return;
+    setSavingId(productId);
+    try {
+      const updated = await api.proxyPut<InventoryItem>('inventory', String(productId), {
+        quantity: qty,
+      });
+      setItems((prev) => prev.map((i) => (i.product_id === productId ? updated : i)));
+      setDrafts((d) => {
+        const next = { ...d };
+        delete next[productId];
+        return next;
+      });
+    } catch {
+      setError('Failed to update stock. Please try again.');
+    } finally {
+      setSavingId(null);
+    }
+  };
 
   return (
     <div>
@@ -128,6 +153,7 @@ export default function InventoryPage() {
                   <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Quantity</th>
                   <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Low Stock Threshold</th>
                   <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Status</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-villa-smoke/25">
@@ -135,7 +161,18 @@ export default function InventoryPage() {
                   <tr key={item.product_id} className="transition-colors hover:bg-surface-elevated/50">
                     <td className="whitespace-nowrap px-5 py-2.5 text-sm font-medium text-text">{item.product_id}</td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-sm font-medium text-text-muted">{item.sku || '\u2014'}</td>
-                    <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text">{item.quantity}</td>
+                    <td className="whitespace-nowrap px-5 py-2.5 text-right">
+                      <input
+                        type="number"
+                        min={0}
+                        value={drafts[item.product_id] ?? String(item.quantity)}
+                        onChange={(e) =>
+                          setDrafts((d) => ({ ...d, [item.product_id]: e.target.value }))
+                        }
+                        aria-label={`Edit quantity for product ${item.product_id}`}
+                        className="w-20 rounded border border-border bg-surface px-2 py-1 text-right text-sm tabular-nums text-text focus:outline-none focus:ring-2 focus:ring-accent"
+                      />
+                    </td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text-muted">{item.low_stock_threshold}</td>
                     <td className="whitespace-nowrap px-5 py-2.5">
                       <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium ${
@@ -143,6 +180,15 @@ export default function InventoryPage() {
                       }`}>
                         {item.is_low_stock ? 'Low Stock' : 'In Stock'}
                       </span>
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-2.5 text-right">
+                      <button
+                        onClick={() => handleSave(item.product_id)}
+                        disabled={savingId === item.product_id}
+                        className="rounded border border-border px-3 py-1 text-xs font-medium text-text transition-colors hover:border-accent hover:text-accent disabled:opacity-50"
+                      >
+                        {savingId === item.product_id ? 'Saving...' : 'Save'}
+                      </button>
                     </td>
                   </tr>
                 ))}

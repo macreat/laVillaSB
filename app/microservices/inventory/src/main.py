@@ -7,7 +7,7 @@ from sqlalchemy import select, func
 
 from .database import get_db, init_db
 from .models import StockLevel
-from .schemas import StockLevelOut, StockAdjust, AvailabilityItem
+from .schemas import StockLevelOut, StockAdjust, AvailabilityItem, StockSet
 from .config import settings
 
 async def seed_stock():
@@ -68,6 +68,30 @@ async def get_inventory(product_id: int, db: AsyncSession = Depends(get_db)):
     if not s:
         raise HTTPException(status_code=404, detail="Stock level not found")
         
+    return StockLevelOut(
+        product_id=s.product_id,
+        sku=s.sku,
+        quantity=s.quantity,
+        low_stock_threshold=s.low_stock_threshold,
+        is_low_stock=s.quantity <= s.low_stock_threshold
+    )
+
+@app.put("/inventory/{product_id}", response_model=StockLevelOut)
+async def set_inventory(product_id: int, stock_set: StockSet, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(StockLevel).where(StockLevel.product_id == product_id))
+    s = result.scalars().first()
+
+    if not s:
+        s = StockLevel(product_id=product_id, quantity=stock_set.quantity)
+        db.add(s)
+    else:
+        s.quantity = stock_set.quantity
+        if stock_set.low_stock_threshold is not None:
+            s.low_stock_threshold = stock_set.low_stock_threshold
+
+    await db.commit()
+    await db.refresh(s)
+
     return StockLevelOut(
         product_id=s.product_id,
         sku=s.sku,

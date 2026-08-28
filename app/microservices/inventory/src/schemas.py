@@ -15,6 +15,10 @@ class StockAdjust(BaseModel):
     quantity: int
     reason: Optional[str] = None
 
+class StockSet(BaseModel):
+    quantity: int
+    low_stock_threshold: Optional[int] = None
+
 class AvailabilityItem(BaseModel):
     product_id: int
     available: bool
