@@ -157,7 +157,7 @@ export default function StoreHomePage() {
               Shop By Category
             </p>
             <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Find Your Board
+              Find Your Style
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
