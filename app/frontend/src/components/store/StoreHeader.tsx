@@ -1,12 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { clsx } from 'clsx';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { BrandWordmark } from '@/components/brand/BrandWordmark';
 import { useCart } from '@/hooks/useCart';
+import { WHATSAPP_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
+import brandManifest from '@/lib/brand-manifest.json';
 
 const NAV_LINKS = [
   { label: 'Decks', href: '/products?category=decks' },
@@ -66,12 +69,21 @@ export function StoreHeader() {
 
           {/* Right actions */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/account"
-              className="font-sans text-sm font-semibold uppercase tracking-wide text-villa-smoke hover:text-villa-bone transition-colors hidden sm:block"
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel={EXTERNAL_LINK_REL}
+              aria-label="Talk to us on WhatsApp"
+              className="hidden sm:block transition-transform hover:scale-105"
             >
-              Account
-            </Link>
+              <Image
+                src={brandManifest.sorneroLogo.src}
+                width={32}
+                height={32}
+                alt="La Villa SB - talk to us on WhatsApp"
+                className="h-8 w-8 rounded-full object-contain"
+              />
+            </a>
             <Link href="/cart" className="relative p-1 text-villa-bone hover:text-villa-fox transition-colors">
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -104,13 +116,22 @@ export function StoreHeader() {
               </Link>
             ))}
             <div className="my-2 border-t border-villa-smoke/10" />
-            <Link
-              href="/account"
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel={EXTERNAL_LINK_REL}
               onClick={() => setMobileOpen(false)}
-              className="rounded-none px-3 py-3 font-sans text-sm font-bold uppercase tracking-wide text-villa-smoke hover:bg-villa-smoke/5 hover:text-villa-bone border-l-2 border-transparent"
+              className="flex items-center gap-3 rounded-none px-3 py-3 font-sans text-sm font-bold uppercase tracking-wide text-villa-smoke hover:bg-villa-smoke/5 hover:text-villa-bone border-l-2 border-transparent"
             >
-              Account
-            </Link>
+              <Image
+                src={brandManifest.sorneroLogo.src}
+                width={24}
+                height={24}
+                alt=""
+                className="h-6 w-6 rounded-full object-contain"
+              />
+              WhatsApp
+            </a>
           </nav>
         </div>
       )}
