@@ -61,7 +61,7 @@ export default function InventoryPage() {
     if (Number.isNaN(qty) || qty < 0) return;
     setSavingId(productId);
     try {
-      const updated = await api.proxyPut<InventoryItem>('inventory', String(productId), {
+      const updated = await api.proxyPut<InventoryItem>('inventory', `inventory/${productId}`, {
         quantity: qty,
       });
       setItems((prev) => prev.map((i) => (i.product_id === productId ? updated : i)));
