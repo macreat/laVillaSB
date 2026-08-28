@@ -27,16 +27,16 @@ export default function StoreHomePage() {
     <div>
       {/* 1. Hero */}
       <section className="relative overflow-hidden bg-villa-black">
-        <div className="hero-reveal grid grid-cols-1 lg:grid-cols-6">
+        <div className="hero-reveal grid grid-cols-1 gap-2 lg:grid-cols-7 lg:gap-3">
           {/* Image zone */}
-          <div className="relative order-1 h-[62vh] min-h-[420px] lg:order-2 lg:col-span-4 lg:h-auto lg:min-h-[640px]">
+          <div className="relative order-1 h-[62vh] min-h-[420px] lg:order-2 lg:col-span-5 lg:h-auto lg:min-h-[600px]">
             <Image
               src={lavillaSb.src}
               alt="La Villa SB full brand logo"
               fill
               priority
               sizes="(min-width: 1024px) 60vw, 100vw"
-              className="object-contain object-center"
+              className="object-cover object-center"
             />
           </div>
 
@@ -174,38 +174,6 @@ export default function StoreHomePage() {
               sizes="(min-width: 1024px) 40vw, 90vw"
               className="object-cover"
             />
-          </div>
-        </div>
-      </section>
-
-      {/* 4.5 Shop By Category */}
-      <section className="relative border-t border-villa-smoke/10 bg-villa-black py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="mb-10 text-center">
-            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-teal">
-              Shop By Category
-            </p>
-            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Find Your Board
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {[
-              { label: 'Decks', href: '/products?category=decks' },
-              { label: 'Apparel', href: '/products?category=apparel' },
-              { label: 'Accessories', href: '/products?category=accessories' },
-              { label: 'Gear', href: '/products?category=gear' },
-            ].map((cat) => (
-              <Link
-                key={cat.label}
-                href={cat.href}
-                className="group rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
-              >
-                <p className="font-display text-lg uppercase tracking-wide text-villa-bone transition-colors group-hover:text-villa-teal">
-                  {cat.label}
-                </p>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
