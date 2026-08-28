@@ -27,6 +27,7 @@ class OrderNotificationRequest(BaseModel):
     items_count: int
     total: float
     status: str = "pending"
+    products: list[str] = []
 
 @app.get("/health")
 async def health_check():
@@ -75,15 +76,8 @@ async def send_whatsapp(request: WhatsAppMessageRequest):
 
 @app.post("/notify-order")
 async def notify_order(request: OrderNotificationRequest):
-    message = (
-        "🛹 *NEW ORDER* - La Villa Skateboarding\n"
-        f"Order: #{request.order_id}\n"
-        f"Customer: {request.customer_name}\n"
-        f"Phone: {request.customer_phone}\n"
-        f"Items: {request.items_count}\n"
-        f"Total: ${request.total:,.2f}\n"
-        f"Status: {request.status}"
-    )
+    product_label = ", ".join(request.products[:3]) if request.products else f"{request.items_count} item(s)"
+    message = f"New order: {product_label} - ${request.total:,.2f}"
     recipient = settings.twilio_to
     result = await send_twilio_message(recipient, message, settings)
     return {"recipient": recipient, "result": result}

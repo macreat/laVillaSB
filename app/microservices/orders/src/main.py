@@ -43,8 +43,9 @@ def serialize_order(order: Order) -> dict:
     }
 
 async def notify_order_created(order: Order):
-    """Fire-and-forget: notify the notifications service (Twilio WhatsApp) about a new order."""
+    """Fire-and-forget: notify the notifications service (Twilio SMS) about a new order."""
     try:
+        items = json.loads(order.items_json)
         async with httpx.AsyncClient(timeout=5.0) as client:
             await client.post(
                 f"{settings.NOTIFICATIONS_URL}/notify-order",
@@ -52,9 +53,10 @@ async def notify_order_created(order: Order):
                     "order_id": order.id,
                     "customer_name": order.customer_name,
                     "customer_phone": order.customer_phone,
-                    "items_count": len(json.loads(order.items_json)),
+                    "items_count": len(items),
                     "total": order.total,
                     "status": order.status,
+                    "products": [item.get("name") for item in items],
                 },
             )
     except Exception:

@@ -38,12 +38,8 @@ async def send_twilio_message(phone: str, message: str, settings) -> dict:
         return {"status": "mock_success", "message": "Twilio not configured"}
 
     url = f"https://api.twilio.com/2010-04-01/Accounts/{settings.twilio_account_sid}/Messages.json"
-    to = f"whatsapp:{phone}" if not str(phone).startswith("whatsapp:") else str(phone)
-    from_number = (
-        str(settings.twilio_from)
-        if str(settings.twilio_from).startswith("whatsapp:")
-        else f"whatsapp:{settings.twilio_from}"
-    )
+    to = str(phone)
+    from_number = str(settings.twilio_from)
     data = {"From": from_number, "To": to, "Body": message}
     auth = (settings.twilio_account_sid, settings.twilio_auth_token)
 
