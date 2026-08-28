@@ -7,13 +7,6 @@ import { ProductCard } from '@/components/store/product/ProductCard';
 import { fetchStoreProducts, type StoreProduct } from '@/lib/store-catalog';
 import brandManifest from '@/lib/brand-manifest.json';
 
-const CATEGORY_TILES = [
-  { name: 'Decks', href: '/products?category=decks' },
-  { name: 'Apparel', href: '/products?category=apparel' },
-  { name: 'Accessories', href: '/products?category=accessories' },
-  { name: 'Gear', href: '/products?category=gear' },
-];
-
 export default function StoreHomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<StoreProduct[]>([]);
 
@@ -121,28 +114,6 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 3. Category tiles */}
-      <section className="border-t border-villa-smoke/25 bg-villa-black">
-        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
-          <h2 className="mb-10 font-display text-3xl uppercase tracking-wide text-villa-bone sm:text-4xl">
-            Shop By Category
-          </h2>
-          <div className="grid grid-cols-2 gap-px bg-villa-smoke/25 lg:grid-cols-4">
-            {CATEGORY_TILES.map((cat) => (
-              <Link
-                key={cat.name}
-                href={cat.href}
-                className="category-tile flex h-32 items-center justify-center bg-villa-black lg:h-44"
-              >
-                <span className="category-tile__label font-display text-xl uppercase tracking-wide text-villa-bone transition-colors hover:text-villa-fox">
-                  {cat.name}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 4. Community / editorial (kunst) */}
       <section className="relative -mt-px bg-villa-bone [clip-path:polygon(0_56px,100%_0,100%_100%,0_100%)]">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 pb-20 pt-24 lg:grid-cols-10 lg:gap-16 lg:px-8 lg:pb-28 lg:pt-32">
@@ -174,6 +145,38 @@ export default function StoreHomePage() {
               sizes="(min-width: 1024px) 40vw, 90vw"
               className="object-cover"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* 4.5 Shop By Category */}
+      <section className="relative border-t border-villa-smoke/10 bg-villa-black py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-teal">
+              Shop By Category
+            </p>
+            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
+              Find Your Board
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {[
+              { label: 'Decks', href: '/products?category=decks' },
+              { label: 'Apparel', href: '/products?category=apparel' },
+              { label: 'Accessories', href: '/products?category=accessories' },
+              { label: 'Gear', href: '/products?category=gear' },
+            ].map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                className="group rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
+              >
+                <p className="font-display text-lg uppercase tracking-wide text-villa-bone transition-colors group-hover:text-villa-teal">
+                  {cat.label}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
