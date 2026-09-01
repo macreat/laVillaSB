@@ -36,7 +36,7 @@ export default function InventoryPage() {
         if (isServiceUnavailable(e instanceof ApiError ? e.status : null)) {
           setOffline(true);
         } else {
-          setError(e instanceof Error ? e.message : 'Failed to load inventory');
+          setError(e instanceof Error ? e.message : 'Error al cargar inventario');
         }
       })
       .finally(() => setLoading(false));
@@ -71,7 +71,7 @@ export default function InventoryPage() {
         return next;
       });
     } catch {
-      setError('Failed to update stock. Please try again.');
+      setError('No se pudo actualizar el stock. Intenta de nuevo.');
     } finally {
       setSavingId(null);
     }
@@ -79,7 +79,7 @@ export default function InventoryPage() {
 
   return (
     <div>
-      <TopBar title="Inventory" />
+      <TopBar title="Inventario" />
 
       <div className="space-y-6 p-6">
         {ready && lowStock.length > 0 && (
@@ -87,7 +87,7 @@ export default function InventoryPage() {
             <div className="flex items-center gap-3">
               <AlertTriangle aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" />
               <p className="text-sm font-medium text-text" aria-live="polite">
-                {lowStock.length} product{lowStock.length !== 1 ? 's' : ''} with low stock
+                {lowStock.length} product{lowStock.length !== 1 ? 's' : ''} con stock bajo
               </p>
             </div>
           </Card>
@@ -101,13 +101,13 @@ export default function InventoryPage() {
             </p>
           </Card>
           <Card>
-            <p className="text-sm font-medium text-text-muted">Low Stock Items</p>
+            <p className="text-sm font-medium text-text-muted">Productos Con Stock Bajo</p>
             <p className="mt-1 font-display text-3xl tracking-wide tabular-nums text-text">
               {ready ? lowStock.length : '\u2014'}
             </p>
           </Card>
           <Card>
-            <p className="text-sm font-medium text-text-muted">Total Units</p>
+            <p className="text-sm font-medium text-text-muted">Unidades Totales</p>
             <p className="mt-1 font-display text-3xl tracking-wide tabular-nums text-text">
               {ready ? items.reduce((sum, i) => sum + i.quantity, 0) : '\u2014'}
             </p>
@@ -115,30 +115,30 @@ export default function InventoryPage() {
         </div>
 
         {state === 'loading' ? (
-          <SkeletonRows label="Loading inventory" />
+          <SkeletonRows label="Cargando inventario" />
         ) : state === 'offline' ? (
           <ServiceOfflinePanel
-            description="The inventory service is not responding right now. Stock levels will appear here once it is back online."
+            description="El servicio de inventario no esta respondiendo. Los niveles de stock apareceran cuando vuelva a estar en linea."
             onRetry={fetchStock}
           />
         ) : error ? (
           <Card>
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-                Request Failed
+                Peticion Fallida
               </p>
               <p aria-live="polite" className="text-sm text-text-muted">
                 {error}
               </p>
               <Button variant="secondary" onClick={fetchStock}>
-                Retry
+                Reintentar
               </Button>
             </div>
           </Card>
         ) : state === 'empty' ? (
           <EmptyStatePanel
-            title="No inventory data"
-            description="Stock levels synced from the inventory service will appear here."
+            title="No hay datos de inventario"
+            description="Los niveles de stock sincronizados desde el servicio de inventario apareceran aca."
           />
         ) : (
           <Card className="overflow-hidden p-0">
@@ -148,12 +148,12 @@ export default function InventoryPage() {
               </caption>
               <thead>
                 <tr className="border-b border-villa-smoke/25">
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Product ID</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">ID Producto</th>
                   <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">SKU</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Quantity</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Low Stock Threshold</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Status</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Actions</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Cantidad</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Limite Stock Bajo</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Estado</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-villa-smoke/25">
@@ -169,7 +169,7 @@ export default function InventoryPage() {
                         onChange={(e) =>
                           setDrafts((d) => ({ ...d, [item.product_id]: e.target.value }))
                         }
-                        aria-label={`Edit quantity for product ${item.product_id}`}
+                        aria-label={`Editar cantidad del producto ${item.product_id}`}
                         className="w-20 rounded border border-border bg-surface px-2 py-1 text-right text-sm tabular-nums text-text focus:outline-none focus:ring-2 focus:ring-accent"
                       />
                     </td>
@@ -178,7 +178,7 @@ export default function InventoryPage() {
                       <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium ${
                         item.is_low_stock ? 'bg-danger/10 text-danger' : 'bg-green-500/10 text-green-500'
                       }`}>
-                        {item.is_low_stock ? 'Low Stock' : 'In Stock'}
+                        {item.is_low_stock ? 'Stock Bajo' : 'En Stock'}
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-5 py-2.5 text-right">
@@ -187,7 +187,7 @@ export default function InventoryPage() {
                         disabled={savingId === item.product_id}
                         className="rounded border border-border px-3 py-1 text-xs font-medium text-text transition-colors hover:border-accent hover:text-accent disabled:opacity-50"
                       >
-                        {savingId === item.product_id ? 'Saving...' : 'Save'}
+                        {savingId === item.product_id ? 'Guardando...' : 'Guardar'}
                       </button>
                     </td>
                   </tr>

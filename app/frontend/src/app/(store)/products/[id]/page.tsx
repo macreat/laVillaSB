@@ -57,20 +57,20 @@ export default function ProductDetailPage() {
   if (notFound || !product) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
-        <p className="text-text-muted">Product not found.</p>
+        <p className="text-text-muted">Producto no encontrado.</p>
         <Link href="/products" className="btn-secondary">
-          Back to Products
+          Volver A Productos
         </Link>
       </div>
     );
   }
-  const whatsappText = `Hi, I'm interested in ${product.name} ($${product.price.toFixed(2)})`;
+  const whatsappText = `Hola, me interesa ${product.name} ($${product.price.toFixed(2)})`;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 lg:px-8">
       <div className="mb-6">
         <Link href="/products" className="text-sm text-text-muted hover:text-accent transition-colors">
-          &larr; Back to Products
+          &larr; Volver A Productos
         </Link>
       </div>
 
@@ -111,24 +111,24 @@ export default function ProductDetailPage() {
               }
               className="btn-primary px-8 py-3 text-base"
             >
-              Add to Cart
+              Agregar Al Carrito
             </button>
             <Link href="/cart" className="btn-secondary px-8 py-3 text-base text-center">
-              View Cart
+              Ver Carrito
             </Link>
           </div>
 
           {/* WhatsApp CTA */}
           <div className="mt-6 rounded-lg border border-border bg-surface p-4">
             <p className="text-sm text-text-muted">
-              Prefer to order via WhatsApp?{' '}
+              Prefieres pedir por WhatsApp?{' '}
               <a
                 href={buildWhatsAppHref(whatsappText)}
                 target="_blank"
                 rel={EXTERNAL_LINK_REL}
                 className="font-semibold text-accent hover:text-accent-hover transition-colors"
               >
-                Message us directly &rarr;
+                Escribenos directo &rarr;
               </a>
             </p>
           </div>

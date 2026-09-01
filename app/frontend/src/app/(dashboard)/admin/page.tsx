@@ -48,10 +48,10 @@ type Subscriber = {
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<StatDatum[]>([
-    { label: 'Total Products', value: '—', icon: 'package', change: 'Catalog service pending', changeType: 'neutral' },
-    { label: 'Orders', value: '—', icon: 'cart', change: 'Orders service pending', changeType: 'neutral' },
-    { label: 'Revenue', value: '—', icon: 'dollar', change: 'Total revenue', changeType: 'neutral' },
-    { label: 'Growth', value: '—', icon: 'trending', change: 'vs yesterday', changeType: 'neutral' },
+    { label: 'Total Productos', value: '—', icon: 'package', change: 'Servicio de catalogo pendiente', changeType: 'neutral' },
+    { label: 'Pedidos', value: '—', icon: 'cart', change: 'Servicio de pedidos pendiente', changeType: 'neutral' },
+    { label: 'Ingresos', value: '—', icon: 'dollar', change: 'Ingresos totales', changeType: 'neutral' },
+    { label: 'Crecimiento', value: '—', icon: 'trending', change: 'vs ayer', changeType: 'neutral' },
   ]);
   const [recentOrders, setRecentOrders] = useState<DashboardOrder[] | null>(null);
   const [topProducts, setTopProducts] = useState<string[] | null>(null);
@@ -67,7 +67,7 @@ export default function DashboardPage() {
         const raw = Array.isArray(res) ? res : (res as { data?: unknown[] }).data ?? [];
         if (!active) return;
         setStats((prev) => [
-          { ...prev[0], value: String(raw.length), change: 'Total products', changeType: 'neutral' as const },
+          { ...prev[0], value: String(raw.length), change: 'Productos totales', changeType: 'neutral' as const },
           ...prev.slice(1),
         ] as StatDatum[]);
         setTopProducts(
@@ -79,7 +79,7 @@ export default function DashboardPage() {
       } catch {
         if (!active) return;
         setStats((prev) => [
-          { ...prev[0], value: 'Unavailable', change: 'Unavailable', changeType: 'neutral' as const },
+          { ...prev[0], value: 'No disponible', change: 'No disponible', changeType: 'neutral' as const },
           ...prev.slice(1),
         ] as StatDatum[]);
         setTopProducts([]);
@@ -117,19 +117,19 @@ export default function DashboardPage() {
             : null;
         setRelevant((prev) => [
           { ...prev[0] },
-          { ...prev[1], value: String(s.total_orders), change: 'Total orders', changeType: 'neutral' },
-          { ...prev[2], value: `$${s.total_revenue.toFixed(2)}`, change: 'Total revenue', changeType: 'neutral' },
+          { ...prev[1], value: String(s.total_orders), change: 'Pedidos totales', changeType: 'neutral' },
+          { ...prev[2], value: `$${s.total_revenue.toFixed(2)}`, change: 'Ingresos totales', changeType: 'neutral' },
           {
             ...prev[3],
-            value: growth !== null ? `${growth >= 0 ? '+' : ''}${growth}%` : 'New',
-            change: 'vs yesterday',
+            value: growth !== null ? `${growth >= 0 ? '+' : ''}${growth}%` : 'Nuevo',
+            change: 'vs ayer',
             changeType: growth !== null ? (growth >= 0 ? 'positive' : 'negative') : 'neutral',
           },
         ]);
       } catch {
         if (!active) return;
         setRelevant((prev) =>
-          prev.map((stat) => ({ ...stat, value: 'Unavailable', change: 'Unavailable', changeType: 'neutral' as const })),
+          prev.map((stat) => ({ ...stat, value: 'No disponible', change: 'No disponible', changeType: 'neutral' as const })),
         );
       }
     };
@@ -164,10 +164,10 @@ export default function DashboardPage() {
       <div className="p-6">
         <div className="mb-6">
           <h2 className="font-display text-lg tracking-wide text-text-muted">
-            OVERVIEW
+            RESUMEN
           </h2>
           <p className="text-sm text-text-muted">
-            Welcome to the La Villa Skateboarding admin panel.
+            Bienvenido al panel de admin de La Villa Skateboarding.
           </p>
         </div>
 
@@ -180,7 +180,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Card>
             <h3 className="mb-3 font-display text-lg tracking-wide text-text">
-              RECENT ORDERS
+              PEDIDOS RECIENTES
             </h3>
             {recentOrders ? (
               recentOrders.length > 0 ? (
@@ -199,19 +199,19 @@ export default function DashboardPage() {
                 </ul>
               ) : (
                 <div className="flex h-40 items-center justify-center rounded-md border border-dashed border-border">
-                  <p className="text-sm text-text-muted">No orders yet.</p>
+                  <p className="text-sm text-text-muted">No hay pedidos aun.</p>
                 </div>
               )
             ) : (
               <div className="flex h-40 items-center justify-center rounded-md border border-dashed border-border">
-                <p className="text-sm text-text-muted">Loading orders...</p>
+                <p className="text-sm text-text-muted">Cargando pedidos...</p>
               </div>
             )}
           </Card>
 
           <Card>
             <h3 className="mb-3 font-display text-lg tracking-wide text-text">
-              TOP PRODUCTS
+              PRODUCTOS TOP
             </h3>
             {topProducts ? (
               topProducts.length > 0 ? (
@@ -225,12 +225,12 @@ export default function DashboardPage() {
                 </ol>
               ) : (
                 <div className="flex h-40 items-center justify-center rounded-md border border-dashed border-border">
-                  <p className="text-sm text-text-muted">No products yet.</p>
+                  <p className="text-sm text-text-muted">No hay productos aun.</p>
                 </div>
               )
             ) : (
               <div className="flex h-40 items-center justify-center rounded-md border border-dashed border-border">
-                <p className="text-sm text-text-muted">Loading products...</p>
+                <p className="text-sm text-text-muted">Cargando productos...</p>
               </div>
             )}
           </Card>
@@ -239,7 +239,7 @@ export default function DashboardPage() {
         <Card className="mt-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-display text-lg tracking-wide text-text">
-              LURK SUBSCRIBERS
+              SUSCRIPTORES
             </h3>
             <span className="text-xs text-text-muted">{subscriberCount} total</span>
           </div>
@@ -249,9 +249,9 @@ export default function DashboardPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-villa-smoke/25">
-                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Tag</th>
-                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Email</th>
-                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Joined</th>
+                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Etiqueta</th>
+                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Correo</th>
+                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Registro</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-villa-smoke/25">
@@ -267,19 +267,19 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border">
-                <p className="text-sm text-text-muted">No subscribers yet.</p>
+                <p className="text-sm text-text-muted">No hay suscriptores aun.</p>
               </div>
             )
           ) : (
             <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border">
-              <p className="text-sm text-text-muted">Loading subscribers...</p>
+              <p className="text-sm text-text-muted">Cargando suscriptores...</p>
             </div>
           )}
         </Card>
 
         <Card className="mt-6">
           <h3 className="mb-3 font-display text-lg uppercase tracking-wide text-text">
-            System Status
+            Estado Del Sistema
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {SYSTEM_SERVICES.map((svc) => (
@@ -312,7 +312,7 @@ function ServiceStatus({ name, check }: { name: string; check: ServiceCheck }) {
     };
   }, [check]);
 
-  const label = state === 'checking' ? 'Checking' : state === 'online' ? 'Online' : 'Offline';
+  const label = state === 'checking' ? 'Verificando' : state === 'online' ? 'En linea' : 'Fuera de linea';
   const textClass =
     state === 'online' ? 'text-green-500' :
     state === 'offline' ? 'text-danger' :

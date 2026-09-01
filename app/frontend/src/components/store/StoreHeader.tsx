@@ -12,10 +12,10 @@ import { WHATSAPP_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
 import brandManifest from '@/lib/brand-manifest.json';
 
 const NAV_LINKS = [
-  { label: 'Decks', href: '/products?category=decks' },
-  { label: 'Apparel', href: '/products?category=apparel' },
-  { label: 'Accessories', href: '/products?category=accessories' },
-  { label: 'Gear', href: '/products?category=gear' },
+  { label: 'Tablas', href: '/products?category=decks' },
+  { label: 'Ropa', href: '/products?category=apparel' },
+  { label: 'Accesorios', href: '/products?category=accessories' },
+  { label: 'Equipo', href: '/products?category=gear' },
 ] as const;
 
 export function StoreHeader() {
@@ -27,7 +27,7 @@ export function StoreHeader() {
     <header className="sticky top-0 z-50 bg-villa-black">
       {/* Top banner */}
       <div className="bg-villa-fox text-villa-black text-center font-sans text-[11px] font-bold uppercase tracking-[0.15em] py-1.5 px-4">
-        Free shipping on orders over $85 &bull; 60-day returns
+        Envios gratis en compras sobre $85 &bull; Devoluciones en 60 dias
       </div>
 
       {/* Main nav */}
@@ -37,7 +37,7 @@ export function StoreHeader() {
           <button
             className="lg:hidden p-1 text-villa-bone"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label="Abrir menu"
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -73,14 +73,14 @@ export function StoreHeader() {
               href={WHATSAPP_URL}
               target="_blank"
               rel={EXTERNAL_LINK_REL}
-              aria-label="Talk to us on WhatsApp"
+              aria-label="Hablanos por WhatsApp"
               className="hidden sm:block transition-transform hover:scale-105"
             >
               <Image
                 src={brandManifest.sorneroLogo.src}
                 width={32}
                 height={32}
-                alt="La Villa SB - talk to us on WhatsApp"
+                alt="La Villa SB - hablanos por WhatsApp"
                 className="h-8 w-8 rounded-full object-contain"
               />
             </a>

@@ -24,13 +24,13 @@ export default function CartPage() {
             <Check className="h-8 w-8 text-green-500" />
           </div>
           <h1 className="font-display text-2xl uppercase tracking-wider text-text">
-            Order Placed
+            Pedido Realizado
           </h1>
           <p className="text-sm text-text-muted">
-            Your WhatsApp is open with the order details. We will confirm it there.
+            Tu WhatsApp se abrio con los detalles del pedido. Lo confirmaremos ahi.
           </p>
           <Link href="/products" className="btn-primary mt-2 px-8 py-3">
-            Shop More
+            Seguir Comprando
           </Link>
         </div>
       );
@@ -44,11 +44,11 @@ export default function CartPage() {
           </svg>
         </div>
         <h1 className="font-display text-2xl uppercase tracking-wider text-text">
-          Your Cart Is Empty
+          Tu Carrito Esta Vacio
         </h1>
-        <p className="text-sm text-text-muted">Time to lurk the shop.</p>
+        <p className="text-sm text-text-muted">Hora de revisar la tienda.</p>
         <Link href="/products" className="btn-primary mt-2 px-8 py-3">
-          Shop Now
+          Comprar Ahora
         </Link>
       </div>
     );
@@ -61,7 +61,7 @@ export default function CartPage() {
 
   const handleOrder = async () => {
     if (!customerName.trim() || !customerPhone.trim()) {
-      setError('Enter your name and phone to place the order.');
+      setError('Ingresa tu nombre y telefono para hacer el pedido.');
       return;
     }
     setSubmitting(true);
@@ -90,7 +90,7 @@ export default function CartPage() {
       setCustomerName('');
       setCustomerPhone('');
     } catch {
-      setError('Could not place the order. Opening WhatsApp with your cart summary instead.');
+      setError('No se pudo hacer el pedido. Abriendo WhatsApp con el resumen de tu carrito.');
       window.open(buildWhatsAppHref(whatsappText), '_blank', 'noopener,noreferrer');
     } finally {
       setSubmitting(false);
@@ -100,7 +100,7 @@ export default function CartPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 lg:px-8">
       <h1 className="mb-8 font-display text-3xl uppercase tracking-wider text-text">
-        Your Cart
+        Tu Carrito
       </h1>
 
       <div className="space-y-4">
@@ -179,18 +179,18 @@ export default function CartPage() {
       <div className="mt-6 flex flex-col gap-3">
         {error && <p className="text-sm text-danger">{error}</p>}
         {placed && (
-          <p className="text-sm text-green-600">Order placed! Your WhatsApp is open with the details.</p>
+          <p className="text-sm text-green-600">Pedido listo! Tu WhatsApp se abrio con los detalles.</p>
         )}
         <input
           type="text"
-          placeholder="Your name"
+          placeholder="Tu nombre"
           value={customerName}
           onChange={(e) => setCustomerName(e.target.value)}
           className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent"
         />
         <input
           type="tel"
-          placeholder="Your phone (WhatsApp)"
+          placeholder="Tu telefono (WhatsApp)"
           value={customerPhone}
           onChange={(e) => setCustomerPhone(e.target.value)}
           className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent"
@@ -201,14 +201,14 @@ export default function CartPage() {
           onClick={handleOrder}
           className="btn-primary w-full py-3.5 text-base text-center disabled:opacity-50"
         >
-          Order via WhatsApp
+          Pedir Por WhatsApp
         </button>
         <div className="flex gap-3">
           <Link href="/products" className="btn-secondary flex-1 py-3 text-center">
-            Continue Shopping
+            Seguir Comprando
           </Link>
           <button onClick={clearCart} className="btn-danger px-6 py-3">
-            Clear
+            Vaciar
           </button>
         </div>
       </div>

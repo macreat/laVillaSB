@@ -18,7 +18,7 @@ const ADMIN_SERVICES: ReadonlyArray<{ name: string; url: string }> = [
 ];
 
 function toInitialServiceHealth(): ServiceHealth[] {
-  return ADMIN_SERVICES.map((svc) => ({ ...svc, status: 'Unknown' }));
+  return ADMIN_SERVICES.map((svc) => ({ ...svc, status: 'Desconocido' }));
 }
 
 export default function SettingsPage() {
@@ -52,7 +52,7 @@ export default function SettingsPage() {
           if (!cancelled) markStatus(svc.url, res.status);
         })
         .catch(() => {
-          if (!cancelled) markStatus(svc.url, 'Unreachable');
+          if (!cancelled) markStatus(svc.url, 'Inalcanzable');
         });
     });
     return () => {
@@ -63,7 +63,7 @@ export default function SettingsPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword && newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' });
+      setMessage({ type: 'error', text: 'Las contrasenas no coinciden' });
       return;
     }
     setSaving(true);
@@ -76,12 +76,12 @@ export default function SettingsPage() {
         new_password: newPassword || undefined,
         new_password_confirmation: confirmPassword || undefined,
       });
-      setMessage({ type: 'success', text: 'Settings saved' });
+      setMessage({ type: 'success', text: 'Configuracion guardada' });
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (e) {
-      setMessage({ type: 'error', text: e instanceof Error ? e.message : 'Failed to save settings' });
+      setMessage({ type: 'error', text: e instanceof Error ? e.message : 'No se pudo guardar la configuracion' });
     } finally {
       setSaving(false);
     }
@@ -89,33 +89,33 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <TopBar title="Settings" />
+      <TopBar title="Configuracion" />
 
       <div className="p-6 space-y-6">
         <form onSubmit={handleSave}>
           <Card>
-            <h3 className="mb-4 font-display text-lg tracking-wide text-text">Profile</h3>
+            <h3 className="mb-4 font-display text-lg tracking-wide text-text">Perfil</h3>
             <div className="space-y-4">
-              <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-              <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input label="Nombre" value={name} onChange={(e) => setName(e.target.value)} />
+              <Input label="Correo" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
 
-            <h3 className="mb-4 mt-8 font-display text-lg tracking-wide text-text">Change Password</h3>
+            <h3 className="mb-4 mt-8 font-display text-lg tracking-wide text-text">Cambiar Contrasena</h3>
             <div className="space-y-4">
               <Input
-                label="Current Password"
+                label="Contrasena Actual"
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
               <Input
-                label="New Password"
+                label="Nueva Contrasena"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
               <Input
-                label="Confirm New Password"
+                label="Confirmar Nueva Contrasena"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -131,24 +131,24 @@ export default function SettingsPage() {
             <div className="mt-6 flex justify-end">
               <Button type="submit" isLoading={saving}>
                 <Save className="mr-2 h-4 w-4" />
-                Save Changes
+                Guardar Cambios
               </Button>
             </div>
           </Card>
         </form>
 
         <Card>
-          <h3 className="mb-4 font-display text-lg tracking-wide text-text">Microservice Status</h3>
+          <h3 className="mb-4 font-display text-lg tracking-wide text-text">Estado De Microservicios</h3>
           <div className="space-y-2">
             {services.map((svc) => (
               <div key={svc.name} className="flex items-center justify-between rounded-md bg-surface-elevated px-4 py-3">
                 <span className="text-sm font-medium text-text">{svc.name}</span>
                 <span className={`text-xs font-medium ${
                   svc.status === 'ok' ? 'text-accent' :
-                  svc.status === 'Unreachable' ? 'text-danger' :
+                  svc.status === 'Inalcanzable' ? 'text-danger' :
                   'text-text-muted'
                 }`}>
-                  {svc.status === 'ok' ? 'Healthy' : svc.status}
+                  {svc.status === 'ok' ? 'Saludable' : svc.status}
                 </span>
               </div>
             ))}

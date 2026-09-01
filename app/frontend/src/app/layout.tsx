@@ -22,12 +22,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
     default: 'La Villa Skateboarding',
-    template: '%s — La Villa Skateboarding',
+    template: '%s - La Villa Skateboarding',
   },
-  description: 'La Villa Skateboarding — The darker side of skateboarding. Shop decks, apparel, and gear.',
+  description: 'La Villa Skateboarding - La villa es la ley del skate. Compra tablas, ropa y equipo.',
   openGraph: {
     title: 'La Villa Skateboarding',
-    description: 'La Villa Skateboarding — The darker side of skateboarding. Shop decks, apparel, and gear.',
+    description: 'La Villa Skateboarding - La villa es la ley del skate. Compra tablas, ropa y equipo.',
     images: ['/brand/villa-scene.webp'],
   },
 };
@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${archivo.variable} ${anton.variable}`}>
+    <html lang="es" className={`dark ${archivo.variable} ${anton.variable}`}>
       <body className="min-h-screen bg-bg font-sans text-text antialiased">
         <AuthProvider>
           <CartProvider>{children}</CartProvider>

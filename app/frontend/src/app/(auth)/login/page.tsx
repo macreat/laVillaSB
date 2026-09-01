@@ -24,7 +24,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/admin');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'Error al iniciar sesion');
     } finally {
       setIsLoading(false);
     }
@@ -39,13 +39,13 @@ export default function LoginPage() {
             LA VILLA SB
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            Admin Dashboard
+            Panel De Admin
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Email"
+            label="Correo"
             type="email"
             placeholder="admin@lavillasb.com"
             value={email}
@@ -54,7 +54,7 @@ export default function LoginPage() {
             autoComplete="email"
           />
           <Input
-            label="Password"
+            label="Contrasena"
             type="password"
             placeholder="••••••••"
             value={password}
@@ -74,7 +74,7 @@ export default function LoginPage() {
             className="w-full"
             isLoading={isLoading}
           >
-            Sign in
+            Iniciar Sesion
           </Button>
         </form>
 

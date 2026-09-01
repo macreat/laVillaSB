@@ -16,7 +16,7 @@ export function TopBar({ title }: { title: string }) {
           onClick={openNav}
           aria-expanded={navOpen}
           aria-controls="admin-sidebar"
-          aria-label="Open navigation"
+          aria-label="Abrir navegacion"
           className="-ml-1 rounded-[2px] p-2 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text lg:hidden"
         >
           <Menu aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />

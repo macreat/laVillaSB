@@ -17,11 +17,11 @@ import { FoxMark } from '@/components/brand/FoxMark';
 import { useAuth } from '@/hooks/useAuth';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { label: 'Products', href: '/admin/products', icon: Package },
-  { label: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-  { label: 'Inventory', href: '/admin/inventory', icon: Warehouse },
-  { label: 'Settings', href: '/admin/settings', icon: Settings },
+  { label: 'Panel', href: '/admin', icon: LayoutDashboard },
+  { label: 'Productos', href: '/admin/products', icon: Package },
+  { label: 'Pedidos', href: '/admin/orders', icon: ShoppingCart },
+  { label: 'Inventario', href: '/admin/inventory', icon: Warehouse },
+  { label: 'Configuracion', href: '/admin/settings', icon: Settings },
 ] as const;
 
 type SidebarProps = {
@@ -106,7 +106,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <button
             type="button"
             onClick={() => onClose()}
-            aria-label="Close navigation"
+            aria-label="Cerrar navegacion"
             className="rounded-[2px] p-1.5 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text lg:hidden"
           >
             <X aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
@@ -149,7 +149,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             className="flex h-10 w-full items-center gap-3 border-l-2 border-transparent px-3 text-xs font-semibold uppercase tracking-[0.12em] text-text-muted transition-colors hover:text-danger"
           >
             <LogOut aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.5} />
-            Sign out
+            Cerrar Sesion
           </button>
         </div>
       </aside>

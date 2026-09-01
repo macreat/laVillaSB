@@ -42,10 +42,10 @@ function ProductsContent() {
     <div className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
       <div className="mb-8 text-center">
         <h1 className="font-display text-4xl uppercase tracking-wider text-text">
-          {activeCategory === 'all' ? 'All Products' : displayCategoryGroup(activeCategory)}
+          {activeCategory === 'all' ? 'Todos Los Productos' : displayCategoryGroup(activeCategory)}
         </h1>
         <p className="mt-2 text-sm text-text-muted">
-          {filtered.length} product{filtered.length !== 1 ? 's' : ''}
+          {filtered.length} producto{filtered.length !== 1 ? 's' : ''}
         </p>
       </div>
 
@@ -82,7 +82,7 @@ function ProductsContent() {
         </div>
       ) : (
         <div className="py-20 text-center">
-          <p className="text-text-muted">No products in this category yet.</p>
+          <p className="text-text-muted">No hay productos en esta categoria aun.</p>
         </div>
       )}
     </div>

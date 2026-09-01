@@ -30,13 +30,13 @@ export function ServiceOfflinePanel({
     <Card>
       <div className="flex flex-col items-center gap-3 py-12 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-          Service Offline
+          Servicio Fuera De Linea
         </p>
         <p aria-live="polite" className="max-w-md text-sm text-text-muted">
           {description}
         </p>
         <Button variant="secondary" onClick={onRetry} isLoading={retrying}>
-          Retry
+          Reintentar
         </Button>
       </div>
     </Card>

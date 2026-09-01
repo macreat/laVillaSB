@@ -34,7 +34,7 @@ export default function OrdersPage() {
         if (isServiceUnavailable(e instanceof ApiError ? e.status : null)) {
           setOffline(true);
         } else {
-          setError(e instanceof Error ? e.message : 'Failed to load orders');
+          setError(e instanceof Error ? e.message : 'Error al cargar pedidos');
         }
       })
       .finally(() => setLoading(false));
@@ -62,48 +62,48 @@ export default function OrdersPage() {
 
   return (
     <div>
-      <TopBar title="Orders" />
+      <TopBar title="Pedidos" />
 
       <div className="space-y-6 p-6">
         <div className="flex items-center justify-between">
           <p className="text-sm text-text-muted" aria-live="polite">
             {state === 'loading'
-              ? 'Loading orders...'
+              ? 'Cargando pedidos...'
               : state === 'ready'
-                ? `${orders.length} order${orders.length !== 1 ? 's' : ''}`
+                ? `${orders.length} pedido${orders.length !== 1 ? 's' : ''}`
                 : '\u00a0'}
           </p>
           <Button variant="secondary" onClick={fetchOrders} isLoading={loading}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
+            Actualizar
           </Button>
         </div>
 
         {state === 'loading' ? (
-          <SkeletonRows label="Loading orders" />
+          <SkeletonRows label="Cargando pedidos" />
         ) : state === 'offline' ? (
           <ServiceOfflinePanel
-            description="The orders service is not responding right now. Orders will appear here once it is back online."
+            description="El servicio de pedidos no esta respondiendo. Los pedidos apareceran cuando vuelva a estar en linea."
             onRetry={fetchOrders}
           />
         ) : error ? (
           <Card>
             <div className="flex flex-col items-center gap-3 py-12 text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">
-                Request Failed
+                Peticion Fallida
               </p>
               <p aria-live="polite" className="text-sm text-text-muted">
                 {error}
               </p>
               <Button variant="secondary" onClick={fetchOrders}>
-                Retry
+                Reintentar
               </Button>
             </div>
           </Card>
         ) : state === 'empty' ? (
           <EmptyStatePanel
-            title="No orders yet"
-            description="Orders placed through the storefront will appear here."
+            title="No hay pedidos aun"
+            description="Los pedidos realizados desde la tienda apareceran aca."
           />
         ) : (
           <Card className="overflow-hidden p-0">
@@ -113,11 +113,11 @@ export default function OrdersPage() {
               </caption>
               <thead>
                 <tr className="border-b border-villa-smoke/25">
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Order</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Customer</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Status</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Pedido</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Cliente</th>
+                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Estado</th>
                   <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Total</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Date</th>
+                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Fecha</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-villa-smoke/25">
@@ -132,12 +132,18 @@ export default function OrdersPage() {
                       <select
                         value={order.status}
                         onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
-                        aria-label={`Change status for order #${order.id}`}
+                        aria-label={`Cambiar estado del pedido #${order.id}`}
                         className="rounded-[2px] border border-border bg-surface px-2 py-1 text-xs font-medium capitalize text-text outline-none transition-colors hover:border-text-muted/50 focus:ring-2 focus:ring-accent"
                       >
-                        {(['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'] as const).map((s) => (
-                          <option key={s} value={s} className="bg-surface text-text">
-                            {s}
+                        {([
+                          { value: 'pending', label: 'pendiente' },
+                          { value: 'confirmed', label: 'confirmado' },
+                          { value: 'shipped', label: 'enviado' },
+                          { value: 'delivered', label: 'entregado' },
+                          { value: 'cancelled', label: 'cancelado' },
+                        ]).map((s) => (
+                          <option key={s.value} value={s.value} className="bg-surface text-text">
+                            {s.label}
                           </option>
                         ))}
                       </select>

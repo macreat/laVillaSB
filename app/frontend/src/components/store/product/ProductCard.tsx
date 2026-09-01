@@ -43,7 +43,7 @@ export function ProductCard({ product }: { product: Product }) {
               })
             }
             className="rounded-md bg-accent/10 p-2 text-accent transition-colors hover:bg-accent hover:text-bg"
-            aria-label={`Add ${product.name} to cart`}
+            aria-label={`Agregar ${product.name} al carrito`}
           >
             <ShoppingCart className="h-4 w-4" />
           </button>

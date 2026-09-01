@@ -12,31 +12,31 @@ const SOCIAL_LINKS = [
 
 const FOOTER_LINKS = [
   {
-    title: 'Shop',
+    title: 'Tienda',
     links: [
-      { label: 'Decks', href: '/products?category=decks' },
-      { label: 'Apparel', href: '/products?category=apparel' },
-      { label: 'Accessories', href: '/products?category=accessories' },
-      { label: 'All Products', href: '/products' },
+      { label: 'Tablas', href: '/products?category=decks' },
+      { label: 'Ropa', href: '/products?category=apparel' },
+      { label: 'Accesorios', href: '/products?category=accessories' },
+      { label: 'Todos Los Productos', href: '/products' },
     ],
   },
   {
-    title: 'Help',
+    title: 'Ayuda',
     links: [
-      { label: 'Contact Us', href: '/account' },
-      { label: 'Shipping Info', href: '/account' },
-      { label: 'Returns', href: '/account' },
-      { label: 'Size Guide', href: '/account' },
+      { label: 'Contacto', href: '/account' },
+      { label: 'Envios', href: '/account' },
+      { label: 'Devoluciones', href: '/account' },
+      { label: 'Guia De Talles', href: '/account' },
     ],
   },
   {
-    title: 'Company',
+    title: 'Compania',
     links: [
-      { label: 'About', href: '/' },
-      { label: 'Team', href: '/' },
-      { label: 'Events', href: '/' },
-      { label: 'Dealers', href: '/' },
-      { label: 'Developer', href: 'https://github.com/Macreat', isExternal: true },
+      { label: 'Nosotros', href: '/' },
+      { label: 'Equipo', href: '/' },
+      { label: 'Eventos', href: '/' },
+      { label: 'Distribuidores', href: '/' },
+      { label: 'Desarrollador', href: 'https://github.com/Macreat', isExternal: true },
     ],
   },
 ];
@@ -80,7 +80,7 @@ export function StoreFooter() {
               <BrandWordmark width={160} />
             </Link>
             <p className="font-sans text-sm text-villa-smoke leading-relaxed max-w-xs">
-              La Villa Skateboarding &mdash; The darker side of skateboarding.
+              La Villa Skateboarding - La villa es la ley del skate.
             </p>
           </div>
 
@@ -121,26 +121,26 @@ export function StoreFooter() {
         <div className="mt-16 border-t border-villa-smoke/25 pt-12">
           <div className="mx-auto max-w-lg text-center">
             <h4 className="font-display text-2xl uppercase tracking-wider text-villa-bone mb-3">
-              Lurk With Us
+              Unite A La Manada
             </h4>
             <p className="font-sans text-sm text-villa-smoke mb-6">
-              Join the mailing list for drops, deals, and skate content.
+              Unite a la lista para drops, ofertas y contenido de skate.
             </p>
             <form className="flex flex-col gap-2 w-full max-w-md mx-auto" onSubmit={handleSubscribe}>
               <label htmlFor="newsletter-tag" className="sr-only">
-                Tag or name
+                Etiqueta o nombre
               </label>
               <input
                 id="newsletter-tag"
                 type="text"
-                placeholder="Your tag or name"
+                placeholder="Tu etiqueta o nombre"
                 value={subTag}
                 onChange={(e) => setSubTag(e.target.value)}
                 className="input-field w-full"
                 required
               />
               <label htmlFor="newsletter-email" className="sr-only">
-                Email address
+                Correo electronico
               </label>
               <input
                 id="newsletter-email"
@@ -156,13 +156,13 @@ export function StoreFooter() {
                 className="btn-secondary"
                 disabled={subscribing}
               >
-                {subscribing ? 'Joining...' : 'Join'}
+                {subscribing ? 'Uniendo...' : 'Unirme'}
               </button>
               {subStatus === 'success' && (
-                <p className="text-sm text-villa-slime">You&apos;re in! Welcome to the lurk.</p>
+                <p className="text-sm text-villa-slime">Listo! Bienvenido a la manada.</p>
               )}
               {subStatus === 'error' && (
-                <p className="text-sm text-villa-blood">Something went wrong. Please try again.</p>
+                <p className="text-sm text-villa-blood">Algo salio mal. Intenta de nuevo.</p>
               )}
             </form>
           </div>
@@ -171,7 +171,7 @@ export function StoreFooter() {
         {/* Bottom */}
         <div className="mt-12 border-t border-villa-smoke/25 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <p className="font-sans text-xs text-villa-smoke">
-            &copy; {new Date().getFullYear()} La Villa Skateboarding. All rights reserved.
+            &copy; {new Date().getFullYear()} La Villa Skateboarding. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-6">
             {SOCIAL_LINKS.map((social) => (

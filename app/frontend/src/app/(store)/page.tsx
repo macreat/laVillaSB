@@ -40,20 +40,20 @@ export default function StoreHomePage() {
               Est. La Villa / Skate / Colombia
             </p>
             <h1 className="font-display text-6xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-7xl lg:-mr-6 lg:text-8xl">
-              The Darker Side
+              La Villa Es La Ley
             </h1>
             <p className="max-w-sm text-base leading-relaxed text-villa-bone/80">
-              Handpicked decks, apparel, and gear for the devoted fiend. Ride with us.
+              Tablas, ropa y equipo seleccionados para los que siguen la ley del skate. Roda con nosotros.
             </p>
             <div className="flex flex-wrap items-center gap-6">
               <Link href="/products" className="btn-primary px-8 py-3 text-base">
-                Shop Now
+                Comprar Ahora
               </Link>
               <Link
                 href="/products?category=decks"
                 className="text-sm font-semibold uppercase tracking-wide text-villa-bone underline decoration-villa-fox decoration-2 underline-offset-4 transition-colors hover:text-villa-fox"
               >
-                Shop Decks
+                Ver Tablas
               </Link>
             </div>
           </div>
@@ -96,10 +96,10 @@ export default function StoreHomePage() {
           />
           <div>
             <h2 className="font-display text-3xl uppercase tracking-wide text-villa-bone sm:text-4xl">
-              Featured
+              Lo Mas Nuevo
             </h2>
             <p className="mt-1 text-sm text-villa-smoke">
-              Fresh drops and skate essentials
+              Drops frescos y lo esencial del skate
             </p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function StoreHomePage() {
         </div>
         <div className="mt-10 text-center">
           <Link href="/products" className="btn-secondary px-8 py-3">
-            View All Products
+            Ver Todos Los Productos
           </Link>
         </div>
       </section>
@@ -120,19 +120,19 @@ export default function StoreHomePage() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 pb-20 pt-24 lg:grid-cols-10 lg:gap-16 lg:px-8 lg:pb-28 lg:pt-32">
           <div className="order-2 lg:order-1 lg:col-span-6">
             <h2 className="font-display text-4xl uppercase tracking-tight text-villa-black sm:text-5xl">
-              Not Here To Fit In
+              No Estamos Para Encajar
             </h2>
             <p className="mt-6 max-w-md text-base leading-relaxed text-villa-black/80">
-              We build for the ones who skate empty parking lots at midnight and
-              never ask permission. Every graphic starts as a sketch on a wall,
-              not a mood board, and the apparel is cut for movement, not for a
-              lookbook.
+              Creamos para los que rodan estacionamientos vacios de madrugada y
+              nunca piden permiso. Cada grafico empieza como un garabato en la
+              pared, no en un mood board, y la ropa esta cortada para el
+              movimiento, no para un catalogo.
             </p>
             <Link
               href="/products?category=apparel"
               className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-slime pb-1 text-sm font-semibold uppercase tracking-wide text-villa-black transition-colors hover:text-villa-slime"
             >
-              Shop Apparel &rarr;
+              Ver Ropa &rarr;
             </Link>
           </div>
           <div className="relative order-1 aspect-[1163/1200] w-full lg:order-2 lg:col-span-4 lg:justify-self-end">
@@ -155,18 +155,18 @@ export default function StoreHomePage() {
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mb-10 text-center">
             <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-teal">
-              Shop By Category
+              Comprar Por Categoria
             </p>
             <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Find Your Style
+              Encuentra Tu Estilo
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {[
-              { label: 'Decks', href: '/products?category=decks' },
-              { label: 'Apparel', href: '/products?category=apparel' },
-              { label: 'Accessories', href: '/products?category=accessories' },
-              { label: 'Gear', href: '/products?category=gear' },
+              { label: 'Tablas', href: '/products?category=decks' },
+              { label: 'Ropa', href: '/products?category=apparel' },
+              { label: 'Accesorios', href: '/products?category=accessories' },
+              { label: 'Equipo', href: '/products?category=gear' },
             ].map((cat) => (
               <Link
                 key={cat.label}
@@ -202,18 +202,18 @@ export default function StoreHomePage() {
               La Villa Skate Shop
             </p>
             <h2 className="mt-3 font-display text-4xl uppercase tracking-tight text-villa-bone sm:text-5xl">
-              Built From The Ground Up
+              Hecho Desde Cero
             </h2>
             <p className="mt-6 max-w-md text-base leading-relaxed text-villa-smoke">
-              La Villa started as a shop counter and a stack of decks nobody
-              else would carry. Years later we still curate every board,
-              graphic, and drop ourselves, no corporate committee involved.
+              La Villa empezo con un mostrador y un monton de tablas que nadie
+              mas queria. Anos despues seguimos seleccionando cada tabla,
+              grafico y drop nosotros mismos, sin comites corporativos.
             </p>
             <Link
               href="/products"
               className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-teal pb-1 text-sm font-semibold uppercase tracking-wide text-villa-bone transition-colors hover:text-villa-teal"
             >
-              Visit The Shop &rarr;
+              Visitar La Tienda &rarr;
             </Link>
           </div>
         </div>
@@ -224,10 +224,10 @@ export default function StoreHomePage() {
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mb-12 text-center">
             <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox">
-              Brand Identity
+              Identidad De Marca
             </p>
             <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Our Logos & Graphics
+              Nuestros Logos Y Graficos
             </h2>
           </div>
           

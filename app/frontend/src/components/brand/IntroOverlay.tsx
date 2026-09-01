@@ -76,13 +76,13 @@ export function IntroOverlay() {
         onClick={dismiss}
         className="btn-secondary absolute right-4 top-4 z-10 px-3 py-2 text-xs"
       >
-        Skip
+        Omitir
       </button>
 
       <div className="intro-credit flex flex-col items-center gap-5">
         <MacreatScript width={96} priority />
         <p className="text-center text-xs uppercase tracking-[0.2em] text-villa-smoke">
-          Performance / Developed / Maintained
+          Rendimiento / Desarrollo / Mantenimiento
         </p>
       </div>
 
