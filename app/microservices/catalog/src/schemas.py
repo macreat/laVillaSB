@@ -68,3 +68,12 @@ class SubscriberOut(BaseModel):
     email: str
     tag: str
     created_at: datetime
+
+
+class NLSearchRequest(BaseModel):
+    query: str
+
+
+class NLSearchResponse(BaseModel):
+    filters: dict
+    products: list[ProductOut]

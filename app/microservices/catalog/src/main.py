@@ -18,11 +18,14 @@ from .schemas import (
     MediaCompleteResponse,
     MediaPresignRequest,
     MediaPresignResponse,
+    NLSearchRequest,
+    NLSearchResponse,
     ProductCreate,
     ProductOut,
     SubscriberCreate,
     SubscriberOut,
 )
+from .nl_search import SearchFilters, _stem_es, parse_query
 from .storage import build_public_url, build_put_url, build_storage_key, ensure_public_bucket
 from .subcategory import classify_subcategory
 
@@ -109,6 +112,112 @@ async def list_products(
     ordered_products = order_products(products)
 
     return [to_product_out(product) for product in ordered_products]
+
+
+def _apply_filters(products: list[Product], filters: SearchFilters) -> list[Product]:
+    """Apply structured search filters to a list of products.
+
+    Uses OR logic for keywords (broader recall) and ranks by relevance.
+    Category/brand/price filters are hard gates.
+    """
+    result = products
+
+    # Filter by category group (hard gate)
+    if filters.category_group:
+        group = filters.category_group.strip().lower()
+        result = [
+            p for p in result
+            if p.category
+            and p.category.category_group
+            and p.category.category_group.strip().lower() == group
+        ]
+
+    # Filter by subcategory (hard gate)
+    if filters.subcategory:
+        sub = filters.subcategory.strip()
+        result = [
+            p for p in result
+            if classify_subcategory(
+                p.category.name if p.category else None,
+                p.name,
+                p.category.category_group if p.category else None,
+            ) == sub
+        ]
+
+    # Filter by price range (hard gate)
+    if filters.min_price is not None:
+        result = [p for p in result if float(p.price) >= filters.min_price]
+    if filters.max_price is not None:
+        result = [p for p in result if float(p.price) <= filters.max_price]
+
+    # Filter by brand keywords (hard gate - must match at least one)
+    if filters.brand_keywords:
+        brand_matched = []
+        for p in result:
+            name_lower = p.name.lower()
+            if any(brand.lower() in name_lower for brand in filters.brand_keywords):
+                brand_matched.append(p)
+        result = brand_matched
+
+    # Keyword scoring (soft gate - OR match with stemming, rank by relevance)
+    if filters.keywords:
+        stemmed_keywords = [_stem_es(kw) for kw in filters.keywords]
+        scored = []
+        for p in result:
+            name_lower = p.name.lower()
+            cat_lower = (p.category.name.lower() if p.category else "")
+            sku_lower = (p.sku.lower() if p.sku else "")
+            desc_lower = (p.description.lower() if p.description else "")
+            search_text = f"{name_lower} {cat_lower} {sku_lower} {desc_lower}"
+
+            # Score using both original and stemmed keywords
+            score = 0
+            for kw, stemmed in zip(filters.keywords, stemmed_keywords):
+                if kw.lower() in search_text or stemmed in search_text:
+                    score += 1
+            if score > 0:
+                scored.append((p, score))
+
+        # Sort by relevance score descending, then by name
+        scored.sort(key=lambda x: (-x[1], x[0].name))
+        result = [p for p, _ in scored]
+
+    return result
+
+
+@app.post("/search", response_model=NLSearchResponse)
+async def nl_search(
+    payload: NLSearchRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    """Natural language product search.
+
+    Accepts a free-text query (Spanish or English), uses an LLM to parse
+    it into structured filters, then applies those filters to the catalog.
+    """
+    filters = await parse_query(payload.query)
+
+    result = await session.execute(
+        select(Product)
+        .options(selectinload(Product.category), selectinload(Product.media))
+        .order_by(Product.id.asc())
+    )
+    products = list(result.scalars().all())
+
+    matched = _apply_filters(products, filters)
+    ordered = order_products(matched)
+
+    return NLSearchResponse(
+        filters={
+            "keywords": filters.keywords,
+            "category_group": filters.category_group,
+            "subcategory": filters.subcategory,
+            "min_price": filters.min_price,
+            "max_price": filters.max_price,
+            "brand_keywords": filters.brand_keywords,
+        },
+        products=[to_product_out(p) for p in ordered],
+    )
 
 
 @app.get("/products/{product_id}", response_model=ProductOut)

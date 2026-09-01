@@ -149,6 +149,9 @@ services:
       S3_BUCKET: catalog-media
       S3_REGION: us-east-1
       CDN_BASE_URL: http://localhost:9000/catalog-media
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      NL_SEARCH_MODEL: ${NL_SEARCH_MODEL:-gpt-4o-mini}
     depends_on:
       postgres:
         condition: service_healthy

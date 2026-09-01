@@ -1,6 +1,7 @@
 import {
   buildCategoryHref,
   displayCategoryGroup,
+  displaySubcategory,
 } from '@/lib/store-catalog';
 
 interface CategorySubtabsProps {
@@ -30,7 +31,7 @@ export function CategorySubtabs({
               aria-label={`View ${tab} products`}
               aria-current={isActive ? 'page' : undefined}
             >
-              {tab}
+              {displaySubcategory(tab)}
             </a>
           );
         })}

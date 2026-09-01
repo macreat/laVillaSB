@@ -16,6 +16,12 @@ Route::put('/admin/me', [AdminAuthController::class, 'updateProfile'])
 Route::get('/v1/catalog/{path?}', [ServiceProxyController::class, 'proxyCatalog'])
     ->where('path', 'health|categories|products|products/[0-9]+|subscribers|subscribers/count');
 
+// Public natural language search (POST, rate-limited).
+Route::post('/v1/catalog/search', function () {
+    return app(\App\Http\Controllers\ServiceProxyController::class)
+        ->proxyCatalog(request(), 'search');
+})->middleware('throttle:10,1');
+
 // Public health checks for all microservices (non-sensitive, useful for monitoring).
 Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxyHealth'])
     ->whereIn('service', ['catalog', 'products', 'inventory', 'orders', 'cart', 'notifications', 'payments', 'users'])

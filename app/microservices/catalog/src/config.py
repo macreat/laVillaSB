@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     s3_region: str = "us-east-1"
     cdn_base_url: str | None = None
     media_presign_expires_seconds: int = 900
+    openai_api_key: str = ""
+    openai_base_url: str = "https://api.openai.com/v1"
+    nl_search_model: str = "gpt-4o-mini"
 
     model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore")
 

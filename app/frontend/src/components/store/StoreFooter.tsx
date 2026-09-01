@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { BrandWordmark } from '@/components/brand/BrandWordmark';
 import { INSTAGRAM_URL, WHATSAPP_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
+
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: INSTAGRAM_URL },
   { label: 'WhatsApp', href: WHATSAPP_URL },
@@ -52,7 +54,10 @@ export function StoreFooter() {
     setSubscribing(true);
     setSubStatus('idle');
     try {
-      const res = await fetch('http://localhost:8010/api/v1/catalog/subscribers', {
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
+
+// ... inside the component:
+      const res = await fetch(`${API_BASE}/api/v1/catalog/subscribers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: subEmail, tag: subTag }),
@@ -80,7 +85,7 @@ export function StoreFooter() {
               <BrandWordmark width={160} />
             </Link>
             <p className="font-sans text-sm text-villa-smoke leading-relaxed max-w-xs">
-              La Villa Skateboarding - La villa es la ley del skate.
+              La Villa Skateboarding - La villa es la ley.
             </p>
           </div>
 

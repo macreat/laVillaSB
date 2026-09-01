@@ -3,20 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '9000',
-        pathname: '/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'minio',
-        port: '9000',
-        pathname: '/**',
-      },
-    ],
+    // Disable Next.js image optimization - media proxy handles serving
+    unoptimized: true,
   },
 };
 

@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     default: 'La Villa Skateboarding',
     template: '%s - La Villa Skateboarding',
   },
-  description: 'La Villa Skateboarding - La villa es la ley del skate. Compra tablas, ropa y equipo.',
+  description: 'La Villa Skateboarding - La villa es la ley. Compra tablas, ropa y equipo.',
   openGraph: {
     title: 'La Villa Skateboarding',
-    description: 'La Villa Skateboarding - La villa es la ley del skate. Compra tablas, ropa y equipo.',
+    description: 'La Villa Skateboarding - La villa es la ley. Compra tablas, ropa y equipo.',
     images: ['/brand/villa-scene.webp'],
   },
 };
