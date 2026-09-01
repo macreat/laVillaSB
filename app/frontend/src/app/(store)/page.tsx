@@ -23,19 +23,19 @@ export default function StoreHomePage() {
       <section className="relative overflow-hidden bg-villa-black">
         <div className="hero-reveal grid grid-cols-1 gap-2 lg:grid-cols-7 lg:gap-3">
           {/* Image zone */}
-          <div className="relative order-1 h-[45vh] min-h-[320px] lg:order-2 lg:col-span-5 lg:h-auto lg:min-h-[450px]">
+          <div className="relative order-1 h-[45vh] min-h-[320px] lg:order-2 lg:col-span-4 lg:h-auto lg:min-h-[450px]">
             <Image
               src={lavillaSbHero.src}
               alt="La Villa SB full brand logo"
               fill
               priority
-              sizes="(min-width: 1024px) 60vw, 100vw"
-              className="object-cover object-center"
+              sizes="(min-width: 1024px) 57vw, 100vw"
+              className="object-contain object-center"
             />
           </div>
 
           {/* Text zone, maroon tinted panel */}
-          <div className="relative order-2 flex flex-col justify-center gap-8 bg-villa-maroon px-6 py-16 lg:order-1 lg:col-span-2 lg:px-12 lg:py-0">
+          <div className="relative order-2 flex flex-col justify-center gap-8 bg-villa-maroon px-6 py-16 lg:order-1 lg:col-span-3 lg:px-12 lg:py-0">
             <p className="font-sans text-xs uppercase tracking-[0.12em] text-villa-smoke">
               Est. La Villa / Skate / Colombia
             </p>
