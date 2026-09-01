@@ -78,6 +78,11 @@
     "width": 1200,
     "height": 1200
   },
+  "lavillaSbHero": {
+    "src": "/brand/lavillasb-hero.webp",
+    "width": 2700,
+    "height": 900
+  },
   "logoOG": {
     "src": "/brand/logoOG.png",
     "width": 200,

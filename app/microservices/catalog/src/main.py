@@ -12,13 +12,16 @@ from .category_groups import resolve_group
 from .config import settings
 from .database import get_session, init_db
 from .merchandising import order_products
-from .models import Category, Media, Product
+from .models import Category, Media, Product, Subscriber
 from .schemas import (
     MediaCompleteRequest,
     MediaCompleteResponse,
     MediaPresignRequest,
     MediaPresignResponse,
+    ProductCreate,
     ProductOut,
+    SubscriberCreate,
+    SubscriberOut,
 )
 from .storage import build_public_url, build_put_url, build_storage_key, ensure_public_bucket
 from .subcategory import classify_subcategory
@@ -122,6 +125,26 @@ async def get_product(product_id: int, session: AsyncSession = Depends(get_sessi
     return to_product_out(product)
 
 
+@app.post("/products", response_model=ProductOut)
+async def create_product(
+    payload: ProductCreate,
+    session: AsyncSession = Depends(get_session),
+):
+    product = Product(
+        name=payload.name,
+        description=payload.description,
+        sku=payload.sku,
+        price=payload.price,
+        category_id=payload.category_id,
+        media_id=payload.media_id,
+        active=payload.active,
+    )
+    session.add(product)
+    await session.commit()
+    await session.refresh(product, ["category", "media"])
+    return to_product_out(product)
+
+
 @app.post("/media/presign", response_model=MediaPresignResponse)
 async def presign_media_upload(
     payload: MediaPresignRequest,
@@ -183,3 +206,29 @@ async def complete_media_upload(
     await session.refresh(media)
 
     return MediaCompleteResponse(id=media.id, status=media.status, variants=media.variants)
+
+
+@app.post("/subscribers", response_model=SubscriberOut)
+async def create_subscriber(payload: SubscriberCreate, session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Subscriber).where(Subscriber.email == payload.email))
+    existing = result.scalars().first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Email already subscribed")
+    sub = Subscriber(email=payload.email, tag=payload.tag)
+    session.add(sub)
+    await session.commit()
+    await session.refresh(sub)
+    return sub
+
+
+@app.get("/subscribers", response_model=list[SubscriberOut])
+async def list_subscribers(session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Subscriber).order_by(Subscriber.id.desc()))
+    return result.scalars().all()
+
+
+@app.get("/subscribers/count")
+async def count_subscribers(session: AsyncSession = Depends(get_session)):
+    from sqlalchemy import func
+    count = (await session.execute(select(func.count(Subscriber.id)))).scalar_one()
+    return {"count": count}

@@ -7,6 +7,7 @@ import { ProductCard } from '@/components/store/product/ProductCard';
 import { fetchStoreProducts, type StoreProduct } from '@/lib/store-catalog';
 import brandManifest from '@/lib/brand-manifest.json';
 
+
 export default function StoreHomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<StoreProduct[]>([]);
 
@@ -14,7 +15,7 @@ export default function StoreHomePage() {
     fetchStoreProducts().then((products) => setFeaturedProducts(products.slice(0, 6)));
   }, []);
 
-  const { villaScene, kunst, lavirgen, stickerFox, sorneroLogo, sorneroFox, lavillaSb, logoOG, logoFuego } = brandManifest;
+  const { villaScene, kunst, lavirgen, stickerFox, sorneroLogo, sorneroFox, lavillaSb, lavillaSbHero, logoOG, logoFuego } = brandManifest;
 
   return (
     <div>
@@ -22,9 +23,9 @@ export default function StoreHomePage() {
       <section className="relative overflow-hidden bg-villa-black">
         <div className="hero-reveal grid grid-cols-1 gap-2 lg:grid-cols-7 lg:gap-3">
           {/* Image zone */}
-          <div className="relative order-1 h-[62vh] min-h-[420px] lg:order-2 lg:col-span-5 lg:h-auto lg:min-h-[600px]">
+          <div className="relative order-1 h-[45vh] min-h-[320px] lg:order-2 lg:col-span-5 lg:h-auto lg:min-h-[450px]">
             <Image
-              src={lavillaSb.src}
+              src={lavillaSbHero.src}
               alt="La Villa SB full brand logo"
               fill
               priority
@@ -219,13 +220,13 @@ export default function StoreHomePage() {
       </section>
 
       {/* 6. Logos & Graphics - Original Brand Identity */}
-      <section className="relative -mt-px bg-villa-smoke py-16 lg:py-24">
+      <section className="relative -mt-px bg-villa-maroon py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mb-12 text-center">
             <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox">
               Brand Identity
             </p>
-            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-black sm:text-4xl">
+            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
               Our Logos & Graphics
             </h2>
           </div>
@@ -233,7 +234,7 @@ export default function StoreHomePage() {
           <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
             {/* Sornero Logo */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={sorneroLogo.src}
                   alt="Sornero La Villa Logo - Main brand mark"
@@ -243,12 +244,12 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">Sornero Logo</p>
+              <p className="text-center text-sm font-medium text-villa-bone">Sornero Logo</p>
             </div>
 
             {/* Sornero Fox */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={sorneroFox.src}
                   alt="Sornero Zorror - Fox mascot illustration"
@@ -258,12 +259,12 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">Sornero Zorror</p>
+              <p className="text-center text-sm font-medium text-villa-bone">Sornero Zorror</p>
             </div>
 
             {/* La Villa SB */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={lavillaSb.src}
                   alt="La Villa Skateboarding - Full brand logo"
@@ -273,12 +274,12 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">La Villa SB</p>
+              <p className="text-center text-sm font-medium text-villa-bone">La Villa SB</p>
             </div>
 
             {/* Logo OG */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={logoOG.src}
                   alt="Logo OG - Original brand mark"
@@ -288,12 +289,12 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">Logo OG</p>
+              <p className="text-center text-sm font-medium text-villa-bone">Logo OG</p>
             </div>
 
             {/* Logo Fuego */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={logoFuego.src}
                   alt="Logo Fuego - Fire variant brand mark"
@@ -303,12 +304,12 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">Logo Fuego</p>
+              <p className="text-center text-sm font-medium text-villa-bone">Logo Fuego</p>
             </div>
 
             {/* Azul Camo */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={brandManifest.azulCamo.src}
                   alt="Azul Camo - Blue camouflage pattern"
@@ -318,12 +319,12 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">Azul Camo</p>
+              <p className="text-center text-sm font-medium text-villa-bone">Azul Camo</p>
             </div>
 
             {/* Fox Mark */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-white p-4">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <Image
                   src={brandManifest.foxMark.src}
                   alt="Fox Mark - Iconic fox symbol"
@@ -333,7 +334,7 @@ export default function StoreHomePage() {
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-black">Fox Mark</p>
+              <p className="text-center text-sm font-medium text-villa-bone">Fox Mark</p>
             </div>
           </div>
         </div>

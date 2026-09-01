@@ -39,6 +39,13 @@ type DashboardOrder = {
   total: number;
 };
 
+type Subscriber = {
+  id: number;
+  email: string;
+  tag: string;
+  created_at: string;
+};
+
 export default function DashboardPage() {
   const [stats, setStats] = useState<StatDatum[]>([
     { label: 'Total Products', value: '—', icon: 'package', change: 'Catalog service pending', changeType: 'neutral' },
@@ -48,6 +55,8 @@ export default function DashboardPage() {
   ]);
   const [recentOrders, setRecentOrders] = useState<DashboardOrder[] | null>(null);
   const [topProducts, setTopProducts] = useState<string[] | null>(null);
+  const [subscribers, setSubscribers] = useState<Subscriber[] | null>(null);
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
 
   useEffect(() => {
     let active = true;
@@ -128,6 +137,20 @@ export default function DashboardPage() {
     loadProducts();
     loadOrders();
     loadSummary();
+
+    const loadSubscribers = async () => {
+      try {
+        const res = await api.proxyGet<unknown>('catalog', 'subscribers');
+        const raw = Array.isArray(res) ? res : [];
+        if (!active) return;
+        setSubscribers(raw as Subscriber[]);
+        setSubscriberCount(raw.length);
+      } catch {
+        if (!active) return;
+        setSubscribers([]);
+      }
+    };
+    loadSubscribers();
 
     return () => {
       active = false;
@@ -212,6 +235,47 @@ export default function DashboardPage() {
             )}
           </Card>
         </div>
+
+        <Card className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-display text-lg tracking-wide text-text">
+              LURK SUBSCRIBERS
+            </h3>
+            <span className="text-xs text-text-muted">{subscriberCount} total</span>
+          </div>
+          {subscribers !== null ? (
+            subscribers.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-villa-smoke/25">
+                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Tag</th>
+                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Email</th>
+                      <th className="pb-2 text-left text-xs font-semibold uppercase tracking-wider text-text-muted">Joined</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-villa-smoke/25">
+                    {subscribers.map((sub) => (
+                      <tr key={sub.id}>
+                        <td className="py-2 font-medium text-text">{sub.tag}</td>
+                        <td className="py-2 text-text-muted">{sub.email}</td>
+                        <td className="py-2 text-text-muted text-xs">{new Date(sub.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border">
+                <p className="text-sm text-text-muted">No subscribers yet.</p>
+              </div>
+            )
+          ) : (
+            <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border">
+              <p className="text-sm text-text-muted">Loading subscribers...</p>
+            </div>
+          )}
+        </Card>
 
         <Card className="mt-6">
           <h3 className="mb-3 font-display text-lg uppercase tracking-wide text-text">

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { BrandWordmark } from '@/components/brand/BrandWordmark';
 import { INSTAGRAM_URL, WHATSAPP_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
@@ -41,6 +42,34 @@ const FOOTER_LINKS = [
 ];
 
 export function StoreFooter() {
+  const [subTag, setSubTag] = useState('');
+  const [subEmail, setSubEmail] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+  const [subStatus, setSubStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubscribing(true);
+    setSubStatus('idle');
+    try {
+      const res = await fetch('http://localhost:8010/api/v1/catalog/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: subEmail, tag: subTag }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.detail || 'Failed to subscribe');
+      }
+      setSubStatus('success');
+      setSubEmail('');
+      setSubTag('');
+    } catch {
+      setSubStatus('error');
+    } finally {
+      setSubscribing(false);
+    }
+  };
   return (
     <footer className="bg-villa-black border-t border-villa-smoke/25">
       <div className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
@@ -97,7 +126,19 @@ export function StoreFooter() {
             <p className="font-sans text-sm text-villa-smoke mb-6">
               Join the mailing list for drops, deals, and skate content.
             </p>
-            <form className="flex gap-2 w-full max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col gap-2 w-full max-w-md mx-auto" onSubmit={handleSubscribe}>
+              <label htmlFor="newsletter-tag" className="sr-only">
+                Tag or name
+              </label>
+              <input
+                id="newsletter-tag"
+                type="text"
+                placeholder="Your tag or name"
+                value={subTag}
+                onChange={(e) => setSubTag(e.target.value)}
+                className="input-field w-full"
+                required
+              />
               <label htmlFor="newsletter-email" className="sr-only">
                 Email address
               </label>
@@ -105,16 +146,24 @@ export function StoreFooter() {
                 id="newsletter-email"
                 type="email"
                 placeholder="you@example.com"
-                className="input-field flex-1"
+                value={subEmail}
+                onChange={(e) => setSubEmail(e.target.value)}
+                className="input-field w-full"
+                required
               />
               <button 
                 type="submit" 
-                className="btn-secondary opacity-50 cursor-not-allowed hover:bg-surface hover:scale-100" 
-                disabled 
-                title="Coming soon"
+                className="btn-secondary"
+                disabled={subscribing}
               >
-                Join
+                {subscribing ? 'Joining...' : 'Join'}
               </button>
+              {subStatus === 'success' && (
+                <p className="text-sm text-villa-slime">You&apos;re in! Welcome to the lurk.</p>
+              )}
+              {subStatus === 'error' && (
+                <p className="text-sm text-villa-blood">Something went wrong. Please try again.</p>
+              )}
             </form>
           </div>
         </div>

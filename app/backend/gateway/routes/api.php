@@ -14,7 +14,7 @@ Route::put('/admin/me', [AdminAuthController::class, 'updateProfile'])
 
 // Public catalog allowlist - read-only endpoints only.
 Route::get('/v1/catalog/{path?}', [ServiceProxyController::class, 'proxyCatalog'])
-    ->where('path', 'health|categories|products|products/[0-9]+');
+    ->where('path', 'health|categories|products|products/[0-9]+|subscribers|subscribers/count');
 
 // Public health checks for all microservices (non-sensitive, useful for monitoring).
 Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxyHealth'])
@@ -23,8 +23,8 @@ Route::get('/v1/{service}/health', [ServiceProxyController::class, 'proxyHealth'
 
 // Public order creation for storefront checkout (no auth, rate-limited).
 Route::post('/v1/{service}/{path}', [ServiceProxyController::class, 'proxy'])
-    ->whereIn('service', ['cart', 'orders'])
-    ->where('path', 'orders')
+    ->whereIn('service', ['cart', 'orders', 'catalog'])
+    ->where('path', 'orders|subscribers')
     ->middleware('throttle:20,1');
 
 Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureAdmin::class])->group(function () {

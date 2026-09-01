@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Villa SB - Skateboarding E-Commerce Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #050b18;
+  --surface: #0b1630;
+  --surface-elevated: #11213f;
+  --accent: #4f83f1;
+  --accent-hover: #6e99f4;
+  --cyan: #00d4ff;
+  --maroon: #132b5e;
+  --border: #1d3057;
+  --text: #e9eef8;
+  --text-muted: #93a5c9;
+  --danger: #a81c13;
+  --slime: #a8d24a;
+  --teal: #2aa8c9;
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  background: var(--bg);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+/* Section base */
+section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4rem 2rem;
+}
+
+/* Grid background */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(79,131,241,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,131,241,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* Particle dots */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--cyan);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFloat 8s infinite ease-in-out;
+}
+
+@keyframes particleFloat {
+  0% { opacity: 0; transform: translateY(100vh) scale(0); }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+}
+
+/* Glow line */
+.glow-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.3;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.4; }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; }
+.reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.12s; }
+.reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.19s; }
+.reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.26s; }
+.reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.33s; }
+.reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.40s; }
+.reveal-stagger.visible > *:nth-child(7) { transition-delay: 0.47s; }
+.reveal-stagger.visible > *:nth-child(8) { transition-delay: 0.54s; }
+.reveal-stagger.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Progress dots */
+.progress-nav {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.progress-dot.active {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+}
+.progress-dot:hover {
+  transform: scale(1.4);
+  border-color: var(--cyan);
+}
+.progress-dot .tooltip {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  font-family: var(--font-body);
+}
+.progress-dot:hover .tooltip { opacity: 1; }
+
+/* Top bar */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: rgba(5,11,24,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(79,131,241,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 100;
+}
+.top-bar-logo {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.top-bar-links {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.top-bar-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.top-bar-links a:hover { color: var(--cyan); }
+
+/* Section number label */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* ===== SECTION 1: HERO ===== */
+.hero {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(79,131,241,0.08) 0%, transparent 70%);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  letter-spacing: 4px;
+  line-height: 1.05;
+  text-align: center;
+  background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: heroGradient 6s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+@keyframes heroGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 1.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-align: center;
+  margin-top: 2.5rem;
+  padding: 6px 16px;
+  border: 1px solid rgba(79,131,241,0.3);
+  border-radius: 999px;
+  display: inline-block;
+  letter-spacing: 2px;
+}
+.hero-container {
+  text-align: center;
+}
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+.scroll-arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 1.5px solid var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  transform: rotate(45deg);
+}
+
+/* ===== SECTION 2: EXEC SUMMARY ===== */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-width: 900px;
+  width: 100%;
+}
+.stat-card {
+  background: rgba(11,22,48,0.6);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.stat-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 30px rgba(79,131,241,0.1);
+  transform: translateY(-4px);
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.stat-card:hover::before { opacity: 1; }
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--cyan);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.stat-detail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+.exec-features {
+  max-width: 900px;
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+.exec-feature {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition: border-color 0.3s, color 0.3s;
+}
+.exec-feature:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* ===== SECTION 3: ARCHITECTURE ===== */
+.arch-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+.arch-node {
+  background: rgba(11,22,48,0.8);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.2rem 1.8rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s;
+  min-width: 130px;
+}
+.arch-node:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 25px rgba(0,212,255,0.15);
+  transform: translateY(-3px);
+}
+.arch-node-name {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+.arch-node-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.arch-arrow {
+  color: var(--cyan);
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+  opacity: 0.5;
+  animation: arrowPulse 2s ease-in-out infinite;
+}
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  max-width: 1000px;
+  width: 100%;
+}
+.service-card {
+  background: rgba(11,22,48,0.5);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.service-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(79,131,241,0.1);
+}
+.service-card .svc-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+.svc-db { background: rgba(79,131,241,0.15); color: var(--accent); }
+.svc-cache { background: rgba(168,210,74,0.15); color: var(--slime); }
+.svc-search { background: rgba(0,212,255,0.15); color: var(--cyan); }
+.svc-storage { background: rgba(42,168,201,0.15); color: var(--teal); }
+.svc-queue { background: rgba(168,28,19,0.15); color: #ef6b6b; }
+.svc-msg { background: rgba(79,131,241,0.15); color: var(--accent); }
+.service-card h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.service-card p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ===== SECTION 4: FEATURES ===== */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+.feature-col {
+  background: rgba(11,22,48,0.4);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.feature-col:hover {
+  border-color: rgba(79,131,241,0.4);
+  box-shadow: 0 0 40px rgba(79,131,241,0.08);
+}
+.feature-col::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 20px 20px 0 0;
+}
+.feature-col.storefront::before { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+.feature-col.admin::before { background: linear-gradient(90deg, var(--slime), var(--teal)); }
+.feature-col h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.feature-col h3 .icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.storefront .icon-circle { background: rgba(79,131,241,0.15); }
+.admin .icon-circle { background: rgba(168,210,74,0.15); }
+.feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.feature-list li .check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  margin-top: 2px;
+}
+.storefront .check { background: rgba(79,131,241,0.15); color: var(--accent); }
+.admin .check { background: rgba(168,210,74,0.15); color: var(--slime); }
+
+/* ===== SECTION 5: TECH STACK ===== */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+.tech-card {
+  background: rgba(11,22,48,0.5);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.tech-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(79,131,241,0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.tech-card:hover::after { opacity: 1; }
+.tech-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(79,131,241,0.1);
+}
+.tech-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.tech-card h4 {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.tech-card p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ===== SECTION 6: STATUS ===== */
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 900px;
+  width: 100%;
+}
+.status-panel {
+  background: rgba(11,22,48,0.5);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+}
+.status-panel h3 {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+.health-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(29,48,87,0.4);
+}
+.health-row:last-child { border-bottom: none; }
+.health-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--slime);
+  box-shadow: 0 0 8px var(--slime);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 4px var(--slime); }
+  50% { box-shadow: 0 0 12px var(--slime); }
+}
+.health-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+.health-value {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--slime);
+}
+.revenue-display {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+.revenue-amount {
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 0.3rem;
+}
+.revenue-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.revenue-orders {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 1rem;
+}
+.gap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+.gap-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.gap-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(168,28,19,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: #ef6b6b;
+  flex-shrink: 0;
+}
+
+/* ===== SECTION 7: DEPLOYMENT ===== */
+.deploy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+.deploy-panel {
+  background: rgba(11,22,48,0.5);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+}
+.deploy-panel h3 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.deploy-panel .deploy-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.timeline-step {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  padding-bottom: 1.2rem;
+}
+.timeline-step:last-child { padding-bottom: 0; }
+.timeline-step::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 24px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.timeline-step:last-child::before { display: none; }
+.timeline-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  background: var(--bg);
+  position: relative;
+  z-index: 1;
+}
+.timeline-content {
+  padding-top: 2px;
+}
+.timeline-content h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+.timeline-content p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.deploy-frontend .timeline-dot { border-color: var(--cyan); color: var(--cyan); }
+.deploy-backend .timeline-dot { border-color: var(--slime); color: var(--slime); }
+
+/* ===== SECTION 8: COST & TIMELINE ===== */
+.cost-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+.cost-panel, .timeline-panel {
+  background: rgba(11,22,48,0.5);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+}
+.cost-panel h3, .timeline-panel h3 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+.cost-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(29,48,87,0.4);
+}
+.cost-row:last-child { border-bottom: none; }
+.cost-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(29,48,87,0.5);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cost-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  width: 0%;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cost-name {
+  font-size: 0.85rem;
+  min-width: 100px;
+}
+.cost-amount {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--cyan);
+  min-width: 70px;
+  text-align: right;
+}
+.cost-total {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cost-total-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.cost-total-value {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.dev-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(29,48,87,0.4);
+}
+.dev-row:last-child { border-bottom: none; }
+.dev-label {
+  font-size: 0.85rem;
+  min-width: 140px;
+}
+.dev-hours {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ===== SECTION 9: NEXT STEPS ===== */
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1100px;
+  width: 100%;
+}
+.phase-card {
+  background: rgba(11,22,48,0.5);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.phase-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(79,131,241,0.08);
+}
+.phase-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.phase-card.p1::before { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+.phase-card.p2::before { background: linear-gradient(90deg, var(--slime), var(--teal)); }
+.phase-card.p3::before { background: linear-gradient(90deg, #ef6b6b, #f59e0b); }
+.phase-number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.phase-card.p2 .phase-number { color: var(--slime); }
+.phase-card.p3 .phase-number { color: #ef6b6b; }
+.phase-card h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+.phase-tasks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.phase-tasks li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.task-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.task-check.done {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ===== SECTION 10: CTA ===== */
+.cta-section {
+  text-align: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(79,131,241,0.1) 0%, transparent 70%);
+}
+.cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+}
+.cta-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+.cta-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cta-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  background: rgba(11,22,48,0.5);
+}
+.cta-link:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(79,131,241,0.15);
+  transform: translateY(-2px);
+}
+.cta-link .link-icon {
+  font-size: 1.2rem;
+}
+
+/* Footer */
+.footer {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  section { padding: 3rem 1.2rem; }
+  .progress-nav { right: 0.75rem; }
+  .progress-dot { width: 8px; height: 8px; }
+  .progress-dot .tooltip { display: none; }
+  .features-grid, .status-grid, .deploy-grid, .cost-grid { grid-template-columns: 1fr; }
+  .roadmap { grid-template-columns: 1fr; }
+  .arch-flow { gap: 0.5rem; }
+  .arch-arrow { font-size: 0.9rem; padding: 0 0.25rem; }
+  .arch-node { padding: 0.8rem 1rem; min-width: 90px; }
+  .arch-node-name { font-size: 0.7rem; }
+  .top-bar-links { display: none; }
+  .stat-value { font-size: 2rem; }
+  .revenue-amount { font-size: 1.8rem; }
+  .tech-grid { grid-template-columns: repeat(2, 1fr); }
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .tech-grid { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-logo">LA VILLA SB</div>
+  <div class="top-bar-links">
+    <a href="#hero">Home</a>
+    <a href="#summary">Summary</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#features">Features</a>
+    <a href="#tech">Tech</a>
+    <a href="#status">Status</a>
+    <a href="#deploy">Deploy</a>
+    <a href="#cost">Cost</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#contact">Contact</a>
+  </div>
+</div>
+
+<!-- Progress Dots -->
+<nav class="progress-nav" id="progressNav">
+  <div class="progress-dot active" data-section="0"><span class="tooltip">Hero</span></div>
+  <div class="progress-dot" data-section="1"><span class="tooltip">Summary</span></div>
+  <div class="progress-dot" data-section="2"><span class="tooltip">Architecture</span></div>
+  <div class="progress-dot" data-section="3"><span class="tooltip">Features</span></div>
+  <div class="progress-dot" data-section="4"><span class="tooltip">Tech Stack</span></div>
+  <div class="progress-dot" data-section="5"><span class="tooltip">Status</span></div>
+  <div class="progress-dot" data-section="6"><span class="tooltip">Deploy</span></div>
+  <div class="progress-dot" data-section="7"><span class="tooltip">Cost</span></div>
+  <div class="progress-dot" data-section="8"><span class="tooltip">Roadmap</span></div>
+  <div class="progress-dot" data-section="9"><span class="tooltip">Contact</span></div>
+</nav>
+
+<!-- ===== SECTION 1: HERO ===== -->
+<section class="hero" id="hero">
+  <div class="grid-bg"></div>
+  <div class="particles" id="heroParticles"></div>
+  <div class="glow-line" style="width:60%; top:30%; left:20%;"></div>
+  <div class="glow-line" style="width:40%; bottom:25%; left:30%; animation-delay:2s;"></div>
+  <div class="hero-container reveal">
+    <div class="section-label">Project Demo 2026</div>
+    <h1 class="hero-title">LA VILLA SB</h1>
+    <p class="hero-subtitle">Skateboarding E-Commerce Platform</p>
+    <div class="hero-tag">FULL-STACK MVP COMPLETE</div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+  <div class="footer">Powered by Macreat</div>
+</section>
+
+<!-- ===== SECTION 2: EXECUTIVE SUMMARY ===== -->
+<section id="summary">
+  <div class="grid-bg"></div>
+  <div style="max-width:1000px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">02 - Executive Summary</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2rem;">MVP Complete</h2>
+    </div>
+    <div class="stat-grid reveal-stagger">
+      <div class="stat-card">
+        <div class="stat-value" data-target="13">0</div>
+        <div class="stat-label">Containers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" data-target="1500" data-prefix="">0</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" data-target="6">0</div>
+        <div class="stat-label">Microservices</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" data-target="100" data-suffix="%">0</div>
+        <div class="stat-label">Health Check</div>
+      </div>
+    </div>
+    <div class="exec-features reveal-stagger" style="margin-top:2rem;">
+      <span class="exec-feature">WhatsApp Checkout Flow</span>
+      <span class="exec-feature">Admin Dashboard</span>
+      <span class="exec-feature">Docker Compose</span>
+      <span class="exec-feature">Twilio SMS</span>
+      <span class="exec-feature">13 Production Containers</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3: ARCHITECTURE ===== -->
+<section id="architecture">
+  <div class="grid-bg"></div>
+  <div style="max-width:1100px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">03 - Architecture Overview</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">System Architecture</h2>
+    </div>
+    <div class="arch-flow reveal-stagger">
+      <div class="arch-node">
+        <div class="arch-node-name">Next.js</div>
+        <div class="arch-node-desc">Frontend</div>
+      </div>
+      <div class="arch-arrow">&#10132;</div>
+      <div class="arch-node">
+        <div class="arch-node-name">Laravel</div>
+        <div class="arch-node-desc">Gateway</div>
+      </div>
+      <div class="arch-arrow">&#10132;</div>
+      <div class="arch-node">
+        <div class="arch-node-name">FastAPI</div>
+        <div class="arch-node-desc">Services</div>
+      </div>
+      <div class="arch-arrow">&#10132;</div>
+      <div class="arch-node">
+        <div class="arch-node-name">PostgreSQL</div>
+        <div class="arch-node-desc">Primary DB</div>
+      </div>
+    </div>
+    <div class="services-grid reveal-stagger">
+      <div class="service-card">
+        <div class="svc-icon svc-db">PG</div>
+        <h4>PostgreSQL</h4>
+        <p>Primary database</p>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon svc-cache">R</div>
+        <h4>Redis</h4>
+        <p>Cache &amp; sessions</p>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon svc-search">M</div>
+        <h4>Meilisearch</h4>
+        <p>Product search</p>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon svc-storage">MinIO</div>
+        <h4>MinIO</h4>
+        <p>Object storage</p>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon svc-queue">RMQ</div>
+        <h4>RabbitMQ</h4>
+        <p>Message broker</p>
+      </div>
+      <div class="service-card">
+        <div class="svc-icon svc-msg">Tw</div>
+        <h4>Twilio</h4>
+        <p>SMS notifications</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 4: FEATURES ===== -->
+<section id="features">
+  <div class="grid-bg"></div>
+  <div style="max-width:1000px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">04 - Key Features</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">Feature Breakdown</h2>
+    </div>
+    <div class="features-grid reveal-stagger">
+      <div class="feature-col storefront">
+        <h3><span class="icon-circle">&#9733;</span> Storefront</h3>
+        <ul class="feature-list">
+          <li><span class="check">&#10003;</span> 1,500 products with categories</li>
+          <li><span class="check">&#10003;</span> WhatsApp checkout integration</li>
+          <li><span class="check">&#10003;</span> Product search (Meilisearch)</li>
+          <li><span class="check">&#10003;</span> Responsive mobile-first design</li>
+          <li><span class="check">&#10003;</span> Cart &amp; order management</li>
+        </ul>
+      </div>
+      <div class="feature-col admin">
+        <h3><span class="icon-circle">&#9881;</span> Admin Dashboard</h3>
+        <ul class="feature-list">
+          <li><span class="check">&#10003;</span> Real-time inventory editing</li>
+          <li><span class="check">&#10003;</span> Order management &amp; tracking</li>
+          <li><span class="check">&#10003;</span> Product search &amp; filtering</li>
+          <li><span class="check">&#10003;</span> Revenue analytics ($480,000 COP)</li>
+          <li><span class="check">&#10003;</span> Multi-user access control</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 5: TECH STACK ===== -->
+<section id="tech">
+  <div class="grid-bg"></div>
+  <div style="max-width:1000px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">05 - Tech Stack</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">Technology Stack</h2>
+    </div>
+    <div class="tech-grid reveal-stagger">
+      <div class="tech-card">
+        <div class="tech-icon">&#9889;</div>
+        <h4>Next.js</h4>
+        <p>Frontend SSR</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#9733;</div>
+        <h4>Laravel</h4>
+        <p>API Gateway</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#9881;</div>
+        <h4>FastAPI</h4>
+        <p>Microservices</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#128451;</div>
+        <h4>PostgreSQL</h4>
+        <p>Primary DB</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#9889;</div>
+        <h4>Redis</h4>
+        <p>Cache &amp; Queue</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#128269;</div>
+        <h4>Meilisearch</h4>
+        <p>Full-text Search</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#9729;</div>
+        <h4>MinIO</h4>
+        <p>Object Storage</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#128227;</div>
+        <h4>RabbitMQ</h4>
+        <p>Message Broker</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#128203;</div>
+        <h4>Docker</h4>
+        <p>Containerization</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#128172;</div>
+        <h4>Twilio</h4>
+        <p>SMS Notifications</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#128172;</div>
+        <h4>WhatsApp</h4>
+        <p>Order Channel</p>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon">&#9729;</div>
+        <h4>Vercel</h4>
+        <p>Frontend Deploy</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6: STATUS ===== -->
+<section id="status">
+  <div class="grid-bg"></div>
+  <div style="max-width:900px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">06 - Current Status</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">System Status</h2>
+    </div>
+    <div class="status-grid reveal-stagger">
+      <div class="status-panel">
+        <h3>System Health</h3>
+        <div class="health-row">
+          <div class="health-dot"></div>
+          <span class="health-label">Containers running</span>
+          <span class="health-value">13/13</span>
+        </div>
+        <div class="health-row">
+          <div class="health-dot"></div>
+          <span class="health-label">Microservices healthy</span>
+          <span class="health-value">6/6</span>
+        </div>
+        <div class="health-row">
+          <div class="health-dot"></div>
+          <span class="health-label">PostgreSQL</span>
+          <span class="health-value">Connected</span>
+        </div>
+        <div class="health-row">
+          <div class="health-dot"></div>
+          <span class="health-label">Redis cache</span>
+          <span class="health-value">Active</span>
+        </div>
+      </div>
+      <div class="status-panel">
+        <h3>Revenue &amp; Orders</h3>
+        <div class="revenue-display">
+          <div class="revenue-amount">$480,000</div>
+          <div class="revenue-label">COP Revenue (Delivered)</div>
+          <div class="revenue-orders">12 orders processed</div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="margin-top:2rem;">
+      <div class="status-panel" style="max-width:900px;">
+        <h3>Known Gaps</h3>
+        <div class="gap-list">
+          <div class="gap-item"><span class="gap-icon">!</span> Payment gateway integration pending</div>
+          <div class="gap-item"><span class="gap-icon">!</span> Email notification templates needed</div>
+          <div class="gap-item"><span class="gap-icon">!</span> CI/CD pipeline not configured</div>
+          <div class="gap-item"><span class="gap-icon">!</span> Production SSL certificates required</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 7: DEPLOYMENT ===== -->
+<section id="deploy">
+  <div class="grid-bg"></div>
+  <div style="max-width:1000px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">07 - Vercel Deployment</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">Deployment Strategy</h2>
+    </div>
+    <div class="deploy-grid reveal-stagger">
+      <div class="deploy-panel deploy-frontend">
+        <h3>Frontend - Vercel</h3>
+        <div class="deploy-sub">Serverless edge deployment</div>
+        <div class="timeline">
+          <div class="timeline-step"><div class="timeline-dot">1</div><div class="timeline-content"><h4>Connect GitHub repo</h4><p>Link repository to Vercel</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">2</div><div class="timeline-content"><h4>Set framework: Next.js</h4><p>Auto-detect build config</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">3</div><div class="timeline-content"><h4>Environment variables</h4><p>API_URL pointing to backend</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">4</div><div class="timeline-content"><h4>Deploy preview on PR</h4><p>Automatic preview deployments</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">5</div><div class="timeline-content"><h4>Custom domain + SSL</h4><p>Auto-provisioned certificates</p></div></div>
+        </div>
+      </div>
+      <div class="deploy-panel deploy-backend">
+        <h3>Backend - VPS / Containers</h3>
+        <div class="deploy-sub">Self-hosted Docker Compose</div>
+        <div class="timeline">
+          <div class="timeline-step"><div class="timeline-dot">1</div><div class="timeline-content"><h4>Deploy to VPS</h4><p>Hetzner or DigitalOcean</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">2</div><div class="timeline-content"><h4>Docker Compose up</h4><p>All 13 containers</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">3</div><div class="timeline-content"><h4>Nginx reverse proxy + SSL</h4><p>Let's Encrypt certificates</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">4</div><div class="timeline-content"><h4>Custom domain</h4><p>api.lavillaskateboarding.com</p></div></div>
+          <div class="timeline-step"><div class="timeline-dot">5</div><div class="timeline-content"><h4>Frontend proxies to API</h4><p>Unified domain routing</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 8: COST & TIMELINE ===== -->
+<section id="cost">
+  <div class="grid-bg"></div>
+  <div style="max-width:1000px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">08 - Cost &amp; Timeline</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">Estimates</h2>
+    </div>
+    <div class="cost-grid reveal-stagger">
+      <div class="cost-panel">
+        <h3>Monthly Hosting Cost</h3>
+        <div class="cost-row">
+          <span class="cost-name">Vercel Pro</span>
+          <div class="cost-bar-wrap"><div class="cost-bar" data-width="30"></div></div>
+          <span class="cost-amount">$20</span>
+        </div>
+        <div class="cost-row">
+          <span class="cost-name">VPS (4 vCPU)</span>
+          <div class="cost-bar-wrap"><div class="cost-bar" data-width="60"></div></div>
+          <span class="cost-amount">$40</span>
+        </div>
+        <div class="cost-row">
+          <span class="cost-name">Domain + SSL</span>
+          <div class="cost-bar-wrap"><div class="cost-bar" data-width="5"></div></div>
+          <span class="cost-amount">$1</span>
+        </div>
+        <div class="cost-row">
+          <span class="cost-name">Monitoring</span>
+          <div class="cost-bar-wrap"><div class="cost-bar" data-width="8"></div></div>
+          <span class="cost-amount">$5</span>
+        </div>
+        <div class="cost-total">
+          <span class="cost-total-label">Total Monthly</span>
+          <span class="cost-total-value">~$66/mo</span>
+        </div>
+      </div>
+      <div class="timeline-panel">
+        <h3>Development Hours</h3>
+        <div class="dev-row">
+          <span class="dev-label">MVP Development</span>
+          <span class="dev-hours">~120 hrs</span>
+        </div>
+        <div class="dev-row">
+          <span class="dev-label">Frontend polish</span>
+          <span class="dev-hours">~40 hrs</span>
+        </div>
+        <div class="dev-row">
+          <span class="dev-label">Backend hardening</span>
+          <span class="dev-hours">~60 hrs</span>
+        </div>
+        <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border); display:flex; justify-content:space-between;">
+          <span style="font-size:0.9rem; font-weight:600;">Total Hours</span>
+          <span style="font-family:var(--font-mono); font-size:1.2rem; font-weight:700; color:var(--accent);">~220 hrs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 9: NEXT STEPS ===== -->
+<section id="roadmap">
+  <div class="grid-bg"></div>
+  <div style="max-width:1100px; width:100%;">
+    <div class="reveal">
+      <div class="section-label">09 - Next Steps</div>
+      <h2 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; margin-bottom:2.5rem;">Roadmap</h2>
+    </div>
+    <div class="roadmap reveal-stagger">
+      <div class="phase-card p1">
+        <div class="phase-number">Phase 1</div>
+        <h3>Production Deployment</h3>
+        <ul class="phase-tasks">
+          <li><span class="task-check done">&#10003;</span> Deploy frontend to Vercel</li>
+          <li><span class="task-check done">&#10003;</span> Set up VPS with Docker Compose</li>
+          <li><span class="task-check done">&#10003;</span> Configure SSL + custom domain</li>
+        </ul>
+      </div>
+      <div class="phase-card p2">
+        <div class="phase-number">Phase 2</div>
+        <h3>Payment Integration</h3>
+        <ul class="phase-tasks">
+          <li><span class="task-check"></span> Stripe/PayU integration</li>
+          <li><span class="task-check"></span> WhatsApp payment confirmation</li>
+          <li><span class="task-check"></span> Invoice generation</li>
+        </ul>
+      </div>
+      <div class="phase-card p3">
+        <div class="phase-number">Phase 3</div>
+        <h3>Production Hardening</h3>
+        <ul class="phase-tasks">
+          <li><span class="task-check"></span> CI/CD pipeline (GitHub Actions)</li>
+          <li><span class="task-check"></span> Monitoring &amp; alerting</li>
+          <li><span class="task-check"></span> Performance optimization</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 10: CTA ===== -->
+<section class="cta-section" id="contact">
+  <div class="grid-bg"></div>
+  <div class="particles" id="ctaParticles"></div>
+  <div class="glow-line" style="width:50%; top:20%; left:25%;"></div>
+  <div class="reveal" style="text-align:center;">
+    <div class="section-label" style="justify-content:center;">10 - Let's Connect</div>
+    <h2 class="cta-title">Ready for Launch</h2>
+    <p class="cta-subtitle">La Villa SB - Skateboarding E-Commerce Platform</p>
+    <div class="cta-links">
+      <a href="https://wa.me/573245710972" target="_blank" rel="noopener noreferrer" class="cta-link">
+        <span class="link-icon">&#128172;</span> WhatsApp
+      </a>
+      <a href="https://instagram.com/lavillaskateboarding" target="_blank" rel="noopener noreferrer" class="cta-link">
+        <span class="link-icon">&#128247;</span> Instagram
+      </a>
+    </div>
+    <div style="margin-top:3rem; font-size:0.8rem; color:var(--text-muted);">La Villa SB Team</div>
+  </div>
+  <div class="footer">Powered by Macreat</div>
+</section>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ===== Particles ===== */
+  function createParticles(containerId, count) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = (6 + Math.random() * 6) + 's';
+      var size = 2 + Math.random() * 3;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      container.appendChild(p);
+    }
+  }
+  createParticles('heroParticles', 30);
+  createParticles('ctaParticles', 20);
+
+  /* ===== Intersection Observer for reveals ===== */
+  var revealEls = document.querySelectorAll('.reveal, .reveal-stagger');
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el) { revealObserver.observe(el); });
+
+  /* ===== Count-up animation ===== */
+  var counted = false;
+  var statValues = document.querySelectorAll('.stat-value[data-target]');
+  var statObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !counted) {
+        counted = true;
+        statValues.forEach(function(el) {
+          var target = parseInt(el.getAttribute('data-target'), 10);
+          var suffix = el.getAttribute('data-suffix') || '';
+          var duration = 1500;
+          var startTime = null;
+          function step(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.floor(eased * target);
+            el.textContent = current.toLocaleString() + suffix;
+            if (progress < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  statValues.forEach(function(el) { statObserver.observe(el); });
+
+  /* ===== Cost bar animation ===== */
+  var costBars = document.querySelectorAll('.cost-bar');
+  var costObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var bar = entry.target;
+        var w = bar.getAttribute('data-width');
+        setTimeout(function() { bar.style.width = w + '%'; }, 200);
+      }
+    });
+  }, { threshold: 0.3 });
+  costBars.forEach(function(el) { costObserver.observe(el); });
+
+  /* ===== Progress dots ===== */
+  var sections = document.querySelectorAll('section');
+  var dots = document.querySelectorAll('.progress-dot');
+
+  var sectionObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var idx = Array.prototype.indexOf.call(sections, entry.target);
+        dots.forEach(function(d, i) {
+          d.classList.toggle('active', i === idx);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(function(s) { sectionObserver.observe(s); });
+
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      var idx = parseInt(dot.getAttribute('data-section'), 10);
+      sections[idx].scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  /* ===== Keyboard navigation ===== */
+  var currentSection = 0;
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown') {
+      e.preventDefault();
+      if (currentSection < sections.length - 1) {
+        currentSection++;
+        sections[currentSection].scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      if (currentSection > 0) {
+        currentSection--;
+        sections[currentSection].scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+
+  /* Keep currentSection in sync with scroll */
+  var syncObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        currentSection = Array.prototype.indexOf.call(sections, entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(function(s) { syncObserver.observe(s); });
+
+  /* ===== Tech card mouse glow ===== */
+  var techCards = document.querySelectorAll('.tech-card');
+  techCards.forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+      var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
