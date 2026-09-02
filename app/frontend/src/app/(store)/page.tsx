@@ -15,7 +15,7 @@ export default function StoreHomePage() {
     fetchStoreProducts().then((products) => setFeaturedProducts(products.slice(0, 6)));
   }, []);
 
-  const { kunst, lavirgen, stickerFox, lavillaSbHero } = brandManifest;
+  const { kunst, lavirgen, stickerFox, lavillaSbHero, sorneroLogo, sorneroFox, lavillaSb, logoOG, logoFuego } = brandManifest;
 
   return (
     <div>
@@ -203,7 +203,149 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 5. Shop By Category */}
+      {/* 5. Cierre */}
+      <section className="relative bg-villa-maroon py-20 lg:py-28">
+        <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
+          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
+            Rueda Con Nosotros.
+          </h2>
+          <p className="mt-8 max-w-md mx-auto text-base leading-relaxed text-villa-bone/80">
+            La calle no necesita otra marca.<br />
+            Necesita algo real.
+          </p>
+          <p className="mt-6 font-display text-2xl uppercase tracking-wider text-villa-fox">
+            La Villa Es La Ley.
+          </p>
+          <div className="mt-10">
+            <Link href="/products" className="btn-primary px-10 py-4 text-base">
+              Comprar Ahora
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Logos & Graphics - Brand Identity */}
+      <section className="relative -mt-px bg-villa-black py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="mb-12 text-center">
+            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox">
+              Identidad De Marca
+            </p>
+            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
+              Nuestros Logos Y Graficos
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
+            {/* Sornero Logo */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={sorneroLogo.src}
+                  alt="Sornero La Villa Logo - Main brand mark"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">Sornero Logo</p>
+            </div>
+
+            {/* Sornero Fox */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={sorneroFox.src}
+                  alt="Sornero Zorror - Fox mascot illustration"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">Sornero Zorror</p>
+            </div>
+
+            {/* La Villa SB */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={lavillaSb.src}
+                  alt="La Villa Skateboarding - Full brand logo"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">La Villa SB</p>
+            </div>
+
+            {/* Logo OG */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={logoOG.src}
+                  alt="Logo OG - Original brand mark"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">Logo OG</p>
+            </div>
+
+            {/* Logo Fuego */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={logoFuego.src}
+                  alt="Logo Fuego - Fire variant brand mark"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">Logo Fuego</p>
+            </div>
+
+            {/* Azul Camo */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={brandManifest.azulCamo.src}
+                  alt="Azul Camo - Blue camouflage pattern"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">Azul Camo</p>
+            </div>
+
+            {/* Fox Mark */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative aspect-square w-full overflow-hidden">
+                <Image
+                  src={brandManifest.foxMark.src}
+                  alt="Fox Mark - Iconic fox symbol"
+                  fill
+                  loading="lazy"
+                  sizes="(min-width: 768px) 25vw, 50vw"
+                  className="object-contain"
+                />
+              </div>
+              <p className="text-center text-sm font-medium text-villa-bone">Fox Mark</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Shop By Category */}
       <section className="relative border-t border-villa-smoke/10 bg-villa-black py-16 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mb-10 text-center">
