@@ -138,7 +138,7 @@ Frontend (Next.js :3000)
         v
   Gateway (Laravel :8010) ---[Sanctum Auth]---> PostgreSQL
         |
-        +---> Catalog (:9002)    ---> PostgreSQL + MinIO + OpenAI
+        +---> Catalog (:9002)    ---> PostgreSQL + MinIO
         +---> Inventory (:9003)  ---> PostgreSQL
         +---> Orders (:9004)     ---> PostgreSQL + Redis
         +---> Payments (:9005)   ---> PostgreSQL
@@ -188,7 +188,7 @@ GET & \texttt{/health} & Health check \\
 GET & \texttt{/products} & Listar productos (parámetros: search, id) \\
 GET & \texttt{/products/\{id\}} & Obtener producto por ID \\
 POST & \texttt{/products} & Crear producto \\
-POST & \texttt{/search} & Búsqueda con lenguaje natural (LLM) \\
+POST & \texttt{/search} & Búsqueda inteligente de productos \\
 POST & \texttt{/media/presign} & URL presignada para upload S3 \\
 POST & \texttt{/media/\{id\}/complete} & Marcar upload como completado \\
 POST & \texttt{/subscribers} & Suscribir email \\
@@ -197,14 +197,19 @@ GET & \texttt{/subscribers/count} & Conteo de suscriptores \\
 \hline
 \end{tabularx}
 
-\subsubsection{Búsqueda con Lenguaje Natural}
-\begin{itemize}
-    \item Modelo: OpenAI GPT-4o-mini (configurable vía variable de entorno)
-    \item Idiomas: Español e inglés
-    \item Fallback: búsqueda por keywords con stemming español básico
-    \item Extracción: categoría, subcategoría, precio, marca, palabras clave
-    \item Lógica OR con scoring de relevancia
-\end{itemize}
+\subsubsection{Estrategia de Búsqueda Inteligente}
+La búsqueda inteligente implementa una estrategia de filtrado por palabras clave con las siguientes capas:
+
+\begin{enumerate}
+    \item \textbf{Extracción de palabras clave}: El texto libre se tokeniza y se filtran palabras vacías (español e inglés: ``de'', ``el'', ``la'', ``para'', ``the'', ``is'', etc.)
+    \item \textbf{Stemming español básico}: Se eliminan terminaciones plurales para mejorar recall (``negros'' $\rightarrow$ ``negro'', ``ruedas'' $\rightarrow$ ``rueda''). Se aplica solo a palabras con 5+ caracteres para evitar distorsión de términos cortos como ``tenis''
+    \item \textbf{Lógica OR}: Un producto coincide si contiene CUALQUIERA de las palabras clave extraídas (no todas)
+    \item \textbf{Scoring de relevancia}: Cada coincidencia suma 1 punto. Los resultados se ordenan por puntaje descendente, luego por nombre
+    \item \textbf{Campos de búsqueda}: nombre del producto, nombre de categoría, SKU, descripción
+    \item \textbf{Filtros duros}: categoría, subcategoría, rango de precio, marca (cuando se proporcionan como filtros estructurados)
+\end{enumerate}
+
+\textbf{Ejemplo}: La consulta ``tenis nike negros'' extrae las keywords [tenis, nike, negros], aplica stemming [tenis, nike, negro], y retorna todos los productos donde CUALQUIERA de esas palabras aparece en nombre/categoría/descripción, ordenados por relevancia.
 
 \subsubsection{Tablas de Base de Datos}
 \begin{itemize}
@@ -367,7 +372,6 @@ Frontend & Next.js & 3000 & Tienda + admin \\
 \texttt{NEXT\_PUBLIC\_SITE\_URL} & Dominio del sitio \\
 \texttt{FRONTEND\_URL} & Dominio para CORS \\
 \texttt{SANCTUM\_STATEFUL\_DOMAINS} & Dominios Sanctum \\
-\texttt{OPENAI\_API\_KEY} & Clave API OpenAI (búsqueda NL) \\
 \texttt{ADMIN\_PASSWORD} & Contraseña del admin \\
 \texttt{APP\_KEY} & Clave de cifrado Laravel \\
 \texttt{CDN\_BASE\_URL} & URL pública de MinIO/S3 \\
@@ -382,7 +386,7 @@ Frontend & Next.js & 3000 & Tienda + admin \\
 \subsection{Tienda Pública}
 \begin{enumerate}
     \item Listado de productos con filtrado por categoría y subcategoría
-    \item Búsqueda con lenguaje natural (español/inglés) potenciada por IA
+    \item Búsqueda inteligente de productos por palabras clave con stemming
     \item Carrito de compras persistente (sesión + Redis)
     \item Checkout con creación de orden
     \item Detalle de producto con imágenes
@@ -404,18 +408,16 @@ Frontend & Next.js & 3000 & Tienda + admin \\
     \item WhatsApp Cloud API (Meta) para notificaciones y catálogo
     \item Twilio SMS para notificaciones de órdenes
     \item MinIO (S3) para almacenamiento de imágenes
-    \item OpenAI API para búsqueda con lenguaje natural
-    \item Google Drive para importación de catálogo (referencia)
 \end{enumerate}
 
-\subsection{Búsqueda con Inteligencia Artificial}
+\subsection{Búsqueda Inteligente (Actual)}
 \begin{itemize}
-    \item Parser LLM que extrae filtros estructurados de texto libre
+    \item Estrategia basada en keywords con stemming español
     \item Categorías: decks, apparel, accessories, gear
     \item Subcategorías: 14 tipos (tenis, buzos, camisetas, trucks, ruedas, etc.)
-    \item Extracción de: marca, rango de precio, color, talla
-    \item Fallback con stemming español cuando no hay API key
-    \item Scoring de relevancia OR con pesos por campo
+    \item Extracción de filtros: categoría, subcategoría, precio, marca
+    \item Lógica OR con scoring de relevancia por coincidencia
+    \item Sin dependencia de servicios externos para búsqueda
 \end{itemize}
 
 % ========================================
@@ -454,7 +456,7 @@ Frontend & Next.js & 3000 & Tienda + admin \\
     \item Frontend Next.js (tienda + admin)
     \item Infraestructura Docker Compose
     \item Integración WhatsApp/SMS
-    \item Búsqueda con IA
+    \item Búsqueda inteligente de productos
 \end{itemize}
 
 \subsection{Fase 3: Levantamiento (Semanas 9--10)}
@@ -530,14 +532,109 @@ Usuarios & 5 & CRUD de usuarios \\
 \end{tabularx}
 
 % ========================================
-% 11. VALIDACIÓN
+% 12. HOJA DE RUTA FUTURA
+% ========================================
+\section{Hoja de Ruta -- Funcionalidades Futuras}
+
+Las siguientes funcionalidades están planificadas como mejoras independientes del alcance actual del contrato. Se implementarán bajo presupuesto adicional o en futuros ciclos de desarrollo.
+
+\subsection{Agente Conversacional con LLM}
+
+\begin{itemize}
+    \item \textbf{Objetivo}: Asistente virtual que responda preguntas sobre la tienda (productos, disponibilidad, tallas, precios, pedidos)
+    \item \textbf{Tecnología}: Modelo de lenguaje (GPT, Claude, u open-source) integrado vía API
+    \item \textbf{Alcance}: Consultas sobre catálogo, estado de órdenes, recomendaciones de productos
+    \item \textbf{Implementación}: Microservicio independiente (\texttt{/chat}) que consume el catálogo y devuelve respuestas contextuales
+    \item \textbf{Costo}: Requiere API key del proveedor LLM (costo operativo mensual variable)
+    \item \textbf{Estado}: No incluido en el contrato actual. Funcionalidad futura independiente
+\end{itemize}
+
+\subsection{Importación de Productos desde Google Drive}
+
+\begin{itemize}
+    \item \textbf{Objetivo}: Permitir al cliente subir un archivo CSV/Excel a Google Drive y que los productos se importen automáticamente al inventario
+    \item \textbf{Flujo}: Google Drive API $\rightarrow$ webhook/polling $\rightarrow$ parser CSV $\rightarrow$ endpoint \texttt{/products} $\rightarrow$ registro en inventario
+    \item \textbf{Requisitos}: Cuenta de servicio Google, permisos de lectura en Drive, estructura CSV predefinida
+    \item \textbf{Estado}: No incluido en el contrato actual. Funcionalidad futura independiente
+\end{itemize}
+
+\subsection{Creación Directa de Productos vía API}
+
+\begin{itemize}
+    \item \textbf{Objetivo}: Endpoint público o autenticado para crear productos directamente sin pasar por el panel admin
+    \item \textbf{Endpoint}: \texttt{POST /api/v1/catalog/products} (ya existe funcionalmente, requiere autenticación)
+    \item \textbf{Uso}: Integración con sistemas externos, imports masivos, automatización
+    \item \textbf{Estado}: Endpoint funcional. Requiere documentación y validación de schema para uso externo
+\end{itemize}
+
+% ========================================
+% 13. CICLO DE DESARROLLO DE SOFTWARE
+% ========================================
+\section{Ciclo de Desarrollo de Software -- Modelo de Sommerville}
+
+El desarrollo y mantenimiento de este sistema sigue el modelo de ciclo de vida de software propuesto por \textbf{Ian Sommerville} en \textit{Engineering Software} (10th ed.), que enfatiza la naturaleza \textbf{iterativa e incremental} del desarrollo moderno.
+
+\subsection{Por Qué un Modelo Iterativo}
+
+\begin{itemize}
+    \item Los requisitos de e-commerce evolucionan constantemente (nuevas categorías, integraciones de pago, funciones de marketing)
+    \item La retroalimentación del usuario es esencial para priorizar mejoras
+    \item Los microservicios permiten desplegar partes del sistema de forma independiente
+    \item Un modelo en cascada tradicional no se adapta a los cambios continuos del negocio
+\end{itemize}
+
+\subsection{Fases del Modelo de Sommerville}
+
+\begin{enumerate}
+    \item \textbf{Definición de Requisitos}: Se capturan y documentan los requisitos funcionales y no funcionales (este PRD). Se validan con el cliente antes de avanzar.
+
+    \item \textbf{Diseño del Sistema}: Se define la arquitectura (microservicios, base de datos, protocolos). Se producen diagramas de componentes, secuencia y despliegue.
+
+    \item \textbf{Implementación}: Se construyen los módulos de forma incremental. Cada microservicio se desarrolla, prueba y despliega de forma independiente.
+
+    \item \textbf{Pruebas}: Se ejecutan pruebas unitarias, de integración y end-to-end. Se validan los criterios de aceptación de cada funcionalidad.
+
+    \item \textbf{Despliegue}: Se libera incrementalmente. Primero se despliega en staging, luego en producción tras validación.
+
+    \item \textbf{Evolución}: El sistema se mantiene vivo. Se corrigen bugs, se agregan funcionalidades, se actualizan dependencias. Cada ciclo de mantenimiento repite las fases anteriores de forma reducida.
+\end{enumerate}
+
+\subsection{Aplicación en Este Proyecto}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Principio Sommerville} & \textbf{Aplicación en La Villa} \\
+\hline
+Desarrollo incremental & Cada microservicio se despliega y valida por separado \\
+Refactorización continua & Se reestructura código sin cambiar funcionalidad \\
+Pruebas automatizadas & Health checks, tests de integración, validación de endpoints \\
+Retroalimentación del usuario & Iteraciones basadas en uso real de la tienda \\
+Gestión de configuración & Variables de entorno, Docker Compose, despliegue reproducible \\
+Documentación viva & Este PRD se actualiza con cada ciclo de desarrollo \\
+\hline
+\end{tabularx}
+
+\subsection{Ciclos de Mantenimiento}
+
+Durante los 12 meses de contrato, el mantenimiento sigue ciclos de 2--4 semanas:
+
+\begin{enumerate}
+    \item \textbf{Sprint de mantenimiento}: Se identifican bugs, mejoras menores y actualizaciones de seguridad
+    \item \textbf{Desarrollo}: Se implementan los cambios en un branch dedicado
+    \item \textbf{Pruebas}: Se validan los cambios contra el sistema existente
+    \item \textbf{Despliegue}: Se liberan los cambios en producción
+    \item \textbf{Revisión}: Se documentan los cambios y se actualiza este PRD si es necesario
+\end{enumerate}
+
+% ========================================
+% 14. VALIDACIÓN
 % ========================================
 \section{Criterios de Aceptación}
 
 \begin{enumerate}
     \item Todos los endpoints funcionan correctamente según especificación
     \item Autenticación Sanctum operativa con tokens scoped
-    \item Búsqueda NL retorna resultados relevantes en español
+    \item Búsqueda inteligente retorna resultados relevantes en español
     \item Carrito persiste entre sesiones (Redis)
     \item Checkout crea orden y limpia carrito
     \item Notificaciones WhatsApp/SMS se envían correctamente
@@ -550,7 +647,7 @@ Usuarios & 5 & CRUD de usuarios \\
 \end{enumerate}
 
 % ========================================
-% 12. FIRMA
+% 15. FIRMA
 % ========================================
 \newpage
 \section{Firmas}
