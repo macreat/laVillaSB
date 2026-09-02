@@ -238,9 +238,6 @@ export default function StoreHomePage() {
       {/* 6. Cierre */}
       <section className="relative bg-villa-maroon py-20 lg:py-28">
         <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
-          <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox mb-6">
-            Cierre
-          </p>
           <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
             Rueda Con Nosotros.
           </h2>
