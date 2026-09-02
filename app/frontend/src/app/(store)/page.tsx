@@ -203,23 +203,34 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 5. Cierre */}
-      <section className="relative bg-villa-maroon py-20 lg:py-28">
-        <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
-          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
-            Rueda Con Nosotros.
-          </h2>
-          <p className="mt-8 max-w-md mx-auto text-base leading-relaxed text-villa-bone/80">
-            La calle no necesita otra marca.<br />
-            Necesita algo real.
-          </p>
-          <p className="mt-6 font-display text-2xl uppercase tracking-wider text-villa-fox">
-            La Villa Es La Ley.
-          </p>
-          <div className="mt-10">
-            <Link href="/products" className="btn-primary px-10 py-4 text-base">
-              Comprar Ahora
-            </Link>
+      {/* 5. Shop By Category */}
+      <section className="relative border-t border-villa-smoke/10 bg-villa-black py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-teal">
+              Comprar Por Categoria
+            </p>
+            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
+              Encuentra Tu Estilo
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {[
+              { label: 'Tablas', href: '/products?category=decks' },
+              { label: 'Ropa', href: '/products?category=apparel' },
+              { label: 'Accesorios', href: '/products?category=accessories' },
+              { label: 'Equipo', href: '/products?category=gear' },
+            ].map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                className="group rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
+              >
+                <p className="font-display text-lg uppercase tracking-wide text-villa-bone transition-colors group-hover:text-villa-teal">
+                  {cat.label}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -341,59 +352,6 @@ export default function StoreHomePage() {
               </div>
               <p className="text-center text-sm font-medium text-villa-bone">Fox Mark</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Shop By Category */}
-      <section className="relative border-t border-villa-smoke/10 bg-villa-black py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="mb-10 text-center">
-            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-teal">
-              Comprar Por Categoria
-            </p>
-            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Encuentra Tu Estilo
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {[
-              { label: 'Tablas', href: '/products?category=decks' },
-              { label: 'Ropa', href: '/products?category=apparel' },
-              { label: 'Accesorios', href: '/products?category=accessories' },
-              { label: 'Equipo', href: '/products?category=gear' },
-            ].map((cat) => (
-              <Link
-                key={cat.label}
-                href={cat.href}
-                className="group rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
-              >
-                <p className="font-display text-lg uppercase tracking-wide text-villa-bone transition-colors group-hover:text-villa-teal">
-                  {cat.label}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Cierre */}
-      <section className="relative bg-villa-maroon py-20 lg:py-28">
-        <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
-          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
-            Rueda Con Nosotros.
-          </h2>
-          <p className="mt-8 max-w-md mx-auto text-base leading-relaxed text-villa-bone/80">
-            La calle no necesita otra marca.<br />
-            Necesita algo real.
-          </p>
-          <p className="mt-6 font-display text-2xl uppercase tracking-wider text-villa-fox">
-            La Villa Es La Ley.
-          </p>
-          <div className="mt-10">
-            <Link href="/products" className="btn-primary px-10 py-4 text-base">
-              Comprar Ahora
-            </Link>
           </div>
         </div>
       </section>
