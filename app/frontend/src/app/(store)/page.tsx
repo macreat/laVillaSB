@@ -235,7 +235,28 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 6. Logos & Graphics - Brand Identity */}
+      {/* 6. Cierre */}
+      <section className="relative bg-villa-maroon py-20 lg:py-28">
+        <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
+          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
+            Rueda Con Nosotros.
+          </h2>
+          <p className="mt-8 max-w-md mx-auto text-base leading-relaxed text-villa-bone/80">
+            La calle no necesita otra marca.<br />
+            Necesita algo real.
+          </p>
+          <p className="mt-6 font-display text-2xl uppercase tracking-wider text-villa-fox">
+            La Villa Es La Ley.
+          </p>
+          <div className="mt-10">
+            <Link href="/products" className="btn-primary px-10 py-4 text-base">
+              Comprar Ahora
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Logos & Graphics - Brand Identity */}
       <section className="relative -mt-px bg-villa-black py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mb-12 text-center">
