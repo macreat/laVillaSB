@@ -1,0 +1,586 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+
+% --- Colors ---
+\definecolor{villafox}{HTML}{D97706}
+\definecolor{villablack}{HTML}{0A0A0A}
+\definecolor{sectioncolor}{HTML}{1a1a1a}
+
+% --- Header/Footer ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{gray}{PRD -- La Villa Skateboarding API}}
+\fancyhead[R]{\small\textcolor{gray}{Confidencial}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Section formatting ---
+\titleformat{\section}{\Large\bfseries\color{sectioncolor}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{sectioncolor}}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{sectioncolor}}{}{0em}{}
+
+% --- Custom commands ---
+\newcommand{\apiversion}{v1.0}
+\newcommand{\docdate}{01 de Septiembre de 2026}
+\newcommand{\contractvalue}{\$5.000.000\ COP}
+\newcommand{\contractperiod}{12 meses}
+
+\begin{document}
+
+% ========================================
+% COVER PAGE
+% ========================================
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\textcolor{sectioncolor}{Producto Requerido}\\[0.3cm]}
+{\Huge\bfseries\textcolor{sectioncolor}{Documento (PRD)}\\[1.5cm]}
+
+{\Large\textcolor{villafox}{\textbf{LA VILLA SKATEBOARDING}}}\\[0.5cm]
+{\Large Sistema de API Microservicios para E-Commerce}\\[2cm]
+
+\rule{\textwidth}{1.5pt}\\[1cm]
+
+\begin{minipage}{0.45\textwidth}
+\begin{flushleft}
+\textbf{\textcolor{villafox}{Cliente:}}\\
+La Villa Skateboarding\\
+Nariño, Colombia\\[1cm]
+\textbf{\textcolor{villafox}{Versión del Documento:}}\\
+\apiversion\\
+\end{flushleft}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{flushright}
+\textbf{\textcolor{villafox}{Proveedor:}}\\
+Macreat Development\\[1cm]
+\textbf{\textcolor{villafox}{Fecha:}}\\
+\docdate\\
+\end{flushright}
+\end{minipage}
+
+\vfill
+
+\begin{minipage}{0.8\textwidth}
+\centering
+\textcolor{gray}{\textit{Este documento es confidencial y está destinado únicamente a las partes involucradas en el proyecto.}}
+\end{minipage}
+
+\vspace{1cm}
+\end{titlepage}
+
+% ========================================
+% TABLE OF CONTENTS
+% ========================================
+\tableofcontents
+\newpage
+
+% ========================================
+% 1. INFORMACIÓN DEL CONTRATO
+% ========================================
+\section{Información del Contrato}
+
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+\textbf{Campo} & \textbf{Detalle} \\
+\midrule
+Objeto & Diseño, construcción, levantamiento y mantenimiento de API microservicios para e-commerce \\
+Valor Total & \contractvalue \\
+Duración & \contractperiod (12 meses) \\
+Moneda & Peso Colombiano (COP) \\
+Fecha de Inicio & Por definir al momento de la firma \\
+Entorno & Producción: VPS + Vercel \\
+\bottomrule
+\end{tabularx}
+
+% ========================================
+% 2. ALCANCE DEL PROYECTO
+% ========================================
+\section{Alcance del Proyecto}
+
+\subsection{Descripción General}
+
+El sistema consiste en una arquitectura de microservicios para una tienda en línea de skateboarding, compuesta por:
+
+\begin{itemize}[leftmargin=2cm]
+    \item \textbf{API Gateway} (Laravel/PHP) -- Enrutamiento, autenticación, proxy a microservicios
+    \item \textbf{6 Microservicios} (Python/FastAPI) -- Catálogo, Inventario, Órdenes, Pagos, Notificaciones, Usuarios
+    \item \textbf{Frontend} (Next.js/React) -- Tienda pública + panel administrativo
+    \item \textbf{Infraestructura} (Docker Compose) -- PostgreSQL, Redis, MinIO, RabbitMQ, MeiliSearch
+\end{itemize}
+
+\subsection{Arquitectura}
+
+\begin{verbatim}
+Frontend (Next.js :3000)
+        |
+        v
+  Gateway (Laravel :8010) ---[Sanctum Auth]---> PostgreSQL
+        |
+        +---> Catalog (:9002)    ---> PostgreSQL + MinIO + OpenAI
+        +---> Inventory (:9003)  ---> PostgreSQL
+        +---> Orders (:9004)     ---> PostgreSQL + Redis
+        +---> Payments (:9005)   ---> PostgreSQL
+        +---> Notifications (:9006) -> WhatsApp API + Twilio SMS
+        +---> Users (:9007)      ---> PostgreSQL
+\end{verbatim}
+
+% ========================================
+% 3. SERVICIOS Y ENDPOINTS
+% ========================================
+\section{Especificación de Servicios y Endpoints}
+
+\subsection{API Gateway (Laravel)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Auth} \\
+\hline
+POST & \texttt{/api/admin/login} & No \\
+POST & \texttt{/api/admin/logout} & Sanctum \\
+GET & \texttt{/api/admin/me} & Sanctum \\
+PUT & \texttt{/api/admin/me} & Sanctum \\
+\hline
+GET & \texttt{/api/v1/catalog/\{path\}} & No \\
+POST & \texttt{/api/v1/catalog/search} & No \\
+GET & \texttt{/api/v1/\{service\}/health} & No \\
+POST & \texttt{/api/v1/\{service\}/\{path\}} & No \\
+ANY & \texttt{/api/v1/\{service\}/\{path\}} & Sanctum \\
+\hline
+\end{tabularx}
+
+\subsubsection{Autenticación}
+\begin{itemize}
+    \item Laravel Sanctum con tokens scoped \texttt{['admin']}
+    \item Middleware \texttt{EnsureAdmin}: verifica \texttt{user.is\_admin} y \texttt{tokenCan('admin')}
+    \item Login: email + password + device\_name, retorna \texttt{plainTextToken}
+    \item Rate limit: 5 intentos/minuto en login
+\end{itemize}
+
+\subsection{Servicio de Catálogo (FastAPI :9002)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Descripción} \\
+\hline
+GET & \texttt{/health} & Health check \\
+GET & \texttt{/products} & Listar productos (parámetros: search, id) \\
+GET & \texttt{/products/\{id\}} & Obtener producto por ID \\
+POST & \texttt{/products} & Crear producto \\
+POST & \texttt{/search} & Búsqueda con lenguaje natural (LLM) \\
+POST & \texttt{/media/presign} & URL presignada para upload S3 \\
+POST & \texttt{/media/\{id\}/complete} & Marcar upload como completado \\
+POST & \texttt{/subscribers} & Suscribir email \\
+GET & \texttt{/subscribers} & Listar suscriptores \\
+GET & \texttt{/subscribers/count} & Conteo de suscriptores \\
+\hline
+\end{tabularx}
+
+\subsubsection{Búsqueda con Lenguaje Natural}
+\begin{itemize}
+    \item Modelo: OpenAI GPT-4o-mini (configurable vía variable de entorno)
+    \item Idiomas: Español e inglés
+    \item Fallback: búsqueda por keywords con stemming español básico
+    \item Extracción: categoría, subcategoría, precio, marca, palabras clave
+    \item Lógica OR con scoring de relevancia
+\end{itemize}
+
+\subsubsection{Tablas de Base de Datos}
+\begin{itemize}
+    \item \texttt{categories}: id, slug (unique), name, category\_group
+    \item \texttt{products}: id, name, description, sku (unique), price (Decimal 10,2), category\_id (FK), media\_id (FK), active
+    \item \texttt{media}: id, storage\_key (unique), bucket, mime\_type, status, variants (JSON), metadata (JSON)
+    \item \texttt{subscribers}: id, email (unique), tag
+\end{itemize}
+
+\subsection{Servicio de Inventario (FastAPI :9003)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Descripción} \\
+\hline
+GET & \texttt{/health} & Health check \\
+GET & \texttt{/inventory} & Listar niveles de stock \\
+GET & \texttt{/inventory/\{product\_id\}} & Stock de un producto \\
+PUT & \texttt{/inventory/\{product\_id\}} & Establecer cantidad \\
+POST & \texttt{/inventory/\{product\_id\}/adjust} & Ajustar stock por delta \\
+GET & \texttt{/availability} & Verificar disponibilidad (IDs separados por coma) \\
+\hline
+\end{tabularx}
+
+\subsubsection{Tablas}
+\begin{itemize}
+    \item \texttt{stock\_levels}: id, product\_id (unique), sku, quantity, low\_stock\_threshold (default: 5)
+\end{itemize}
+
+\subsection{Servicio de Órdenes (FastAPI :9004)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Descripción} \\
+\hline
+GET & \texttt{/health} & Health check \\
+POST & \texttt{/orders} & Crear orden directa \\
+GET & \texttt{/orders} & Listar órdenes (skip/limit) \\
+GET & \texttt{/orders/summary} & Resumen dashboard \\
+GET & \texttt{/orders/\{id\}} & Obtener orden \\
+POST & \texttt{/orders/\{id\}/cancel} & Cancelar orden \\
+POST & \texttt{/orders/\{id\}/status} & Actualizar estado \\
+\hline
+GET & \texttt{/cart} & Obtener carrito (requiere \texttt{X-Session-Id}) \\
+POST & \texttt{/cart/items} & Agregar item al carrito \\
+DELETE & \texttt{/cart/items/\{product\_id\}} & Eliminar item \\
+POST & \texttt{/cart/checkout} & Checkout: crear orden desde carrito \\
+\hline
+\end{tabularx}
+
+\subsubsection{Estados de Orden}
+\texttt{pending} $\rightarrow$ \texttt{confirmed} $\rightarrow$ \texttt{shipped} $\rightarrow$ \texttt{delivered} $\mid$ \texttt{cancelled}
+
+\subsubsection{Carrito}
+\begin{itemize}
+    \item Almacenamiento: Redis con TTL configurable
+    \item Clave: \texttt{cart:\{session\_id\}}
+    \item Checkout: convierte carrito a Orden persistente, elimina carrito
+\end{itemize}
+
+\subsection{Servicio de Pagos (FastAPI :9005)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Descripción} \\
+\hline
+GET & \texttt{/health} & Health check \\
+POST & \texttt{/payment-intents} & Crear intención de pago \\
+GET & \texttt{/payment-intents} & Listar intenciones \\
+GET & \texttt{/payment-intents/\{id\}} & Obtener intención \\
+POST & \texttt{/payment-intents/\{id\}/confirm} & Confirmar pago \\
+POST & \texttt{/payment-intents/\{id\}/capture} & Capturar pago \\
+\hline
+\end{tabularx}
+
+\subsubsection{Tablas}
+\begin{itemize}
+    \item \texttt{payment\_intents}: id, order\_id, amount (float), currency (default: ``COP''), status (pending/confirmed/captured), provider (default: ``manual'')
+\end{itemize}
+
+\subsection{Servicio de Notificaciones (FastAPI :9006)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Descripción} \\
+\hline
+GET & \texttt{/health} & Health check \\
+POST & \texttt{/send-catalog} & Enviar catálogo completo vía WhatsApp \\
+POST & \texttt{/send-whatsapp} & Enviar mensaje WhatsApp arbitrario \\
+POST & \texttt{/notify-order} & Notificar orden vía SMS (Twilio) \\
+GET & \texttt{/status} & Estado de configuración WhatsApp/Twilio \\
+\hline
+\end{tabularx}
+
+\subsubsection{Integraciones Externas}
+\begin{itemize}
+    \item WhatsApp Cloud API (Meta) v21.0
+    \item Twilio SMS (fallback)
+    \item Modo mock: responde éxito simulado si no hay API keys configuradas
+\end{itemize}
+
+\subsection{Servicio de Usuarios (FastAPI :9007)}
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Método} & \textbf{Ruta} & \textbf{Descripción} \\
+\hline
+GET & \texttt{/health} & Health check \\
+GET & \texttt{/users} & Listar usuarios \\
+GET & \texttt{/users/\{id\}} & Obtener usuario \\
+POST & \texttt{/users} & Crear usuario (email único) \\
+PUT & \texttt{/users/\{id\}} & Actualizar usuario \\
+\hline
+\end{tabularx}
+
+% ========================================
+% 4. INFRAESTRUCTURA
+% ========================================
+\section{Infraestructura}
+
+\subsection{Servicios Docker}
+
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\textbf{Servicio} & \textbf{Imagen} & \textbf{Puerto} & \textbf{Propósito} \\
+\hline
+PostgreSQL & postgres:16-alpine & 5432 & Base de datos principal \\
+Redis & redis:7-alpine & 6379 & Carrito, caché \\
+RabbitMQ & rabbitmq:3-mgmt & 5672 & Cola de mensajes \\
+MeiliSearch & meilisearch:v1 & 7700 & Motor de búsqueda \\
+MinIO & minio/minio & 9000/9001 & Almacenamiento S3 \\
+Gateway & Laravel & 8010 & API Gateway \\
+Catalog & FastAPI & 9002 & Catálogo de productos \\
+Inventory & FastAPI & 9003 & Gestión de stock \\
+Orders & FastAPI & 9004 & Órdenes + carrito \\
+Payments & FastAPI & 9005 & Intenciones de pago \\
+Notifications & FastAPI & 9006 & WhatsApp + SMS \\
+Users & FastAPI & 9007 & Perfiles de usuario \\
+Frontend & Next.js & 3000 & Tienda + admin \\
+\hline
+\end{tabularx}
+
+\subsection{Volúmenes Persistidos}
+\begin{itemize}
+    \item \texttt{postgres\_data}
+    \item \texttt{redis\_data}
+    \item \texttt{rabbitmq\_data}
+    \item \texttt{meilisearch\_data}
+    \item \texttt{minio\_data}
+\end{itemize}
+
+\subsection{Variables de Entorno Críticas}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Variable} & \textbf{Descripción} \\
+\hline
+\texttt{DATABASE\_URL} & URL de conexión PostgreSQL \\
+\texttt{NEXT\_PUBLIC\_API\_BASE\_URL} & URL pública del gateway \\
+\texttt{NEXT\_PUBLIC\_SITE\_URL} & Dominio del sitio \\
+\texttt{FRONTEND\_URL} & Dominio para CORS \\
+\texttt{SANCTUM\_STATEFUL\_DOMAINS} & Dominios Sanctum \\
+\texttt{OPENAI\_API\_KEY} & Clave API OpenAI (búsqueda NL) \\
+\texttt{ADMIN\_PASSWORD} & Contraseña del admin \\
+\texttt{APP\_KEY} & Clave de cifrado Laravel \\
+\texttt{CDN\_BASE\_URL} & URL pública de MinIO/S3 \\
+\hline
+\end{tabularx}
+
+% ========================================
+% 5. FUNCIONALIDADES CLAVE
+% ========================================
+\section{Funcionalidades Clave}
+
+\subsection{Tienda Pública}
+\begin{enumerate}
+    \item Listado de productos con filtrado por categoría y subcategoría
+    \item Búsqueda con lenguaje natural (español/inglés) potenciada por IA
+    \item Carrito de compras persistente (sesión + Redis)
+    \item Checkout con creación de orden
+    \item Detalle de producto con imágenes
+    \item Sistema de suscripción por email
+    \item Contenido de marca: hero, editorial, heritage, identidad visual
+\end{enumerate}
+
+\subsection{Panel Administrativo}
+\begin{enumerate}
+    \item Dashboard con métricas (órdenes totales, ingresos, hoy/ayer)
+    \item Gestión de productos (CRUD + imágenes via presigned URLs)
+    \item Gestión de órdenes (estados, cancelación)
+    \item Gestión de inventario (stock, ajustes, alertas de bajo stock)
+    \item Autenticación con tokens Sanctum
+\end{enumerate}
+
+\subsection{Integraciones Externas}
+\begin{enumerate}
+    \item WhatsApp Cloud API (Meta) para notificaciones y catálogo
+    \item Twilio SMS para notificaciones de órdenes
+    \item MinIO (S3) para almacenamiento de imágenes
+    \item OpenAI API para búsqueda con lenguaje natural
+    \item Google Drive para importación de catálogo (referencia)
+\end{enumerate}
+
+\subsection{Búsqueda con Inteligencia Artificial}
+\begin{itemize}
+    \item Parser LLM que extrae filtros estructurados de texto libre
+    \item Categorías: decks, apparel, accessories, gear
+    \item Subcategorías: 14 tipos (tenis, buzos, camisetas, trucks, ruedas, etc.)
+    \item Extracción de: marca, rango de precio, color, talla
+    \item Fallback con stemming español cuando no hay API key
+    \item Scoring de relevancia OR con pesos por campo
+\end{itemize}
+
+% ========================================
+% 6. SEGURIDAD
+% ========================================
+\section{Seguridad}
+
+\begin{itemize}
+    \item Autenticación basada en tokens (Laravel Sanctum)
+    \item Tokens scoped con ability \texttt{['admin']}
+    \item Middleware \texttt{EnsureAdmin} en rutas protegidas
+    \item Rate limiting: login (5/min), búsqueda NL (10/min), checkout (20/min)
+    \item Variables de entorno para credenciales (no hardcodeadas en código fuente)
+    \item CORS configurado por dominio
+    \item HTTPS requerido en producción
+\end{itemize}
+
+% ========================================
+% 7. ENTREGABLES
+% ========================================
+\section{Entregables}
+
+\subsection{Fase 1: Diseño (Semanas 1--2)}
+\begin{itemize}
+    \item Documento de requerimientos (este documento)
+    \item Arquitectura de microservicios
+    \item Diseño de base de datos
+    \item Diagrama de endpoints
+    \item Definición de variables de entorno
+\end{itemize}
+
+\subsection{Fase 2: Construcción (Semanas 3--8)}
+\begin{itemize}
+    \item API Gateway (Laravel) con autenticación
+    \item 6 microservicios FastAPI
+    \item Frontend Next.js (tienda + admin)
+    \item Infraestructura Docker Compose
+    \item Integración WhatsApp/SMS
+    \item Búsqueda con IA
+\end{itemize}
+
+\subsection{Fase 3: Levantamiento (Semanas 9--10)}
+\begin{itemize}
+    \item Configuración de VPS (Docker, nginx, TLS)
+    \item Despliegue frontend en Vercel
+    \item Configuración de variables de entorno producción
+    \item Generación de APP\_KEY único
+    \item Pruebas end-to-end
+\end{itemize}
+
+\subsection{Fase 4: Mantenimiento (Mes 1--12)}
+\begin{itemize}
+    \item Monitoreo de servicios
+    \item Resolución de bugs
+    \item Actualizaciones de seguridad
+    \item Soporte técnico
+    \item Mejoras menores (hasta 10 horas/mes)
+\end{itemize}
+
+% ========================================
+% 8. CRONOGRAMA
+% ========================================
+\section{Cronograma}
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Fase} & \textbf{Duración} & \textbf{Actividades} \\
+\hline
+Diseño & 2 semanas & PRD, arquitectura, DB, endpoints \\
+Construcción & 6 semanas & Gateway, microservicios, frontend \\
+Levantamiento & 2 semanas & VPS, Vercel, TLS, pruebas \\
+Mantenimiento & 12 meses & Monitoreo, bugs, seguridad, soporte \\
+\hline
+\end{tabularx}
+
+% ========================================
+% 9. TERMINOS ECONÓMICOS
+% ========================================
+\section{Terminos Económicos}
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Concepto} & \textbf{Detalle} \\
+\hline
+Valor total del contrato & \contractvalue \\
+Forma de pago & 50\% al inicio, 50\% al entrega \\
+Moneda & Peso Colombiano (COP) \\
+Periodo de mantenimiento & \contractperiod \\
+Incluye mantenimiento & Sí (hasta 10 horas/mes) \\
+\hline
+\end{tabularx}
+
+% ========================================
+% 10. total de endpoints
+% ========================================
+\section{Resumen de Endpoints}
+
+\begin{tabularx}{\textwidth}{|l|c|X|}
+\hline
+\textbf{Servicio} & \textbf{Endpoints} & \textbf{Descripción} \\
+\hline
+Gateway & 9 & Enrutamiento, auth, proxy \\
+Catálogo & 10 & Productos, búsqueda NL, media, suscriptores \\
+Inventario & 6 & Stock, disponibilidad \\
+Órdenes & 10 & Órdenes, carrito, checkout \\
+Pagos & 5 & Intenciones de pago \\
+Notificaciones & 5 & WhatsApp, SMS \\
+Usuarios & 5 & CRUD de usuarios \\
+\hline
+\textbf{Total} & \textbf{50} & \\
+\hline
+\end{tabularx}
+
+% ========================================
+% 11. VALIDACIÓN
+% ========================================
+\section{Criterios de Aceptación}
+
+\begin{enumerate}
+    \item Todos los endpoints funcionan correctamente según especificación
+    \item Autenticación Sanctum operativa con tokens scoped
+    \item Búsqueda NL retorna resultados relevantes en español
+    \item Carrito persiste entre sesiones (Redis)
+    \item Checkout crea orden y limpia carrito
+    \item Notificaciones WhatsApp/SMS se envían correctamente
+    \item Panel admin muestra métricas en tiempo real
+    \item Imágenes se sirven correctamente vía media proxy
+    \item Todos los servicios pasan health check
+    \item Despliegue exitoso en VPS + Vercel
+    \item HTTPS operativo en dominio de producción
+    \item CORS configurado para dominio Vercel
+\end{enumerate}
+
+% ========================================
+% 12. FIRMA
+% ========================================
+\newpage
+\section{Firmas}
+
+\vspace{2cm}
+
+\begin{minipage}{0.45\textwidth}
+\begin{center}
+\rule{6cm}{0.5pt}\\[0.5cm]
+\textbf{La Villa Skateboarding}\\
+Cliente\\[0.3cm]
+Nombre: \rule{5cm}{0.3pt}\\[0.3cm]
+Fecha: \rule{5cm}{0.3pt}\\
+\end{center}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{center}
+\rule{6cm}{0.5pt}\\[0.5cm]
+\textbf{Macreat Development}\\
+Proveedor\\[0.3cm]
+Nombre: \rule{5cm}{0.3pt}\\[0.3cm]
+Fecha: \rule{5cm}{0.3pt}\\
+\end{center}
+\end{minipage}
+
+\vfill
+
+\begin{center}
+\textcolor{gray}{\small Documento generado el \docdate --- \apiversion}
+\end{center}
+
+\end{document}
