@@ -98,7 +98,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         <div className="flex h-16 items-center justify-between border-b border-border px-5">
           <div className="flex items-center gap-2.5">
-            <FoxMark size={28} />
+            <FoxMark size={28} white />
             <span className="font-display text-xl uppercase tracking-wide text-text">
               Admin
             </span>

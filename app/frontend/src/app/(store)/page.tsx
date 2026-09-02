@@ -336,7 +336,7 @@ export default function StoreHomePage() {
                   fill
                   loading="lazy"
                   sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
+                  className="object-contain brightness-0 invert"
                 />
               </div>
               <p className="text-center text-sm font-medium text-villa-bone">Fox Mark</p>
