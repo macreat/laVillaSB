@@ -15,7 +15,7 @@ export default function StoreHomePage() {
     fetchStoreProducts().then((products) => setFeaturedProducts(products.slice(0, 6)));
   }, []);
 
-  const { villaScene, kunst, lavirgen, stickerFox, sorneroLogo, sorneroFox, lavillaSb, lavillaSbHero, logoOG, logoFuego } = brandManifest;
+  const { kunst, lavirgen, stickerFox, lavillaSbHero } = brandManifest;
 
   return (
     <div>
@@ -36,14 +36,11 @@ export default function StoreHomePage() {
 
           {/* Text zone, maroon tinted panel */}
           <div className="relative order-2 flex flex-col justify-center gap-8 bg-villa-maroon px-6 py-16 lg:order-1 lg:col-span-3 lg:px-12 lg:py-0">
-            <p className="font-sans text-xs uppercase tracking-[0.12em] text-villa-smoke">
-              Est. La Villa / Nariño / Colombia
-            </p>
             <h1 className="font-display text-6xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-7xl lg:-mr-6 lg:text-8xl">
               La Villa Es La Ley
             </h1>
             <p className="max-w-sm text-base leading-relaxed text-villa-bone/80">
-              Tablas, ropa y equipo seleccionados para los que siguen la ley. Rueda con nosotros!
+              Tablas, ropa y equipo para los que ruedan a su manera.
             </p>
             <div className="flex flex-wrap items-center gap-6">
               <Link href="/products" className="btn-primary px-8 py-3 text-base">
@@ -99,10 +96,13 @@ export default function StoreHomePage() {
               Lo Mas Nuevo
             </h2>
             <p className="mt-1 text-sm text-villa-smoke">
-              Drops frescos y lo esencial del skate
+              Lo que acaba de salir.
             </p>
           </div>
         </div>
+        <p className="mb-8 max-w-md text-sm leading-relaxed text-villa-smoke/70">
+          Graficos nuevos. Prendas nuevas. Lo demas puede esperar.
+        </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 lg:gap-6">
           {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
@@ -115,18 +115,24 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 4. Community / editorial (kunst) */}
+      {/* 3. Community / editorial (kunst) */}
       <section className="relative -mt-px bg-villa-bone [clip-path:polygon(0_56px,100%_0,100%_100%,0_100%)]">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 pb-20 pt-24 lg:grid-cols-10 lg:gap-16 lg:px-8 lg:pb-28 lg:pt-32">
           <div className="order-2 lg:order-1 lg:col-span-6">
             <h2 className="font-display text-4xl uppercase tracking-tight text-villa-black sm:text-5xl">
               No Estamos Para Encajar
             </h2>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-villa-black/80">
-              Creamos para los que rodan estacionamientos vacios de madrugada y
-              nunca piden permiso. Cada grafico empieza como un garabato en la
-              pared, no en un mood board, y la ropa esta cortada para el
-              movimiento, no para un catalogo.
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-villa-black/80">
+              No hacemos skatewear para combinar con el resto.
+              Hacemos cosas para los que salen cuando la ciudad esta vacia,
+              ruedan hasta tarde y convierten cualquier lugar en spot.
+            </p>
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-villa-black/80">
+              Cada grafico nace de una idea, un garabato, una pared o una obsesion.
+              Nada de plantillas. Nada de reuniones para decidir que esta de moda.
+            </p>
+            <p className="mt-4 max-w-lg text-sm font-semibold uppercase tracking-wide text-villa-black">
+              Hecho para rodar. Hecho para durar. Hecho en La Villa.
             </p>
             <Link
               href="/products?category=apparel"
@@ -150,7 +156,7 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 4.5 Heritage / shop (lavirgen) */}
+      {/* 4. Heritage / shop (lavirgen) */}
       <section className="relative bg-villa-black">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-20 lg:grid-cols-10 lg:gap-16 lg:px-8 lg:py-28">
           <div className="relative order-1 aspect-[569/784] w-full lg:col-span-3">
@@ -172,10 +178,20 @@ export default function StoreHomePage() {
             <h2 className="mt-3 font-display text-4xl uppercase tracking-tight text-villa-bone sm:text-5xl">
               Hecho Desde Cero
             </h2>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-villa-smoke">
-              La Villa empezo con un mostrador y un monton de tablas que nadie
-              mas queria. Anos despues seguimos seleccionando cada tabla,
-              grafico y drop nosotros mismos, sin comites corporativos.
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-villa-smoke">
+              Empezamos con un mostrador, unas cuantas tablas y ganas de hacer
+              las cosas diferente. Seguimos igual.
+            </p>
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-villa-smoke">
+              Seleccionamos cada tabla, cada grafico y cada drop porque creemos
+              que lo que llevas encima deberia tener algo que decir.
+            </p>
+            <p className="mt-4 max-w-lg text-sm text-villa-smoke/70">
+              Sin comites. Sin formulas. Sin pedir permiso.
+            </p>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-villa-teal">
+              La Villa.<br />
+              Est. Narino, Colombia.
             </p>
             <Link
               href="/products"
@@ -187,155 +203,26 @@ export default function StoreHomePage() {
         </div>
       </section>
 
-      {/* 5. Shop By Category */}
-      <section className="relative border-t border-villa-smoke/10 bg-villa-black py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="mb-10 text-center">
-            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-teal">
-              Comprar Por Categoria
-            </p>
-            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Encuentra Tu Estilo
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {[
-              { label: 'Tablas', href: '/products?category=decks' },
-              { label: 'Ropa', href: '/products?category=apparel' },
-              { label: 'Accesorios', href: '/products?category=accessories' },
-              { label: 'Equipo', href: '/products?category=gear' },
-            ].map((cat) => (
-              <Link
-                key={cat.label}
-                href={cat.href}
-                className="group rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
-              >
-                <p className="font-display text-lg uppercase tracking-wide text-villa-bone transition-colors group-hover:text-villa-teal">
-                  {cat.label}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Logos & Graphics - Original Brand Identity */}
-      <section className="relative -mt-px bg-villa-maroon py-16 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="mb-12 text-center">
-            <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox">
-              Identidad De Marca
-            </p>
-            <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-villa-bone sm:text-4xl">
-              Nuestros Logos Y Graficos
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
-            {/* Sornero Logo */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={sorneroLogo.src}
-                  alt="Sornero La Villa Logo - Main brand mark"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Sornero Logo</p>
-            </div>
-
-            {/* Sornero Fox */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={sorneroFox.src}
-                  alt="Sornero Zorror - Fox mascot illustration"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Sornero Zorror</p>
-            </div>
-
-            {/* La Villa SB */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={lavillaSb.src}
-                  alt="La Villa Skateboarding - Full brand logo"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">La Villa SB</p>
-            </div>
-
-            {/* Logo OG */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={logoOG.src}
-                  alt="Logo OG - Original brand mark"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Logo OG</p>
-            </div>
-
-            {/* Logo Fuego */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={logoFuego.src}
-                  alt="Logo Fuego - Fire variant brand mark"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Logo Fuego</p>
-            </div>
-
-            {/* Azul Camo */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={brandManifest.azulCamo.src}
-                  alt="Azul Camo - Blue camouflage pattern"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Azul Camo</p>
-            </div>
-
-            {/* Fox Mark */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={brandManifest.foxMark.src}
-                  alt="Fox Mark - Iconic fox symbol"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Fox Mark</p>
-            </div>
+      {/* 5. Cierre */}
+      <section className="relative bg-villa-maroon py-20 lg:py-28">
+        <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox mb-6">
+            Cierre
+          </p>
+          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
+            Rueda Con Nosotros.
+          </h2>
+          <p className="mt-8 max-w-md mx-auto text-base leading-relaxed text-villa-bone/80">
+            La calle no necesita otra marca.<br />
+            Necesita algo real.
+          </p>
+          <p className="mt-6 font-display text-2xl uppercase tracking-wider text-villa-fox">
+            La Villa Es La Ley.
+          </p>
+          <div className="mt-10">
+            <Link href="/products" className="btn-primary px-10 py-4 text-base">
+              Comprar Ahora
+            </Link>
           </div>
         </div>
       </section>
