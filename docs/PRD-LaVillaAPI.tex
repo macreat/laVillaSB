@@ -41,7 +41,7 @@
 % --- Custom commands ---
 \newcommand{\apiversion}{v1.0}
 \newcommand{\docdate}{01 de Septiembre de 2026}
-\newcommand{\contractvalue}{\$5.000.000\ COP}
+\newcommand{\contractvalue}{\$1.000\text{--}\$1.500\ USD (estimado)}
 \newcommand{\contractperiod}{12 meses}
 
 \begin{document}
@@ -53,8 +53,8 @@
 \centering
 \vspace*{2cm}
 
-{\Huge\bfseries\textcolor{sectioncolor}{Producto Requerido}\\[0.3cm]}
-{\Huge\bfseries\textcolor{sectioncolor}{Documento (PRD)}\\[1.5cm]}
+{\Huge\bfseries\textcolor{sectioncolor}{PRD}\\[0.3cm]}
+{\Large\textcolor{sectioncolor}{Product Requirements Document}\\[1.5cm]}
 
 {\Large\textcolor{villafox}{\textbf{LA VILLA SKATEBOARDING}}}\\[0.5cm]
 {\Large Sistema de API Microservicios para E-Commerce}\\[2cm]
@@ -74,7 +74,7 @@ Nariño, Colombia\\[1cm]
 \begin{minipage}{0.45\textwidth}
 \begin{flushright}
 \textbf{\textcolor{villafox}{Proveedor:}}\\
-Macreat Development\\[1cm]
+MACREAT - developer\\[1cm]
 \textbf{\textcolor{villafox}{Fecha:}}\\
 \docdate\\
 \end{flushright}
@@ -107,8 +107,8 @@ Macreat Development\\[1cm]
 \midrule
 Objeto & Diseño, construcción, levantamiento y mantenimiento de API microservicios para e-commerce \\
 Valor Total & \contractvalue \\
-Duración & \contractperiod (12 meses) \\
-Moneda & Peso Colombiano (COP) \\
+Duración & \contractperiod \\
+Moneda & Dólares Americanos (USD) \\
 Fecha de Inicio & Por definir al momento de la firma \\
 Entorno & Producción: VPS + Vercel \\
 \bottomrule
@@ -474,7 +474,7 @@ Frontend & Next.js & 3000 & Tienda + admin \\
     \item Resolución de bugs
     \item Actualizaciones de seguridad
     \item Soporte técnico
-    \item Mejoras menores (hasta 10 horas/mes)
+    \item Mejoras menores (20--30 horas/mes)
 \end{itemize}
 
 % ========================================
@@ -504,9 +504,9 @@ Mantenimiento & 12 meses & Monitoreo, bugs, seguridad, soporte \\
 \hline
 Valor total del contrato & \contractvalue \\
 Forma de pago & 50\% al inicio, 50\% al entrega \\
-Moneda & Peso Colombiano (COP) \\
+Moneda & Dólares Americanos (USD) \\
 Periodo de mantenimiento & \contractperiod \\
-Incluye mantenimiento & Sí (hasta 10 horas/mes) \\
+Incluye mantenimiento & Sí (20--30 horas/mes) \\
 \hline
 \end{tabularx}
 
@@ -532,7 +532,195 @@ Usuarios & 5 & CRUD de usuarios \\
 \end{tabularx}
 
 % ========================================
-% 12. HOJA DE RUTA FUTURA
+% 11. DIAGRAMAS
+% ========================================
+\section{Diagramas}
+
+\subsection{Diagrama de Arquitectura Lógica}
+
+Muestra la estructura del sistema por capas: presentación, gateway, microservicios y datos.
+
+\begin{verbatim}
++====================================================================+
+|                      PRESENTACION (Capa de UI)                     |
+|  +-------------------+        +--------------------------------+  |
+|  | Tienda Publica    |        | Panel Administrativo           |  |
+|  | (Next.js :3000)   |        | (Next.js :3000/admin)          |  |
+|  +-------------------+        +--------------------------------+  |
++====================================================================+
+                            |  HTTP/HTTPS
+                            v
++====================================================================+
+|                    GATEWAY (Capa de Enrutamiento)                  |
+|  +--------------------------------------------------------------+  |
+|  | API Gateway (Laravel :8010)                                  |  |
+|  | - Autenticacion Sanctum                                      |  |
+|  | - Rate Limiting                                              |  |
+|  | - CORS / Headers                                             |  |
+|  | - Proxy a microservicios                                     |  |
+|  +--------------------------------------------------------------+  |
++====================================================================+
+              |              |              |              |
+              v              v              v              v
++====================================================================+
+|                 MICROSERVICIOS (Capa de Logica)                    |
+|  +-----------+ +-----------+ +-----------+ +-----------+           |
+|  | Catalog   | | Inventory | | Orders    | | Payments  |           |
+|  | :9002     | | :9003     | | :9004     | | :9005     |           |
+|  +-----------+ +-----------+ +-----------+ +-----------+           |
+|  +-----------+ +-----------+                                      |
+|  | Notifs    | | Users     |                                      |
+|  | :9006     | | :9007     |                                      |
+|  +-----------+ +-----------+                                      |
++====================================================================+
+              |              |              |
+              v              v              v
++====================================================================+
+|                      DATOS (Capa de Persistencia)                  |
+|  +--------------+  +--------------+  +--------------+              |
+|  | PostgreSQL   |  | Redis        |  | MinIO (S3)   |              |
+|  | :5432        |  | :6379        |  | :9000        |              |
+|  | - products   |  | - carrito    |  | - imagenes   |              |
+|  | - orders     |  | - cache      |  | - media      |              |
+|  | - users      |  | - sessions   |  |              |              |
+|  +--------------+  +--------------+  +--------------+              |
++====================================================================+
+\end{verbatim}
+
+\subsection{Diagrama de Arquitectura Funcional}
+
+Muestra las funcionalidades agrupadas por dominio de negocio.
+
+\begin{verbatim}
++====================================================================+
+|                     DOMINIO: TIENDA PUBLICA                        |
+|  +------------------+  +------------------+  +------------------+  |
+|  | Catalogo         |  | Busqueda         |  | Carrito           |  |
+|  | - Listar prod.   |  | - Por keywords   |  | - Agregar item   |  |
+|  | - Ver detalle    |  | - Por categoria  |  | - Eliminar item  |  |
+|  | - Filtrar        |  | - Por precio     |  | - Ver carrito    |  |
+|  +------------------+  +------------------+  +------------------+  |
+|  +------------------+  +------------------+  +------------------+  |
+|  | Checkout         |  | Suscripcion      |  | Contenido Marca  |  |
+|  | - Crear orden    |  | - Email signup   |  | - Hero           |  |
+|  | - Pago           |  | - Newsletter     |  | - Editorial      |  |
+|  +------------------+  +------------------+  +------------------+  |
++====================================================================+
+
++====================================================================+
+|                     DOMINIO: ADMINISTRACION                        |
+|  +------------------+  +------------------+  +------------------+  |
+|  | Dashboard        |  | Gestion Prod.    |  | Gestion Ordenes  |  |
+|  | - Metricas       |  | - CRUD           |  | - Estados        |  |
+|  | - Ingresos       |  | - Imagenes S3    |  | - Cancelar       |  |
+|  | - Hoy/Ayer       |  | - Categorias     |  | - Historial      |  |
+|  +------------------+  +------------------+  +------------------+  |
+|  +------------------+  +------------------+                       |
+|  | Inventario       |  | Auth             |                       |
+|  | - Stock          |  | - Login          |                       |
+|  | - Ajustes        |  | - Tokens         |                       |
+|  | - Alertas        |  | - Permisos       |                       |
+|  +------------------+  +------------------+                       |
++====================================================================+
+
++====================================================================+
+|                     DOMINIO: EXTERNO                               |
+|  +------------------+  +------------------+  +------------------+  |
+|  | WhatsApp API     |  | Twilio SMS       |  | MinIO / S3       |  |
+|  | - Notificaciones |  | - Ordenes        |  | - Upload imgs    |  |
+|  | - Catalogo       |  | - Confirmaciones |  | - CDN publico    |  |
+|  +------------------+  +------------------+  +------------------+  |
++====================================================================+
+\end{verbatim}
+
+\subsection{Diagrama de Endpoints por Servicio}
+
+Mapa visual de todos los endpoints agrupados por servicio y metodo HTTP.
+
+\begin{verbatim}
+GATEWAY (Laravel :8010)
++--------------------------------------------------------------+
+| [POST]   /api/admin/login              -> Login              |
+| [POST]   /api/admin/logout             -> Logout (auth)      |
+| [GET]    /api/admin/me                 -> Profile (auth)     |
+| [PUT]    /api/admin/me                 -> Update (auth)      |
+| [GET]    /api/v1/catalog/{path}        -> Proxy publico      |
+| [POST]   /api/v1/catalog/search        -> Busqueda NL        |
+| [GET]    /api/v1/{service}/health      -> Health check       |
+| [POST]   /api/v1/{service}/{path}      -> Proxy (auth)       |
+| [ANY]    /api/v1/{service}/{path}      -> Proxy (auth)       |
++--------------------------------------------------------------+
+
+CATALOG (FastAPI :9002)
++--------------------------------------------------------------+
+| [GET]    /health                        -> Health check       |
+| [GET]    /products                      -> Listar productos   |
+| [GET]    /products/{id}                 -> Ver producto       |
+| [POST]   /products                      -> Crear producto     |
+| [POST]   /search                        -> Busqueda NL        |
+| [POST]   /media/presign                 -> URL upload S3      |
+| [POST]   /media/{id}/complete           -> Marcar completado  |
+| [POST]   /subscribers                   -> Suscribir email    |
+| [GET]    /subscribers                   -> Listar suscript.   |
+| [GET]    /subscribers/count             -> Conteo             |
++--------------------------------------------------------------+
+
+INVENTORY (FastAPI :9003)
++--------------------------------------------------------------+
+| [GET]    /health                        -> Health check       |
+| [GET]    /inventory                     -> Listar stock       |
+| [GET]    /inventory/{product_id}        -> Stock producto     |
+| [PUT]    /inventory/{product_id}        -> Set cantidad       |
+| [POST]   /inventory/{product_id}/adjust -> Ajustar delta      |
+| [GET]    /availability                  -> Disponibilidad     |
++--------------------------------------------------------------+
+
+ORDERS (FastAPI :9004)
++--------------------------------------------------------------+
+| [GET]    /health                        -> Health check       |
+| [POST]   /orders                        -> Crear orden        |
+| [GET]    /orders                        -> Listar ordenes     |
+| [GET]    /orders/summary                -> Dashboard          |
+| [GET]    /orders/{id}                   -> Ver orden          |
+| [POST]   /orders/{id}/cancel            -> Cancelar           |
+| [POST]   /orders/{id}/status            -> Actualizar estado  |
+| [GET]    /cart                          -> Ver carrito        |
+| [POST]   /cart/items                    -> Agregar item       |
+| [DELETE] /cart/items/{product_id}       -> Eliminar item      |
+| [POST]   /cart/checkout                 -> Checkout           |
++--------------------------------------------------------------+
+
+PAYMENTS (FastAPI :9005)
++--------------------------------------------------------------+
+| [GET]    /health                        -> Health check       |
+| [POST]   /payment-intents               -> Crear intento      |
+| [GET]    /payment-intents               -> Listar             |
+| [GET]    /payment-intents/{id}          -> Ver intento        |
+| [POST]   /payment-intents/{id}/confirm  -> Confirmar          |
+| [POST]   /payment-intents/{id}/capture  -> Capturar           |
++--------------------------------------------------------------+
+
+NOTIFICATIONS (FastAPI :9006)
++--------------------------------------------------------------+
+| [GET]    /health                        -> Health check       |
+| [POST]   /send-catalog                  -> WhatsApp catalogo  |
+| [POST]   /send-whatsapp                 -> WhatsApp msg       |
+| [POST]   /notify-order                  -> SMS Twilio         |
+| [GET]    /status                        -> Estado config      |
++--------------------------------------------------------------+
+
+USERS (FastAPI :9007)
++--------------------------------------------------------------+
+| [GET]    /health                        -> Health check       |
+| [GET]    /users                         -> Listar usuarios    |
+| [GET]    /users/{id}                    -> Ver usuario        |
+| [POST]   /users                         -> Crear usuario      |
+| [PUT]    /users/{id}                    -> Actualizar         |
++--------------------------------------------------------------+
+\end{verbatim}
+
+% ========================================
+% 13. HOJA DE RUTA FUTURA
 % ========================================
 \section{Hoja de Ruta -- Funcionalidades Futuras}
 
@@ -568,7 +756,7 @@ Las siguientes funcionalidades están planificadas como mejoras independientes d
 \end{itemize}
 
 % ========================================
-% 13. CICLO DE DESARROLLO DE SOFTWARE
+% 14. CICLO DE DESARROLLO DE SOFTWARE
 % ========================================
 \section{Ciclo de Desarrollo de Software -- Modelo de Sommerville}
 
@@ -627,7 +815,7 @@ Durante los 12 meses de contrato, el mantenimiento sigue ciclos de 2--4 semanas:
 \end{enumerate}
 
 % ========================================
-% 14. VALIDACIÓN
+% 15. VALIDACION
 % ========================================
 \section{Criterios de Aceptación}
 
@@ -647,7 +835,7 @@ Durante los 12 meses de contrato, el mantenimiento sigue ciclos de 2--4 semanas:
 \end{enumerate}
 
 % ========================================
-% 15. FIRMA
+% 16. FIRMA
 % ========================================
 \newpage
 \section{Firmas}
@@ -667,7 +855,7 @@ Fecha: \rule{5cm}{0.3pt}\\
 \begin{minipage}{0.45\textwidth}
 \begin{center}
 \rule{6cm}{0.5pt}\\[0.5cm]
-\textbf{Macreat Development}\\
+\textbf{MACREAT - developer}\\
 Proveedor\\[0.3cm]
 Nombre: \rule{5cm}{0.3pt}\\[0.3cm]
 Fecha: \rule{5cm}{0.3pt}\\
