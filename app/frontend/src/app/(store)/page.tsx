@@ -358,21 +358,6 @@ export default function StoreHomePage() {
               </div>
               <p className="text-center text-sm font-medium text-villa-bone">Azul Camo</p>
             </div>
-
-            {/* Fox Mark */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
-                <Image
-                  src={brandManifest.foxMark.src}
-                  alt="Fox Mark - Iconic fox symbol"
-                  fill
-                  loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
-                  className="object-contain brightness-0 invert"
-                />
-              </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Fox Mark</p>
-            </div>
           </div>
         </div>
       </section>
