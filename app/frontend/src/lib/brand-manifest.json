@@ -1,8 +1,8 @@
 {
   "wordmark": {
-    "src": "/brand/wordmark.png",
-    "width": 391,
-    "height": 230
+    "src": "/brand/logoOG.png",
+    "width": 200,
+    "height": 200
   },
   "wordmarkFire": {
     "src": "/brand/wordmark-fire.webp",
