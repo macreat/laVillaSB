@@ -272,9 +272,9 @@ export default function StoreHomePage() {
             La Villa Es La Ley.
           </p>
           <div className="mt-10">
-            <Link href="/products" className="btn-primary press-scale px-10 py-4 text-base glow-hover">
-              Comprar Ahora
-            </Link>
+            <a href="#newsletter" className="btn-primary press-scale px-10 py-4 text-base glow-hover">
+              Unite A La Manada
+            </a>
           </div>
         </div>
       </section>

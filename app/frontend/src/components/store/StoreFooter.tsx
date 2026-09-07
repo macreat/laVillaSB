@@ -124,7 +124,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010'
         </div>
 
         {/* Newsletter */}
-        <div className="mt-16 border-t border-villa-smoke/25 pt-12">
+        <div id="newsletter" className="mt-16 border-t border-villa-smoke/25 pt-12">
           <div className="mx-auto max-w-lg text-center">
             <h4 className="font-display text-2xl uppercase tracking-wider text-villa-bone mb-3">
               Unite A La Manada
