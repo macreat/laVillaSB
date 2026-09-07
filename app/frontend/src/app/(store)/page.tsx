@@ -236,9 +236,9 @@ export default function StoreHomePage() {
       </section>
 
       {/* 6. Cierre */}
-      <section className="cierre-bg relative bg-villa-maroon py-20 lg:py-28">
+      <section className="cierre-bg relative bg-villa-maroon py-20 lg:py-28 group/cierre">
         <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
-          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
+          <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl transition-text-shadow duration-300 group-hover/cierre:[text-shadow:0_0_40px_rgba(79,131,241,0.3)]">
             Rueda Con Nosotros.
           </h2>
           <p className="mt-8 max-w-md mx-auto text-base leading-relaxed text-villa-bone/80">
@@ -249,7 +249,7 @@ export default function StoreHomePage() {
             La Villa Es La Ley.
           </p>
           <div className="mt-10">
-            <Link href="/products" className="btn-primary press-scale px-10 py-4 text-base">
+            <Link href="/products" className="btn-primary press-scale px-10 py-4 text-base glow-hover">
               Comprar Ahora
             </Link>
           </div>

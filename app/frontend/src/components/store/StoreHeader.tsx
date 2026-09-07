@@ -74,14 +74,14 @@ export function StoreHeader() {
               target="_blank"
               rel={EXTERNAL_LINK_REL}
               aria-label="Hablanos por WhatsApp"
-              className="hidden sm:block transition-transform hover:scale-105"
+              className="hidden sm:flex items-center justify-center h-11 w-11 rounded-full border-2 border-villa-fox/30 bg-villa-fox/10 transition-all hover:border-villa-fox hover:bg-villa-fox/20 hover:scale-110 hover:shadow-lg hover:shadow-villa-fox/20"
             >
               <Image
                 src={brandManifest.sorneroLogo.src}
-                width={32}
-                height={32}
+                width={36}
+                height={36}
                 alt="La Villa SB - hablanos por WhatsApp"
-                className="h-8 w-8 rounded-full object-contain"
+                className="h-9 w-9 rounded-full object-contain"
               />
             </a>
             <Link href="/cart" className="relative p-1 text-villa-bone hover:text-villa-fox transition-colors">
@@ -123,13 +123,15 @@ export function StoreHeader() {
               onClick={() => setMobileOpen(false)}
               className="flex items-center gap-3 rounded-none px-3 py-3 font-sans text-sm font-bold uppercase tracking-wide text-villa-smoke hover:bg-villa-smoke/5 hover:text-villa-bone border-l-2 border-transparent"
             >
-              <Image
-                src={brandManifest.sorneroLogo.src}
-                width={24}
-                height={24}
-                alt=""
-                className="h-6 w-6 rounded-full object-contain"
-              />
+              <div className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-villa-fox/30 bg-villa-fox/10">
+                <Image
+                  src={brandManifest.sorneroLogo.src}
+                  width={28}
+                  height={28}
+                  alt=""
+                  className="h-7 w-7 rounded-full object-contain"
+                />
+              </div>
               WhatsApp
             </a>
           </nav>
