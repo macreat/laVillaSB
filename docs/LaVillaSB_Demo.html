@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Villa SB - Architecture &amp; Delivery Review</title>
+<title>La Villa SB - Revisión de Arquitectura y Entrega</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -536,22 +536,22 @@ footer {
   <div class="grid-bg"></div>
 
   <div class="wrap hero-inner">
-    <div class="hero-badge hero-anim ha1"><span class="dot"></span> MVP Complete &middot; 13 Containers Running</div>
+    <div class="hero-badge hero-anim ha1"><span class="dot"></span> MVP Completo &middot; 13 Contenedores Activos</div>
     <h1 class="hero-anim ha2">LA VILLA SB</h1>
     <div class="hero-rule hero-anim ha3"></div>
     <p class="hero-sub hero-anim ha3">
-      Architecture and delivery review of the skateboarding e-commerce platform.
-      Documented against Sommerville's architectural views, with the trade-offs,
-      the timeline and the features that actually shipped.
+      Revisión de arquitectura y entrega de la plataforma de comercio electrónico
+      de skateboarding. Documentada según las vistas arquitectónicas de Sommerville,
+      con los balances, el cronograma y las funcionalidades que realmente se entregaron.
     </p>
     <div class="hero-stats hero-anim ha4">
-      <div class="hero-stat"><b>13</b><span>Containers</span></div>
-      <div class="hero-stat"><b>6</b><span>Microservices</span></div>
+      <div class="hero-stat"><b>13</b><span>Contenedores</span></div>
+      <div class="hero-stat"><b>6</b><span>Microservicios</span></div>
       <div class="hero-stat"><b>112</b><span>Commits</span></div>
-      <div class="hero-stat"><b>11.3k</b><span>Lines of source</span></div>
+      <div class="hero-stat"><b>11.3k</b><span>Líneas de código</span></div>
     </div>
   </div>
-  <div class="scroll-cue hero-anim ha5">Scroll &darr;</div>
+  <div class="scroll-cue hero-anim ha5">Desliza &darr;</div>
 </section>
 
 
@@ -559,33 +559,33 @@ footer {
 <section id="summary">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">01 &mdash; Executive Summary</div>
-    <h2 class="reveal d1">What Was Built</h2>
+    <div class="label reveal">01 &mdash; Resumen Ejecutivo</div>
+    <h2 class="reveal d1">Lo Que Se Construyó</h2>
     <p class="lede reveal d1">
-      A containerised storefront and admin platform for a Colombian skate shop.
-      Every figure on this page is taken from the repository or the running stack,
-      not estimated.
+      Una tienda y un panel de administración en contenedores para un skate shop
+      colombiano. Cada cifra de esta página proviene del repositorio o del stack en
+      ejecución; no son estimaciones.
     </p>
 
     <div class="grid g4" style="margin-bottom:1.6rem;">
-      <div class="metric reveal d1"><b data-count="13">0</b><span>Containers</span></div>
-      <div class="metric reveal d2"><b data-count="6">0</b><span>FastAPI Services</span></div>
-      <div class="metric reveal d3"><b data-count="145">0</b><span>Source Files</span></div>
-      <div class="metric reveal d4"><b data-count="27">0</b><span>Test Files</span></div>
+      <div class="metric reveal d1"><b data-count="13">0</b><span>Contenedores</span></div>
+      <div class="metric reveal d2"><b data-count="6">0</b><span>Servicios FastAPI</span></div>
+      <div class="metric reveal d3"><b data-count="145">0</b><span>Archivos fuente</span></div>
+      <div class="metric reveal d4"><b data-count="27">0</b><span>Archivos de prueba</span></div>
     </div>
 
     <div class="grid g3">
       <div class="card reveal d2">
-        <h3>&#9733; Storefront</h3>
-        <p>Next.js 15 catalogue, search, cart and a WhatsApp-based checkout, localised to Spanish.</p>
+        <h3>&#9733; Tienda</h3>
+        <p>Catálogo, búsqueda y carrito en Next.js 15, con checkout vía WhatsApp y localización al español.</p>
       </div>
       <div class="card reveal d3">
-        <h3>&#9881; Admin</h3>
-        <p>Inventory editing, order tracking and revenue analytics behind gateway-managed sessions.</p>
+        <h3>&#9881; Administración</h3>
+        <p>Edición de inventario, seguimiento de pedidos y analítica de ingresos, con sesiones gestionadas por el gateway.</p>
       </div>
       <div class="card reveal d4">
-        <h3>&#128736; Platform</h3>
-        <p>Six FastAPI services on a RabbitMQ event bus, fronted by a Laravel 12 API gateway.</p>
+        <h3>&#128736; Plataforma</h3>
+        <p>Seis servicios FastAPI sobre un bus de eventos RabbitMQ, detrás de un API gateway en Laravel 12.</p>
       </div>
     </div>
   </div>
@@ -596,66 +596,66 @@ footer {
 <section id="architecture">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">02 &mdash; Architecture</div>
-    <h2 class="reveal d1">Four Views, After Sommerville</h2>
+    <div class="label reveal">02 &mdash; Arquitectura</div>
+    <h2 class="reveal d1">Cuatro Vistas, Según Sommerville</h2>
     <p class="lede reveal d1">
-      Sommerville argues no single diagram describes a system: you need several views,
-      each answering a different question. These are the four we kept, and what each one
-      is actually for.
+      Sommerville sostiene que ningún diagrama describe un sistema por sí solo: hacen
+      falta varias vistas, cada una respondiendo una pregunta distinta. Estas son las cuatro
+      que mantuvimos, y para qué sirve cada una.
     </p>
 
     <div class="grid g2" style="margin-bottom:2rem;">
       <div class="view reveal d1">
-        <div class="vname">Conceptual view</div>
-        <h3>Four responsibility layers</h3>
-        <p>The organising idea a newcomer needs before reading any code. Presentation, gateway, domain services, infrastructure.</p>
+        <div class="vname">Vista conceptual</div>
+        <h3>Cuatro capas de responsabilidad</h3>
+        <p>La idea organizadora que alguien nuevo necesita antes de leer código. Presentación, gateway, servicios de dominio, infraestructura.</p>
       </div>
       <div class="view reveal d2">
-        <div class="vname">Logical view</div>
-        <h3>Services and their capabilities</h3>
-        <p>Which service owns which business capability, and how they talk. Drives team boundaries and deployment units.</p>
+        <div class="vname">Vista lógica</div>
+        <h3>Servicios y sus capacidades</h3>
+        <p>Qué servicio es dueño de qué capacidad de negocio, y cómo se comunican. Define límites de equipo y unidades de despliegue.</p>
       </div>
       <div class="view reveal d3">
-        <div class="vname">Physical view</div>
-        <h3>Containers and hardware</h3>
-        <p>Docker Compose locally, containers behind Cloudflare in production. Answers capacity and cost questions.</p>
+        <div class="vname">Vista física</div>
+        <h3>Contenedores y hardware</h3>
+        <p>Docker Compose en local, contenedores detrás de Cloudflare en producción. Responde las preguntas de capacidad y costo.</p>
       </div>
       <div class="view reveal d4">
-        <div class="vname">Development view</div>
-        <h3>Repository structure</h3>
-        <p>One monorepo, three stacks. Frontend, gateway and services version together, which keeps contracts honest.</p>
+        <div class="vname">Vista de desarrollo</div>
+        <h3>Estructura del repositorio</h3>
+        <p>Un monorepo, tres stacks. Frontend, gateway y servicios se versionan juntos, lo que mantiene honestos los contratos.</p>
       </div>
     </div>
 
     <div class="grid" style="gap:0.7rem; margin-bottom:2rem;">
       <div class="layer reveal d1">
-        <span class="n">L1</span><span class="t">Presentation</span>
-        <span class="d">Next.js 15 storefront and admin dashboard, server-rendered.</span>
+        <span class="n">L1</span><span class="t">Presentación</span>
+        <span class="d">Tienda y panel de administración en Next.js 15, renderizados en servidor.</span>
       </div>
       <div class="layer reveal d2">
         <span class="n">L2</span><span class="t">Gateway</span>
-        <span class="d">Laravel 12: authentication, authorisation, rate limiting, admin sessions, routing.</span>
+        <span class="d">Laravel 12: autenticación, autorización, limitación de tasa, sesiones de administración y enrutamiento.</span>
       </div>
       <div class="layer reveal d3">
-        <span class="n">L3</span><span class="t">Domain Services</span>
-        <span class="d">Catalog, Inventory, Orders, Payments, Users, Notifications &mdash; FastAPI, one capability each.</span>
+        <span class="n">L3</span><span class="t">Servicios de Dominio</span>
+        <span class="d">Catálogo, Inventario, Pedidos, Pagos, Usuarios y Notificaciones &mdash; FastAPI, una capacidad cada uno.</span>
       </div>
       <div class="layer reveal d4">
-        <span class="n">L4</span><span class="t">Infrastructure</span>
-        <span class="d">PostgreSQL, Redis, RabbitMQ, Meilisearch, MinIO object storage.</span>
+        <span class="n">L4</span><span class="t">Infraestructura</span>
+        <span class="d">PostgreSQL, Redis, RabbitMQ, Meilisearch y almacenamiento de objetos MinIO.</span>
       </div>
     </div>
 
     <div class="reveal d5">
-      <div class="vname" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:0.8rem;">Architectural patterns applied</div>
+      <div class="vname" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:0.8rem;">Patrones arquitectónicos aplicados</div>
       <div class="chips">
-        <span class="chip">Layered architecture</span>
-        <span class="chip">Client&ndash;server</span>
+        <span class="chip">Arquitectura en capas</span>
+        <span class="chip">Cliente&ndash;servidor</span>
         <span class="chip">API gateway / broker</span>
-        <span class="chip">Service-oriented</span>
-        <span class="chip">Publish&ndash;subscribe (RabbitMQ)</span>
-        <span class="chip">Repository</span>
-        <span class="chip">Database per service</span>
+        <span class="chip">Orientada a servicios</span>
+        <span class="chip">Publicación&ndash;suscripción (RabbitMQ)</span>
+        <span class="chip">Repositorio</span>
+        <span class="chip">Base de datos por servicio</span>
       </div>
     </div>
   </div>
@@ -666,71 +666,72 @@ footer {
 <section id="tradeoffs">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">03 &mdash; Trade-offs</div>
-    <h2 class="reveal d1">The Balances We Struck</h2>
+    <div class="label reveal">03 &mdash; Balances</div>
+    <h2 class="reveal d1">Los Balances Que Hicimos</h2>
     <p class="lede reveal d1">
-      Every one of these was a fork with a real alternative. What matters is not that we
-      chose, but what we knowingly gave up &mdash; the last row of each card is the bill.
+      Cada uno de estos fue una bifurcación con una alternativa real. Lo que importa no es
+      haber elegido, sino a qué renunciamos a sabiendas &mdash; la última fila de cada tarjeta
+      es la cuenta.
     </p>
 
     <div class="grid g2">
       <div class="card reveal d1">
-        <h3>&#128225; WhatsApp checkout</h3>
+        <h3>&#128225; Checkout por WhatsApp</h3>
         <div class="tradeoff">
-          <div class="row"><span class="k k-chose">Chose</span><span class="v">Order handoff to WhatsApp</span></div>
-          <div class="row"><span class="k k-over">Over</span><span class="v muted">Full card gateway at MVP</span></div>
-          <div class="row"><span class="k k-why">Why</span><span class="v muted">It is how this market already buys. Zero onboarding friction, and it shipped in days rather than weeks of compliance work.</span></div>
-          <div class="row"><span class="k k-cost">Cost</span><span class="v muted">No automated payment capture. Conversion is unmeasurable end to end.</span></div>
+          <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Traspaso del pedido a WhatsApp</span></div>
+          <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Pasarela de tarjetas completa en el MVP</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Es como ya compra este mercado. Cero fricción de adopción, y se entregó en días en lugar de semanas de trabajo de cumplimiento normativo.</span></div>
+          <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Sin captura automática de pagos. La conversión no se puede medir de extremo a extremo.</span></div>
         </div>
       </div>
 
       <div class="card reveal d2">
-        <h3>&#127760; Laravel gateway over FastAPI</h3>
+        <h3>&#127760; Gateway en Laravel en vez de FastAPI</h3>
         <div class="tradeoff">
-          <div class="row"><span class="k k-chose">Chose</span><span class="v">Laravel 12 as the single entry point</span></div>
-          <div class="row"><span class="k k-over">Over</span><span class="v muted">A seventh FastAPI service, or an off-the-shelf gateway</span></div>
-          <div class="row"><span class="k k-why">Why</span><span class="v muted">Auth, sessions, rate limiting and policy are batteries-included. Writing that in FastAPI would have been re-implementing a solved problem.</span></div>
-          <div class="row"><span class="k k-cost">Cost</span><span class="v muted">A second language and runtime in the stack, and one more thing to keep patched.</span></div>
+          <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Laravel 12 como único punto de entrada</span></div>
+          <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Un séptimo servicio FastAPI, o un gateway comercial</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Autenticación, sesiones, limitación de tasa y políticas vienen incluidas. Escribir eso en FastAPI habría sido reimplementar un problema ya resuelto.</span></div>
+          <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Un segundo lenguaje y runtime en el stack, y una cosa más que mantener actualizada.</span></div>
         </div>
       </div>
 
       <div class="card reveal d3">
-        <h3>&#9881; Six services, not one monolith</h3>
+        <h3>&#9881; Seis servicios, no un monolito</h3>
         <div class="tradeoff">
-          <div class="row"><span class="k k-chose">Chose</span><span class="v">Service per business capability</span></div>
-          <div class="row"><span class="k k-over">Over</span><span class="v muted">A single Django or Laravel application</span></div>
-          <div class="row"><span class="k k-why">Why</span><span class="v muted">Catalogue sync and image processing are bursty and slow; isolating them keeps checkout responsive under load.</span></div>
-          <div class="row"><span class="k k-cost">Cost</span><span class="v muted">Distributed debugging, and 13 containers to run for a shop that is not yet at scale.</span></div>
+          <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Un servicio por capacidad de negocio</span></div>
+          <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Una sola aplicación Django o Laravel</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">La sincronización del catálogo y el procesamiento de imágenes son intermitentes y lentos; aislarlos mantiene el checkout ágil bajo carga.</span></div>
+          <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Depuración distribuida, y 13 contenedores para una tienda que aún no está a escala.</span></div>
         </div>
       </div>
 
       <div class="card reveal d4">
-        <h3>&#128269; Meilisearch over Postgres FTS</h3>
+        <h3>&#128269; Meilisearch en vez de Postgres FTS</h3>
         <div class="tradeoff">
-          <div class="row"><span class="k k-chose">Chose</span><span class="v">A dedicated search engine</span></div>
-          <div class="row"><span class="k k-over">Over</span><span class="v muted">PostgreSQL full-text search</span></div>
-          <div class="row"><span class="k k-why">Why</span><span class="v muted">Typo tolerance out of the box. Customers search for board brands they cannot spell, and Postgres FTS returns nothing for those.</span></div>
-          <div class="row"><span class="k k-cost">Cost</span><span class="v muted">An index to keep in sync, and one more stateful service to back up.</span></div>
+          <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Un motor de búsqueda dedicado</span></div>
+          <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Búsqueda de texto completo de PostgreSQL</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Tolerancia a errores de tipeo desde el inicio. Los clientes buscan marcas de tablas que no saben escribir, y Postgres FTS no devuelve nada en esos casos.</span></div>
+          <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Un índice que mantener sincronizado, y un servicio con estado más que respaldar.</span></div>
         </div>
       </div>
 
       <div class="card reveal d5">
-        <h3>&#128230; Self-hosted VPS backend</h3>
+        <h3>&#128230; Backend autogestionado en VPS</h3>
         <div class="tradeoff">
-          <div class="row"><span class="k k-chose">Chose</span><span class="v">Docker Compose on a single VPS</span></div>
-          <div class="row"><span class="k k-over">Over</span><span class="v muted">Kubernetes, or fully managed services</span></div>
-          <div class="row"><span class="k k-why">Why</span><span class="v muted">Roughly $66/month all-in against several hundred. At current order volume, managed orchestration would cost more than the shop makes.</span></div>
-          <div class="row"><span class="k k-cost">Cost</span><span class="v muted">One machine is one point of failure. No horizontal scaling without a migration.</span></div>
+          <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Docker Compose en un solo VPS</span></div>
+          <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Kubernetes, o servicios totalmente gestionados</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Unos $66 al mes todo incluido, frente a varios cientos. Al volumen de pedidos actual, la orquestación gestionada costaría más de lo que factura la tienda.</span></div>
+          <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Una sola máquina es un único punto de falla. Sin escalado horizontal sin una migración.</span></div>
         </div>
       </div>
 
       <div class="card reveal d6">
-        <h3>&#127912; Single-file deliverables</h3>
+        <h3>&#127912; Entregables de un solo archivo</h3>
         <div class="tradeoff">
-          <div class="row"><span class="k k-chose">Chose</span><span class="v">Self-contained HTML with embedded art</span></div>
-          <div class="row"><span class="k k-over">Over</span><span class="v muted">A hosted deck or a slide export</span></div>
-          <div class="row"><span class="k k-why">Why</span><span class="v muted">This page has to open from a USB stick on a projector with no network. Linking assets would break exactly when it matters.</span></div>
-          <div class="row"><span class="k k-cost">Cost</span><span class="v muted">A heavier file, and art that cannot be swapped without re-encoding.</span></div>
+          <div class="row"><span class="k k-chose">Elegimos</span><span class="v">HTML autocontenido con el arte embebido</span></div>
+          <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Una presentación alojada o exportada a diapositivas</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Esta página tiene que abrirse desde una USB en un proyector sin red. Enlazar recursos fallaría justo cuando importa.</span></div>
+          <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Un archivo más pesado, y arte que no se puede cambiar sin recodificar.</span></div>
         </div>
       </div>
     </div>
@@ -742,49 +743,49 @@ footer {
 <section id="features">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">04 &mdash; Delivered</div>
-    <h2 class="reveal d1">Features Implemented</h2>
+    <div class="label reveal">04 &mdash; Entregado</div>
+    <h2 class="reveal d1">Funcionalidades Implementadas</h2>
     <p class="lede reveal d1">
-      Shipped and running in the current stack. Anything still open is listed under
-      System Status, not here.
+      Entregado y en ejecución en el stack actual. Todo lo que sigue pendiente está en
+      Estado Actual, no aquí.
     </p>
 
     <div class="grid g3">
       <div class="card reveal d1">
-        <h3>&#9733; Storefront</h3>
+        <h3>&#9733; Tienda</h3>
         <ul class="ticks">
-          <li><span class="tick">&#10003;</span><span>Product catalogue with categories and sub-tabs</span></li>
-          <li><span class="tick">&#10003;</span><span>Typo-tolerant search via <b>Meilisearch</b></span></li>
-          <li><span class="tick">&#10003;</span><span>Cart and order management</span></li>
-          <li><span class="tick">&#10003;</span><span><b>WhatsApp</b> checkout handoff</span></li>
-          <li><span class="tick">&#10003;</span><span>Mobile-first responsive layout</span></li>
-          <li><span class="tick">&#10003;</span><span>Cookie consent with stored preferences</span></li>
-          <li><span class="tick">&#10003;</span><span>Full Spanish localisation</span></li>
+          <li><span class="tick">&#10003;</span><span>Catálogo de productos con categorías y subpestañas</span></li>
+          <li><span class="tick">&#10003;</span><span>Búsqueda tolerante a errores de tipeo con <b>Meilisearch</b></span></li>
+          <li><span class="tick">&#10003;</span><span>Gestión de carrito y pedidos</span></li>
+          <li><span class="tick">&#10003;</span><span>Traspaso de checkout a <b>WhatsApp</b></span></li>
+          <li><span class="tick">&#10003;</span><span>Diseño responsivo con enfoque mobile-first</span></li>
+          <li><span class="tick">&#10003;</span><span>Consentimiento de cookies con preferencias guardadas</span></li>
+          <li><span class="tick">&#10003;</span><span>Localización completa al español</span></li>
         </ul>
       </div>
 
       <div class="card reveal d2">
-        <h3>&#9881; Admin Dashboard</h3>
+        <h3>&#9881; Panel de Administración</h3>
         <ul class="ticks">
-          <li><span class="tick">&#10003;</span><span>Real-time inventory editing</span></li>
-          <li><span class="tick">&#10003;</span><span>Order management and tracking</span></li>
-          <li><span class="tick">&#10003;</span><span>Product search and filtering</span></li>
-          <li><span class="tick">&#10003;</span><span>Revenue analytics</span></li>
-          <li><span class="tick">&#10003;</span><span>Multi-user access control</span></li>
-          <li><span class="tick">&#10003;</span><span>Gateway-managed admin sessions</span></li>
+          <li><span class="tick">&#10003;</span><span>Edición de inventario en tiempo real</span></li>
+          <li><span class="tick">&#10003;</span><span>Gestión y seguimiento de pedidos</span></li>
+          <li><span class="tick">&#10003;</span><span>Búsqueda y filtrado de productos</span></li>
+          <li><span class="tick">&#10003;</span><span>Analítica de ingresos</span></li>
+          <li><span class="tick">&#10003;</span><span>Control de acceso multiusuario</span></li>
+          <li><span class="tick">&#10003;</span><span>Sesiones de administración gestionadas por el gateway</span></li>
         </ul>
       </div>
 
       <div class="card reveal d3">
-        <h3>&#128736; Platform</h3>
+        <h3>&#128736; Plataforma</h3>
         <ul class="ticks">
-          <li><span class="tick">&#10003;</span><span>Six FastAPI domain services</span></li>
-          <li><span class="tick">&#10003;</span><span><b>RabbitMQ</b> event bus between services</span></li>
-          <li><span class="tick">&#10003;</span><span><b>Redis</b> caching and session store</span></li>
-          <li><span class="tick">&#10003;</span><span><b>MinIO</b> S3-compatible object storage</span></li>
-          <li><span class="tick">&#10003;</span><span>Media proxy route for signed assets</span></li>
-          <li><span class="tick">&#10003;</span><span>13-container Docker Compose stack</span></li>
-          <li><span class="tick">&#10003;</span><span>Brand design system and tokens</span></li>
+          <li><span class="tick">&#10003;</span><span>Seis servicios de dominio en FastAPI</span></li>
+          <li><span class="tick">&#10003;</span><span>Bus de eventos <b>RabbitMQ</b> entre servicios</span></li>
+          <li><span class="tick">&#10003;</span><span>Caché y almacén de sesiones con <b>Redis</b></span></li>
+          <li><span class="tick">&#10003;</span><span>Almacenamiento de objetos compatible con S3 en <b>MinIO</b></span></li>
+          <li><span class="tick">&#10003;</span><span>Ruta proxy de medios para recursos firmados</span></li>
+          <li><span class="tick">&#10003;</span><span>Stack Docker Compose de 13 contenedores</span></li>
+          <li><span class="tick">&#10003;</span><span>Sistema de diseño de marca y tokens</span></li>
         </ul>
       </div>
     </div>
@@ -796,24 +797,24 @@ footer {
 <section id="timeline">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">05 &mdash; Development Time</div>
-    <h2 class="reveal d1">Two Months, Thirteen Working Days</h2>
+    <div class="label reveal">05 &mdash; Tiempo de Desarrollo</div>
+    <h2 class="reveal d1">Dos Meses, Trece Días de Trabajo</h2>
     <p class="lede reveal d1">
-      Read straight out of git history: <b>112 commits</b> between 9 July and 7 September 2026,
-      landed across <b>13 distinct working days</b>. The calendar span is two months; the
-      actual effort is concentrated.
+      Leído directamente del historial de git: <b>112 commits</b> entre el 9 de julio y el
+      7 de septiembre de 2026, repartidos en <b>13 días de trabajo distintos</b>. El lapso en
+      calendario es de dos meses; el esfuerzo real está concentrado.
     </p>
 
     <div class="grid g4" style="margin-bottom:2.2rem;">
       <div class="metric reveal d1"><b data-count="112">0</b><span>Commits</span></div>
-      <div class="metric reveal d2"><b data-count="13">0</b><span>Active days</span></div>
-      <div class="metric reveal d3"><b data-count="61">0</b><span>Calendar days</span></div>
-      <div class="metric reveal d4"><b>~220</b><span>Estimated hours</span></div>
+      <div class="metric reveal d2"><b data-count="13">0</b><span>Días activos</span></div>
+      <div class="metric reveal d3"><b data-count="61">0</b><span>Días de calendario</span></div>
+      <div class="metric reveal d4"><b>~220</b><span>Horas estimadas</span></div>
     </div>
 
     <div class="grid g2">
       <div class="card reveal d2">
-        <h3>&#128200; Commits by month</h3>
+        <h3>&#128200; Commits por mes</h3>
         <div class="bars" style="margin-top:1.2rem;">
           <div class="bar-col">
             <span class="bar-val">9</span>
@@ -823,7 +824,7 @@ footer {
           <div class="bar-col">
             <span class="bar-val">80</span>
             <div class="bar" data-h="100"></div>
-            <span class="bar-lab">AUG</span>
+            <span class="bar-lab">AGO</span>
           </div>
           <div class="bar-col">
             <span class="bar-val">24</span>
@@ -832,24 +833,24 @@ footer {
           </div>
         </div>
         <p style="margin-top:1.1rem;font-size:0.86rem;">
-          August carried the build. July was scaffolding, September has been
-          hardening and visual work.
+          Agosto cargó con la construcción. Julio fue andamiaje, y septiembre ha sido
+          endurecimiento y trabajo visual.
         </p>
       </div>
 
       <div class="card reveal d3">
-        <h3>&#9201; Where the hours went</h3>
+        <h3>&#9201; En qué se fueron las horas</h3>
         <div style="margin-top:0.5rem;">
-          <div class="srow"><span class="sk">MVP development</span><span class="sv">~120 hrs</span></div>
-          <div class="srow"><span class="sk">Backend hardening</span><span class="sv">~60 hrs</span></div>
-          <div class="srow"><span class="sk">Frontend polish</span><span class="sv">~40 hrs</span></div>
+          <div class="srow"><span class="sk">Desarrollo del MVP</span><span class="sv">~120 h</span></div>
+          <div class="srow"><span class="sk">Endurecimiento del backend</span><span class="sv">~60 h</span></div>
+          <div class="srow"><span class="sk">Pulido del frontend</span><span class="sv">~40 h</span></div>
         </div>
         <div class="cost-total">
           <span style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);">Total</span>
-          <b>~220 hrs</b>
+          <b>~220 h</b>
         </div>
         <p style="margin-top:0.9rem;font-size:0.82rem;">
-          Hours are an estimate; commits and active days are measured.
+          Las horas son una estimación; los commits y los días activos están medidos.
         </p>
       </div>
     </div>
@@ -857,23 +858,23 @@ footer {
     <div class="timeline reveal d4" style="margin-top:2.4rem;">
       <div class="tl-item">
         <div class="tl-date">09 Jul 2026</div>
-        <h4>Repository and scaffolding</h4>
-        <p>Monorepo laid out, Docker Compose stack defined, service skeletons in place.</p>
+        <h4>Repositorio y andamiaje</h4>
+        <p>Monorepo estructurado, stack Docker Compose definido y esqueletos de servicios en su lugar.</p>
       </div>
       <div class="tl-item">
-        <div class="tl-date">Aug 2026 &middot; 80 commits</div>
-        <h4>The build</h4>
-        <p>Domain services, gateway, storefront, admin dashboard, search, cart and the WhatsApp checkout flow.</p>
+        <div class="tl-date">Ago 2026 &middot; 80 commits</div>
+        <h4>La construcción</h4>
+        <p>Servicios de dominio, gateway, tienda, panel de administración, búsqueda, carrito y el flujo de checkout por WhatsApp.</p>
       </div>
       <div class="tl-item">
         <div class="tl-date">Sep 2026 &middot; 24 commits</div>
-        <h4>Catalogue, consent and brand</h4>
-        <p>Category mapping fixes, cookie consent, Spanish localisation, and the Logo OG visual identity across the storefront.</p>
+        <h4>Catálogo, consentimiento y marca</h4>
+        <p>Correcciones en el mapeo de categorías, consentimiento de cookies, localización al español y la identidad visual del Logo OG en toda la tienda.</p>
       </div>
       <div class="tl-item">
-        <div class="tl-date">Next</div>
-        <h4>Production deployment</h4>
-        <p>Payments, CI/CD and monitoring &mdash; scoped in the roadmap below.</p>
+        <div class="tl-date">Siguiente</div>
+        <h4>Despliegue a producción</h4>
+        <p>Pagos, CI/CD y monitoreo &mdash; delimitados en la hoja de ruta más abajo.</p>
       </div>
     </div>
   </div>
@@ -884,39 +885,39 @@ footer {
 <section id="status">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">06 &mdash; Current Status</div>
-    <h2 class="reveal d1">Running, With Known Gaps</h2>
+    <div class="label reveal">06 &mdash; Estado Actual</div>
+    <h2 class="reveal d1">En Marcha, Con Brechas Conocidas</h2>
     <p class="lede reveal d1">
-      An honest read of the stack. The gaps are listed because they are the work
-      between this MVP and a production launch.
+      Una lectura honesta del stack. Las brechas están listadas porque son el trabajo
+      que separa a este MVP de un lanzamiento en producción.
     </p>
 
     <div class="grid g3">
       <div class="card reveal d1">
-        <h3>&#128994; System health</h3>
-        <div class="srow"><span class="sk">Containers running</span><span class="sv">13/13</span></div>
-        <div class="srow"><span class="sk">Microservices healthy</span><span class="sv">6/6</span></div>
-        <div class="srow"><span class="sk">PostgreSQL</span><span class="sv">Connected</span></div>
-        <div class="srow"><span class="sk">Redis cache</span><span class="sv">Active</span></div>
-        <div class="srow"><span class="sk">Meilisearch</span><span class="sv">Healthy</span></div>
+        <h3>&#128994; Salud del sistema</h3>
+        <div class="srow"><span class="sk">Contenedores en ejecución</span><span class="sv">13/13</span></div>
+        <div class="srow"><span class="sk">Microservicios saludables</span><span class="sv">6/6</span></div>
+        <div class="srow"><span class="sk">PostgreSQL</span><span class="sv">Conectado</span></div>
+        <div class="srow"><span class="sk">Caché Redis</span><span class="sv">Activo</span></div>
+        <div class="srow"><span class="sk">Meilisearch</span><span class="sv">Saludable</span></div>
       </div>
 
       <div class="card reveal d2">
-        <h3>&#128176; Orders to date</h3>
+        <h3>&#128176; Pedidos a la fecha</h3>
         <div style="text-align:center;padding:1.4rem 0;">
           <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:var(--cyan);line-height:1;">$480,000</div>
-          <div style="font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-top:0.5rem;">COP revenue &middot; delivered</div>
+          <div style="font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-top:0.5rem;">Ingresos COP &middot; entregados</div>
         </div>
-        <div class="srow"><span class="sk">Orders processed</span><span class="sv">12</span></div>
+        <div class="srow"><span class="sk">Pedidos procesados</span><span class="sv">12</span></div>
       </div>
 
       <div class="card reveal d3">
-        <h3>&#9888; Known gaps</h3>
+        <h3>&#9888; Brechas conocidas</h3>
         <ul class="ticks">
-          <li><span class="warn">!</span><span>Payment gateway integration pending</span></li>
-          <li><span class="warn">!</span><span>Email notification templates needed</span></li>
-          <li><span class="warn">!</span><span>CI/CD pipeline not configured</span></li>
-          <li><span class="warn">!</span><span>Production SSL certificates required</span></li>
+          <li><span class="warn">!</span><span>Integración de pasarela de pagos pendiente</span></li>
+          <li><span class="warn">!</span><span>Faltan plantillas de notificación por correo</span></li>
+          <li><span class="warn">!</span><span>Pipeline de CI/CD sin configurar</span></li>
+          <li><span class="warn">!</span><span>Se requieren certificados SSL de producción</span></li>
         </ul>
       </div>
     </div>
@@ -928,39 +929,39 @@ footer {
 <section id="cost">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">07 &mdash; Running Cost</div>
-    <h2 class="reveal d1">Sixty-Six Dollars A Month</h2>
+    <div class="label reveal">07 &mdash; Costo Operativo</div>
+    <h2 class="reveal d1">Sesenta y Seis Dólares al Mes</h2>
     <p class="lede reveal d1">
-      The self-hosting trade-off, priced. This is what keeps the platform online
-      at current volume.
+      El balance de autogestionar, con precio. Esto es lo que mantiene la plataforma
+      en línea al volumen actual.
     </p>
 
     <div class="grid g2">
       <div class="card reveal d1">
-        <h3>&#128181; Monthly hosting</h3>
+        <h3>&#128181; Hospedaje mensual</h3>
         <div style="margin-top:0.5rem;">
           <div class="srow"><span class="sk">Vercel Pro &mdash; frontend</span><span class="sv">$20</span></div>
           <div class="srow"><span class="sk">VPS, 4 vCPU &mdash; backend</span><span class="sv">$40</span></div>
-          <div class="srow"><span class="sk">Domain</span><span class="sv">$1</span></div>
-          <div class="srow"><span class="sk">Monitoring</span><span class="sv">$5</span></div>
+          <div class="srow"><span class="sk">Dominio</span><span class="sv">$1</span></div>
+          <div class="srow"><span class="sk">Monitoreo</span><span class="sv">$5</span></div>
         </div>
         <div class="cost-total">
           <span style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);">Total</span>
-          <b>~$66/mo</b>
+          <b>~$66/mes</b>
         </div>
       </div>
 
       <div class="card reveal d2">
-        <h3>&#128640; Deployment shape</h3>
+        <h3>&#128640; Forma del despliegue</h3>
         <ul class="ticks">
-          <li><span class="tick">&#10003;</span><span><b>Frontend</b> &mdash; Vercel, serverless edge, preview per PR</span></li>
-          <li><span class="tick">&#10003;</span><span><b>Backend</b> &mdash; Docker Compose on a single VPS</span></li>
-          <li><span class="tick">&#10003;</span><span><b>Proxy</b> &mdash; Nginx with Let's Encrypt certificates</span></li>
-          <li><span class="tick">&#10003;</span><span><b>Routing</b> &mdash; frontend proxies to <span style="font-family:var(--font-mono);font-size:0.84rem;">api.lavillaskateboarding.com</span></span></li>
+          <li><span class="tick">&#10003;</span><span><b>Frontend</b> &mdash; Vercel, serverless en el edge, preview por cada PR</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Backend</b> &mdash; Docker Compose en un solo VPS</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Proxy</b> &mdash; Nginx con certificados Let's Encrypt</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Enrutamiento</b> &mdash; el frontend hace proxy a <span style="font-family:var(--font-mono);font-size:0.84rem;">api.lavillaskateboarding.com</span></span></li>
         </ul>
         <p style="margin-top:1rem;font-size:0.85rem;">
-          Managed orchestration was priced at several hundred a month. At twelve
-          orders, that maths does not work yet &mdash; revisit it when it does.
+          La orquestación gestionada se cotizó en varios cientos al mes. Con doce pedidos,
+          esa cuenta todavía no cierra &mdash; se revisa cuando cierre.
         </p>
       </div>
     </div>
@@ -972,36 +973,36 @@ footer {
 <section id="roadmap">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">08 &mdash; Next Steps</div>
-    <h2 class="reveal d1">Roadmap</h2>
-    <p class="lede reveal d1">Three phases between here and a hardened production launch.</p>
+    <div class="label reveal">08 &mdash; Próximos Pasos</div>
+    <h2 class="reveal d1">Hoja de Ruta</h2>
+    <p class="lede reveal d1">Tres fases entre este punto y un lanzamiento en producción endurecido.</p>
 
     <div class="grid g3">
       <div class="card reveal d1">
-        <h3><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--cyan);">PHASE 1</span></h3>
-        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.8rem;">Production Deployment</div>
+        <h3><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--cyan);">FASE 1</span></h3>
+        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.8rem;">Despliegue a Producción</div>
         <ul class="ticks">
-          <li><span class="tick">&#10003;</span><span>Deploy frontend to Vercel</span></li>
-          <li><span class="tick">&#10003;</span><span>Set up VPS with Docker Compose</span></li>
-          <li><span class="tick">&#10003;</span><span>Configure SSL and custom domain</span></li>
+          <li><span class="tick">&#10003;</span><span>Desplegar el frontend en Vercel</span></li>
+          <li><span class="tick">&#10003;</span><span>Montar el VPS con Docker Compose</span></li>
+          <li><span class="tick">&#10003;</span><span>Configurar SSL y dominio propio</span></li>
         </ul>
       </div>
       <div class="card reveal d2">
-        <h3><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--cyan);">PHASE 2</span></h3>
-        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.8rem;">Payment Integration</div>
+        <h3><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--cyan);">FASE 2</span></h3>
+        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.8rem;">Integración de Pagos</div>
         <ul class="ticks">
-          <li><span class="warn">&rarr;</span><span>Stripe / PayU integration</span></li>
-          <li><span class="warn">&rarr;</span><span>WhatsApp payment confirmation</span></li>
-          <li><span class="warn">&rarr;</span><span>Invoice generation</span></li>
+          <li><span class="warn">&rarr;</span><span>Integración con Stripe / PayU</span></li>
+          <li><span class="warn">&rarr;</span><span>Confirmación de pago por WhatsApp</span></li>
+          <li><span class="warn">&rarr;</span><span>Generación de facturas</span></li>
         </ul>
       </div>
       <div class="card reveal d3">
-        <h3><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--cyan);">PHASE 3</span></h3>
-        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.8rem;">Production Hardening</div>
+        <h3><span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--cyan);">FASE 3</span></h3>
+        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.8rem;">Endurecimiento de Producción</div>
         <ul class="ticks">
-          <li><span class="warn">&rarr;</span><span>CI/CD pipeline (GitHub Actions)</span></li>
-          <li><span class="warn">&rarr;</span><span>Monitoring and alerting</span></li>
-          <li><span class="warn">&rarr;</span><span>Performance optimisation</span></li>
+          <li><span class="warn">&rarr;</span><span>Pipeline de CI/CD (GitHub Actions)</span></li>
+          <li><span class="warn">&rarr;</span><span>Monitoreo y alertas</span></li>
+          <li><span class="warn">&rarr;</span><span>Optimización de rendimiento</span></li>
         </ul>
       </div>
     </div>
@@ -1018,11 +1019,11 @@ footer {
   <div class="grid-bg"></div>
 
   <div class="wrap">
-    <div class="hero-badge reveal"><span class="dot"></span> Ready for Launch</div>
+    <div class="hero-badge reveal"><span class="dot"></span> Listo para Lanzar</div>
     <h2 class="reveal d1">La Villa Es La Ley</h2>
     <p class="lede reveal d2" style="margin-left:auto;margin-right:auto;text-align:center;">
-      Skateboarding e-commerce platform &mdash; storefront, admin and six domain
-      services, built and running.
+      Plataforma de comercio electrónico de skateboarding &mdash; tienda, administración
+      y seis servicios de dominio, construidos y en ejecución.
     </p>
     <div class="links reveal d3">
       <a class="btn btn--primary" href="https://api.whatsapp.com/send/?phone=573017602493" target="_blank" rel="noopener">&#128172; WhatsApp</a>
