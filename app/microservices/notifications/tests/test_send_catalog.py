@@ -36,7 +36,7 @@ class TestSendCatalog:
 
         data = response.json()
         assert "delivery_log" in data
-        assert data["delivery_log"]["phone"] == "+573017602493"
+        assert data["delivery_log"]["phone"] == "+573245710972"
         assert data["delivery_log"]["products_sent"] == 2
         assert data["delivery_log"]["status"] == "success"
         assert "timestamp" in data["delivery_log"]

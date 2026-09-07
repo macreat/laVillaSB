@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     twilio_account_sid: str = ""
     twilio_auth_token: str = ""
     twilio_from: str = "+15715683120"
-    twilio_to: str = "+573017602493"
+    twilio_to: str = "+573245710972"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

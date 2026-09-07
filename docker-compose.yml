@@ -202,7 +202,7 @@ services:
       TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
       TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
       TWILIO_FROM: ${TWILIO_FROM:-+15715683120}
-      TWILIO_TO: ${TWILIO_TO:-+573017602493}
+      TWILIO_TO: ${TWILIO_TO:-+573245710972}
     depends_on:
       catalog:
         condition: service_started
