@@ -315,7 +315,9 @@ input:-webkit-autofill:focus {
   flex: 0 0 auto;
   min-width: 100%;
   align-items: center;
-  animation: marquee-scroll 22s linear infinite;
+  /* Duration is tuned to the track width so the band reads at roughly
+     110px/s - fast enough to feel alive, slow enough to read the event. */
+  animation: marquee-scroll 48s linear infinite;
 }
 
 .marquee__item {

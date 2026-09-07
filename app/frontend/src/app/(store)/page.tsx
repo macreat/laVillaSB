@@ -86,20 +86,32 @@ export default function StoreHomePage() {
         `}</style>
       </section>
 
-      {/* 1b. "Solo La Villa SB" marquee band */}
-      <section aria-hidden="true" className="relative z-10">
-        <div className="marquee border-y border-villa-fox/30 bg-villa-black py-3.5">
+      {/* 1b. Marquee band - carries the event announcement and links to the post.
+          The repeated text is hidden from assistive tech; the link is labelled
+          once instead, so the event is announced rather than read five times. */}
+      <section className="relative z-10">
+        <a
+          href="https://www.instagram.com/p/Dc88Ygdh7fY/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Evento: Skate de Parque en Unicentro con 3LKS, el viernes 11 de septiembre a las 6 PM. Ver la publicacion en Instagram."
+          className="marquee group border-y border-villa-fox/30 bg-villa-black py-3.5 transition-colors hover:border-villa-fox/60 hover:bg-villa-ink"
+        >
           {[0, 1].map((track) => (
-            <div key={track} className="marquee__track">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <span key={i} className="marquee__item font-display text-2xl uppercase tracking-tight text-villa-bone/80 sm:text-3xl">
-                  Solo La Villa SB
-                  <span className="text-villa-fox">&#9670;</span>
+            <div key={track} className="marquee__track" aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} className="marquee__item font-display text-2xl uppercase tracking-tight sm:text-3xl">
+                  <span className="text-villa-bone/60">Solo La Villa SB</span>
+                  <span className="text-villa-fox/60">&#9670;</span>
+                  <span className="text-villa-fox transition-colors group-hover:text-villa-bone">
+                    Evento Skate De Parque - Unicentro - 3LKS - Viernes 11/09 - 6PM
+                  </span>
+                  <span className="text-villa-fox/60">&#9670;</span>
                 </span>
               ))}
             </div>
           ))}
-        </div>
+        </a>
       </section>
 
       {/* 2. Featured products rail */}
