@@ -86,14 +86,14 @@ export default function StoreHomePage() {
         `}</style>
       </section>
 
-      {/* 1b. "La Villa Es La Ley" marquee band */}
+      {/* 1b. "Solo La Villa SB" marquee band */}
       <section aria-hidden="true" className="relative z-10">
         <div className="marquee border-y border-villa-fox/30 bg-villa-black py-3.5">
           {[0, 1].map((track) => (
             <div key={track} className="marquee__track">
               {Array.from({ length: 8 }).map((_, i) => (
                 <span key={i} className="marquee__item font-display text-2xl uppercase tracking-tight text-villa-bone/80 sm:text-3xl">
-                  La Villa Es La Ley
+                  Solo La Villa SB
                   <span className="text-villa-fox">&#9670;</span>
                 </span>
               ))}
