@@ -11,6 +11,7 @@ import {
   Warehouse,
   Settings,
   LogOut,
+  ExternalLink,
   X,
 } from 'lucide-react';
 import { FoxMark } from '@/components/brand/FoxMark';
@@ -142,7 +143,17 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </ul>
         </nav>
 
-        <div className="border-t border-villa-smoke/25 p-3">
+        <div className="border-t border-villa-smoke/25 p-3 space-y-1">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 items-center gap-3 border-l-2 border-transparent px-3 text-xs font-semibold uppercase tracking-[0.12em] text-text-muted transition-colors hover:text-accent"
+          >
+            <ExternalLink aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.5} />
+            Ver Tienda
+          </a>
+          <p className="px-3 py-2 text-[11px] text-text-muted/60">admin@lavillasb.com</p>
           <button
             type="button"
             onClick={() => logout()}

@@ -160,7 +160,7 @@ export function resolveSubcategorySelection(
 export function filterByCategoryAndSubcategory(
   products: StoreProduct[],
   group: string,
-  requestedSubcategory?: string | null,
+  resolvedSubcategory?: string | null,
 ): StoreProduct[] {
   const normalizedGroup = normalizeCategory(group);
   const groupProducts = filterByCategoryGroup(products, normalizedGroup);
@@ -168,11 +168,12 @@ export function filterByCategoryAndSubcategory(
     return groupProducts;
   }
 
-  const subcategory = resolveSubcategorySelection(products, normalizedGroup, requestedSubcategory);
-  if (subcategory === 'Todos') {
+  // resolvedSubcategory is already the English DB key (e.g. "Shoes") or "Todos"
+  // from resolveSubcategorySelection — no double-resolution needed.
+  if (!resolvedSubcategory || resolvedSubcategory === 'Todos') {
     return groupProducts;
   }
-  return groupProducts.filter((product) => product.categorySubcategory === subcategory);
+  return groupProducts.filter((product) => product.categorySubcategory === resolvedSubcategory);
 }
 
 export function buildCategoryHref(group: string, subcategory?: string): string {
