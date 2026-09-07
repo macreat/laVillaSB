@@ -276,3 +276,155 @@ input:-webkit-autofill:focus {
   position: relative;
   z-index: 1;
 }
+
+/* ===== LOGO-OG DISPLAY LETTERING =====
+   Mirrors the hard-cut, right-leaning letterforms of the original
+   "La Villa" truck logo: heavy condensed caps, dark keyline, hard
+   offset shadow in brand blue. */
+.logo-type {
+  display: inline-block;
+  transform: skewX(-8deg);
+  transform-origin: left bottom;
+  letter-spacing: -0.025em;
+  -webkit-text-stroke: 2px #050b18;
+  paint-order: stroke fill;
+  text-shadow:
+    3px 3px 0 #050b18,
+    6px 6px 0 rgba(79, 131, 241, 0.85),
+    9px 9px 0 rgba(5, 11, 24, 0.55);
+}
+
+@media (min-width: 1024px) {
+  .logo-type {
+    -webkit-text-stroke-width: 3px;
+    text-shadow:
+      4px 4px 0 #050b18,
+      9px 9px 0 rgba(79, 131, 241, 0.85),
+      13px 13px 0 rgba(5, 11, 24, 0.55);
+  }
+}
+
+/* ===== "LA VILLA ES LA LEY" MARQUEE BANDS ===== */
+.marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.marquee__track {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 100%;
+  align-items: center;
+  animation: marquee-scroll 34s linear infinite;
+}
+
+.marquee--reverse .marquee__track {
+  animation-name: marquee-scroll-reverse;
+  animation-duration: 42s;
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding-right: 1.75rem;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes marquee-scroll-reverse {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+}
+
+/* ===== CIERRE SECTION: slow illuminate + shine on hover =====
+   Same visual language as the product cards, played back slowly so the
+   whole panel warms up instead of flashing. */
+.cierre-bg {
+  transition: box-shadow 900ms ease, background-color 900ms ease;
+}
+.cierre-bg::before {
+  transition: opacity 900ms ease, transform 1200ms ease;
+}
+.cierre-bg:hover {
+  box-shadow: inset 0 0 120px rgba(79, 131, 241, 0.18);
+}
+.cierre-bg:hover::before {
+  opacity: 0.14;
+  transform: rotate(45deg) scale(1.62);
+}
+
+/* Radial warm-up layer */
+.cierre-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 90% at 50% 50%,
+    rgba(79, 131, 241, 0.28) 0%,
+    rgba(79, 131, 241, 0.12) 38%,
+    rgba(79, 131, 241, 0.03) 62%,
+    transparent 78%
+  );
+  opacity: 0;
+  transition: opacity 900ms ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.cierre-bg:hover::after {
+  opacity: 1;
+}
+
+/* Slow diagonal shine sweep across the whole panel */
+.cierre-shine {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(233, 238, 248, 0.05) 46%,
+    rgba(233, 238, 248, 0.12) 50%,
+    rgba(233, 238, 248, 0.05) 54%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  transition: transform 1600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cierre-bg:hover .cierre-shine {
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cierre-bg,
+  .cierre-bg::before,
+  .cierre-bg::after,
+  .cierre-shine {
+    transition: none;
+  }
+  .cierre-bg:hover .cierre-shine {
+    transform: translateX(-100%);
+  }
+}

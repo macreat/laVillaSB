@@ -23,20 +23,25 @@ export default function StoreHomePage() {
       <section className="relative overflow-hidden bg-villa-black">
         <div className="hero-reveal grid grid-cols-1 gap-2 lg:grid-cols-7 lg:gap-3">
           {/* Image zone */}
-          <div className="relative order-1 h-[45vh] min-h-[320px] lg:order-2 lg:col-span-4 lg:h-auto lg:min-h-[450px]">
+          <div className="group/hero relative order-1 h-[52vh] min-h-[360px] overflow-hidden lg:order-2 lg:col-span-4 lg:h-auto lg:min-h-[600px]">
             <Image
               src={lavillaSbHero.src}
               alt="La Villa SB full brand logo"
               fill
               priority
               sizes="(min-width: 1024px) 57vw, 100vw"
-              className="object-contain object-center"
+              className="scale-100 object-cover object-center transition-transform duration-700 ease-out group-hover/hero:scale-[1.04]"
+            />
+            {/* Edge falloff so the crop blends into the black section */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-villa-black/45 via-transparent to-transparent lg:bg-gradient-to-r lg:from-villa-black/35 lg:via-transparent lg:to-transparent"
             />
           </div>
 
           {/* Text zone, maroon tinted panel */}
           <div className="relative order-2 flex flex-col justify-center gap-8 bg-villa-maroon px-6 py-16 lg:order-1 lg:col-span-3 lg:px-12 lg:py-0">
-            <h1 className="font-display text-7xl uppercase leading-[0.82] tracking-[-0.03em] text-villa-bone sm:text-8xl lg:-mr-6 lg:text-[6.5rem] lg:leading-[0.78]" style={{ textShadow: '0 2px 20px rgba(79, 131, 241, 0.15)' }}>
+            <h1 className="logo-type font-display text-6xl uppercase leading-[0.82] text-villa-bone sm:text-7xl lg:-mr-6 lg:text-[5.75rem] lg:leading-[0.8]">
               La Villa Es La Ley
             </h1>
             <p className="max-w-sm text-base leading-relaxed text-villa-bone/80">
@@ -78,6 +83,34 @@ export default function StoreHomePage() {
             }
           }
         `}</style>
+      </section>
+
+      {/* 1b. "La Villa Es La Ley" marquee bands */}
+      <section aria-hidden="true" className="relative z-10 border-y border-villa-black/40 bg-villa-black">
+        <div className="marquee bg-villa-fox py-3">
+          {[0, 1].map((track) => (
+            <div key={track} className="marquee__track">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <span key={i} className="marquee__item font-display text-2xl uppercase tracking-tight text-villa-black sm:text-3xl">
+                  La Villa Es La Ley
+                  <span className="text-villa-black/45">&#9670;</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="marquee marquee--reverse border-t border-villa-fox/30 bg-villa-black py-2.5">
+          {[0, 1].map((track) => (
+            <div key={track} className="marquee__track">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <span key={i} className="marquee__item font-display text-xl uppercase tracking-tight text-villa-bone/70 sm:text-2xl">
+                  La Villa Es La Ley
+                  <span className="text-villa-fox">&#9670;</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* 2. Featured products rail */}
@@ -236,7 +269,8 @@ export default function StoreHomePage() {
       </section>
 
       {/* 6. Cierre */}
-      <section className="cierre-bg relative bg-villa-maroon py-20 lg:py-28 group/cierre">
+      <section className="cierre-bg group/cierre relative bg-villa-maroon py-20 lg:py-28">
+        <div aria-hidden="true" className="cierre-shine" />
         <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
           <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl transition-text-shadow duration-300 group-hover/cierre:[text-shadow:0_0_40px_rgba(79,131,241,0.3)]">
             Rueda Con Nosotros.

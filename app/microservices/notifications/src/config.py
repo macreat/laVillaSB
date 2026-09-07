@@ -8,12 +8,12 @@ class Settings(BaseSettings):
     whatsapp_api_url: str = "https://graph.facebook.com/v21.0"
     whatsapp_phone_id: str = ""
     whatsapp_token: str = ""
-    whatsapp_recipient: str = "+573245710972"
+    whatsapp_recipient: str = "+573017602493"
     whatsapp_auto_send_enabled: bool = False
     twilio_account_sid: str = ""
     twilio_auth_token: str = ""
     twilio_from: str = "+15715683120"
-    twilio_to: str = "+573245710972"
+    twilio_to: str = "+573017602493"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

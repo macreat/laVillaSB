@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { BrandWordmark } from '@/components/brand/BrandWordmark';
-import { INSTAGRAM_URL, WHATSAPP_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
+import { INSTAGRAM_URL, WHATSAPP_URL, YOUTUBE_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
 
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: INSTAGRAM_URL },
+  { label: 'YouTube', href: YOUTUBE_URL },
   { label: 'WhatsApp', href: WHATSAPP_URL },
 ];
 

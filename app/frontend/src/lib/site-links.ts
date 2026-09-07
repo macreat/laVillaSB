@@ -5,6 +5,7 @@
  */
 export const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM_URL || '#';
 export const WHATSAPP_URL = process.env.NEXT_PUBLIC_WHATSAPP_URL || '#';
+export const YOUTUBE_URL = process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://www.youtube.com/@lavillaskateboarding1263';
 
 export function buildWhatsAppHref(text: string): string {
   if (WHATSAPP_URL === '#') return '#';
