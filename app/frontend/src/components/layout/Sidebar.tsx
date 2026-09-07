@@ -104,14 +104,26 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               Admin
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => onClose()}
-            aria-label="Cerrar navegacion"
-            className="rounded-[2px] p-1.5 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text lg:hidden"
-          >
-            <X aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ver tienda"
+              className="flex items-center gap-1.5 rounded-[2px] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted transition-colors hover:bg-surface-elevated hover:text-accent"
+            >
+              <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
+              Ver Tienda
+            </a>
+            <button
+              type="button"
+              onClick={() => onClose()}
+              aria-label="Cerrar navegacion"
+              className="rounded-[2px] p-1.5 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text lg:hidden"
+            >
+              <X aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
+            </button>
+          </div>
         </div>
 
         <nav className="flex-1 px-3 py-4">
@@ -143,16 +155,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </ul>
         </nav>
 
-        <div className="border-t border-villa-smoke/25 p-3 space-y-1">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex h-10 items-center gap-3 border-l-2 border-transparent px-3 text-xs font-semibold uppercase tracking-[0.12em] text-text-muted transition-colors hover:text-accent"
-          >
-            <ExternalLink aria-hidden="true" className="h-5 w-5 shrink-0" strokeWidth={1.5} />
-            Ver Tienda
-          </a>
+        <div className="border-t border-villa-smoke/25 p-3">
           <p className="px-3 py-2 text-[11px] text-text-muted/60">admin@lavillasb.com</p>
           <button
             type="button"
