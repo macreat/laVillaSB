@@ -315,11 +315,7 @@ input:-webkit-autofill:focus {
   flex: 0 0 auto;
   min-width: 100%;
   align-items: center;
-  animation: marquee-scroll 34s linear infinite;
-}
-
-.marquee:hover .marquee__track {
-  animation-play-state: paused;
+  animation: marquee-scroll 22s linear infinite;
 }
 
 .marquee__item {

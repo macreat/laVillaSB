@@ -19,6 +19,7 @@ const config: Config = {
         danger: '#a81c13',
         // Brand palette
         villa: {
+          void: '#02050d',
           black: '#050b18',
           ink: '#0b1630',
           bone: '#e9eef8',

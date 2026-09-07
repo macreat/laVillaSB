@@ -258,7 +258,7 @@ export default function StoreHomePage() {
       </section>
 
       {/* 6. Cierre */}
-      <section className="cierre-bg group/cierre relative bg-villa-maroon py-20 lg:py-28">
+      <section className="cierre-bg group/cierre relative bg-villa-void py-20 lg:py-28">
         <div aria-hidden="true" className="cierre-shine" />
         <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
           <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl transition-text-shadow duration-300 group-hover/cierre:[text-shadow:0_0_40px_rgba(79,131,241,0.3)]">

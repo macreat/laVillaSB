@@ -27,7 +27,7 @@ export function StoreHeader() {
     <header className="sticky top-0 z-50 bg-villa-black">
       {/* Top banner */}
       <div className="bg-villa-fox text-villa-black text-center font-sans text-[11px] font-bold uppercase tracking-[0.15em] py-1.5 px-4">
-        Envios gratis en compras sobre $85 &bull; Devoluciones en 60 dias
+        Envios gratis en compras desde $250.000 COP &bull; Devoluciones en 60 dias
       </div>
 
       {/* Main nav */}
