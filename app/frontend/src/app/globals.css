@@ -330,11 +330,6 @@ input:-webkit-autofill:focus {
   to { transform: translateX(-100%); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .marquee__track {
-    animation: none;
-  }
-}
 
 /* ===== CIERRE SECTION: shine + glow on hover =====
    Same effect and timing as the product cards and the logo tiles, scaled up
@@ -398,14 +393,3 @@ input:-webkit-autofill:focus {
   transform: translateX(100%);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cierre-bg,
-  .cierre-bg::before,
-  .cierre-bg::after,
-  .cierre-shine {
-    transition: none;
-  }
-  .cierre-bg:hover .cierre-shine {
-    transform: translateX(-100%);
-  }
-}
