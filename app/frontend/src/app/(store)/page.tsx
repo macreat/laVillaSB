@@ -41,8 +41,9 @@ export default function StoreHomePage() {
 
           {/* Text zone, maroon tinted panel */}
           <div className="relative order-2 flex flex-col justify-center gap-8 bg-villa-maroon px-6 py-16 lg:order-1 lg:col-span-3 lg:px-12 lg:py-0">
-            <h1 className="logo-type font-display text-6xl uppercase leading-[0.82] text-villa-bone sm:text-7xl lg:-mr-6 lg:text-[5.75rem] lg:leading-[0.8]">
-              La Villa Es La Ley
+            <h1 className="font-display text-6xl uppercase leading-[0.82] text-villa-bone sm:text-7xl lg:-mr-6 lg:text-[5.75rem] lg:leading-[0.8]">
+              <span className="logo-type block">La Villa</span>
+              <span className="logo-type block">Es La Ley</span>
             </h1>
             <p className="max-w-sm text-base leading-relaxed text-villa-bone/80">
               Tablas, ropa y equipo para los que ruedan a su manera.
@@ -85,25 +86,13 @@ export default function StoreHomePage() {
         `}</style>
       </section>
 
-      {/* 1b. "La Villa Es La Ley" marquee bands */}
-      <section aria-hidden="true" className="relative z-10 border-y border-villa-black/40 bg-villa-black">
-        <div className="marquee bg-villa-fox py-3">
+      {/* 1b. "La Villa Es La Ley" marquee band */}
+      <section aria-hidden="true" className="relative z-10">
+        <div className="marquee border-y border-villa-fox/30 bg-villa-black py-3.5">
           {[0, 1].map((track) => (
             <div key={track} className="marquee__track">
               {Array.from({ length: 8 }).map((_, i) => (
-                <span key={i} className="marquee__item font-display text-2xl uppercase tracking-tight text-villa-black sm:text-3xl">
-                  La Villa Es La Ley
-                  <span className="text-villa-black/45">&#9670;</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-        <div className="marquee marquee--reverse border-t border-villa-fox/30 bg-villa-black py-2.5">
-          {[0, 1].map((track) => (
-            <div key={track} className="marquee__track">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <span key={i} className="marquee__item font-display text-xl uppercase tracking-tight text-villa-bone/70 sm:text-2xl">
+                <span key={i} className="marquee__item font-display text-2xl uppercase tracking-tight text-villa-bone/80 sm:text-3xl">
                   La Villa Es La Ley
                   <span className="text-villa-fox">&#9670;</span>
                 </span>

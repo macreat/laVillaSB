@@ -11,23 +11,20 @@ body {
   font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url('/brand/villa-camo-blue.png');
-  background-size: 320px auto;
-  background-repeat: repeat;
-  background-position: center;
-  background-blend-mode: soft-light;
   background-color: #050b18;
 }
 
+/* Site-wide Logo OG watermark. The mark is a solid shape, so it needs a much
+   lower opacity than the old camo fill to stay behind the content. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: url('/brand/villa-camo-blue.png');
-  background-size: 280px auto;
+  background-image: url('/brand/pattern-logoog.png');
+  background-size: 300px auto;
   background-repeat: repeat;
-  opacity: 0.04;
+  opacity: 0.05;
   pointer-events: none;
 }
 
@@ -264,7 +261,7 @@ input:-webkit-autofill:focus {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/brand/villa-camo-blue.png');
+  background-image: url('/brand/pattern-logoog.png');
   background-size: 280px auto;
   background-repeat: repeat;
   opacity: 0.06;
@@ -282,7 +279,8 @@ input:-webkit-autofill:focus {
    "La Villa" truck logo: heavy condensed caps, dark keyline, hard
    offset shadow in brand blue. */
 .logo-type {
-  display: inline-block;
+  display: block;
+  width: fit-content;
   transform: skewX(-8deg);
   transform-origin: left bottom;
   letter-spacing: -0.025em;
@@ -320,11 +318,6 @@ input:-webkit-autofill:focus {
   animation: marquee-scroll 34s linear infinite;
 }
 
-.marquee--reverse .marquee__track {
-  animation-name: marquee-scroll-reverse;
-  animation-duration: 42s;
-}
-
 .marquee:hover .marquee__track {
   animation-play-state: paused;
 }
@@ -341,35 +334,27 @@ input:-webkit-autofill:focus {
   to { transform: translateX(-100%); }
 }
 
-@keyframes marquee-scroll-reverse {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .marquee__track {
     animation: none;
   }
-  .marquee {
-    overflow-x: auto;
-  }
 }
 
-/* ===== CIERRE SECTION: slow illuminate + shine on hover =====
-   Same visual language as the product cards, played back slowly so the
-   whole panel warms up instead of flashing. */
+/* ===== CIERRE SECTION: shine + glow on hover =====
+   Same effect and timing as the product cards and the logo tiles, scaled up
+   to a full-width panel. */
 .cierre-bg {
-  transition: box-shadow 900ms ease, background-color 900ms ease;
+  transition: box-shadow 0.3s ease;
 }
 .cierre-bg::before {
-  transition: opacity 900ms ease, transform 1200ms ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .cierre-bg:hover {
   box-shadow: inset 0 0 120px rgba(79, 131, 241, 0.18);
 }
 .cierre-bg:hover::before {
   opacity: 0.14;
-  transform: rotate(45deg) scale(1.62);
+  transform: rotate(45deg) scale(1.58);
 }
 
 /* Radial warm-up layer */
@@ -385,7 +370,7 @@ input:-webkit-autofill:focus {
     transparent 78%
   );
   opacity: 0;
-  transition: opacity 900ms ease;
+  transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 0;
 }
@@ -393,7 +378,7 @@ input:-webkit-autofill:focus {
   opacity: 1;
 }
 
-/* Slow diagonal shine sweep across the whole panel */
+/* Diagonal shine sweep, matching .shine-hover */
 .cierre-shine {
   position: absolute;
   top: -50%;
@@ -405,13 +390,13 @@ input:-webkit-autofill:focus {
   background: linear-gradient(
     115deg,
     transparent 40%,
-    rgba(233, 238, 248, 0.05) 46%,
-    rgba(233, 238, 248, 0.12) 50%,
-    rgba(233, 238, 248, 0.05) 54%,
+    rgba(79, 131, 241, 0.08) 45%,
+    rgba(79, 131, 241, 0.15) 50%,
+    rgba(79, 131, 241, 0.08) 55%,
     transparent 60%
   );
   transform: translateX(-100%);
-  transition: transform 1600ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s ease;
 }
 .cierre-bg:hover .cierre-shine {
   transform: translateX(100%);
