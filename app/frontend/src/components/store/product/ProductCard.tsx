@@ -16,10 +16,12 @@ export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
 
   return (
-    <div className="group card-elevated relative overflow-hidden transition-all hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5 p-0">
+    <div className="group card-elevated shine-hover glow-hover relative overflow-hidden transition-all p-0">
       {/* Image area */}
-      <Link href={`/products/${product.id}`} className="block">
-        <ProductImage src={product.image} alt={product.name} />
+      <Link href={`/products/${product.id}`} className="block overflow-hidden">
+        <div className="img-zoom">
+          <ProductImage src={product.image} alt={product.name} />
+        </div>
       </Link>
 
       {/* Info */}
@@ -42,7 +44,7 @@ export function ProductCard({ product }: { product: Product }) {
                 image: product.image,
               })
             }
-            className="rounded-md bg-accent/10 p-2 text-accent transition-colors hover:bg-accent hover:text-bg"
+            className="press-scale rounded-md bg-accent/10 p-2 text-accent transition-colors hover:bg-accent hover:text-bg"
             aria-label={`Agregar ${product.name} al carrito`}
           >
             <ShoppingCart className="h-4 w-4" />

@@ -36,19 +36,19 @@ export default function StoreHomePage() {
 
           {/* Text zone, maroon tinted panel */}
           <div className="relative order-2 flex flex-col justify-center gap-8 bg-villa-maroon px-6 py-16 lg:order-1 lg:col-span-3 lg:px-12 lg:py-0">
-            <h1 className="font-display text-6xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-7xl lg:-mr-6 lg:text-8xl">
+            <h1 className="font-display text-7xl uppercase leading-[0.82] tracking-[-0.03em] text-villa-bone sm:text-8xl lg:-mr-6 lg:text-[6.5rem] lg:leading-[0.78]" style={{ textShadow: '0 2px 20px rgba(79, 131, 241, 0.15)' }}>
               La Villa Es La Ley
             </h1>
             <p className="max-w-sm text-base leading-relaxed text-villa-bone/80">
               Tablas, ropa y equipo para los que ruedan a su manera.
             </p>
             <div className="flex flex-wrap items-center gap-6">
-              <Link href="/products" className="btn-primary px-8 py-3 text-base">
+              <Link href="/products" className="btn-primary press-scale px-8 py-3 text-base">
                 Comprar Ahora
               </Link>
               <Link
                 href="/products?category=decks"
-                className="text-sm font-semibold uppercase tracking-wide text-villa-bone underline decoration-villa-fox decoration-2 underline-offset-4 transition-colors hover:text-villa-fox"
+                className="text-sm font-semibold uppercase tracking-wide text-villa-bone underline decoration-villa-fox decoration-2 underline-offset-4 transition-colors hover:text-villa-fox text-glow-hover"
               >
                 Ver Tablas
               </Link>
@@ -109,7 +109,7 @@ export default function StoreHomePage() {
           ))}
         </div>
         <div className="mt-10 text-center">
-          <Link href="/products" className="btn-secondary px-8 py-3">
+          <Link href="/products" className="btn-secondary press-scale px-8 py-3">
             Ver Todos Los Productos
           </Link>
         </div>
@@ -136,7 +136,7 @@ export default function StoreHomePage() {
             </p>
             <Link
               href="/products?category=apparel"
-              className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-slime pb-1 text-sm font-semibold uppercase tracking-wide text-villa-black transition-colors hover:text-villa-slime"
+              className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-slime pb-1 text-sm font-semibold uppercase tracking-wide text-villa-black transition-colors hover:text-villa-slime text-glow-hover"
             >
               Ver Ropa &rarr;
             </Link>
@@ -195,7 +195,7 @@ export default function StoreHomePage() {
             </p>
             <Link
               href="/products"
-              className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-teal pb-1 text-sm font-semibold uppercase tracking-wide text-villa-bone transition-colors hover:text-villa-teal"
+              className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-teal pb-1 text-sm font-semibold uppercase tracking-wide text-villa-bone transition-colors hover:text-villa-teal text-glow-hover"
             >
               Visitar La Tienda &rarr;
             </Link>
@@ -224,7 +224,7 @@ export default function StoreHomePage() {
               <Link
                 key={cat.label}
                 href={cat.href}
-                className="group rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
+                className="group shine-hover glow-hover rounded-lg border border-villa-smoke/20 bg-villa-ink p-6 text-center transition-colors hover:border-villa-teal hover:bg-villa-ink/80"
               >
                 <p className="font-display text-lg uppercase tracking-wide text-villa-bone transition-colors group-hover:text-villa-teal">
                   {cat.label}
@@ -236,7 +236,7 @@ export default function StoreHomePage() {
       </section>
 
       {/* 6. Cierre */}
-      <section className="relative bg-villa-maroon py-20 lg:py-28">
+      <section className="cierre-bg relative bg-villa-maroon py-20 lg:py-28">
         <div className="mx-auto max-w-3xl px-4 text-center lg:px-8">
           <h2 className="font-display text-5xl uppercase leading-[0.85] tracking-tight text-villa-bone sm:text-6xl lg:text-7xl">
             Rueda Con Nosotros.
@@ -249,7 +249,7 @@ export default function StoreHomePage() {
             La Villa Es La Ley.
           </p>
           <div className="mt-10">
-            <Link href="/products" className="btn-primary px-10 py-4 text-base">
+            <Link href="/products" className="btn-primary press-scale px-10 py-4 text-base">
               Comprar Ahora
             </Link>
           </div>
@@ -258,7 +258,7 @@ export default function StoreHomePage() {
 
       {/* 7. Logos & Graphics - Brand Identity */}
       <section className="relative -mt-px bg-villa-black py-16 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 lg:px-8">
           <div className="mb-12 text-center">
             <p className="text-xs font-medium uppercase tracking-[0.12em] text-villa-fox">
               Identidad De Marca
@@ -268,95 +268,91 @@ export default function StoreHomePage() {
             </h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
-            {/* Sornero Logo */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
+          <div className="grid grid-cols-3 gap-6 lg:gap-10">
+            {/* Row 1 */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="logo-hover shine-hover relative aspect-square w-full max-w-[220px] mx-auto overflow-hidden rounded-lg border border-villa-smoke/10 bg-villa-ink/30 p-4">
                 <Image
                   src={sorneroLogo.src}
                   alt="Sornero La Villa Logo - Main brand mark"
                   fill
                   loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  sizes="(min-width: 768px) 25vw, 33vw"
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Sornero Logo</p>
+              <p className="text-center text-xs font-medium text-villa-smoke">Sornero Logo</p>
             </div>
 
-            {/* Sornero Fox */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
+            <div className="flex flex-col items-center gap-3">
+              <div className="logo-hover shine-hover relative aspect-square w-full max-w-[220px] mx-auto overflow-hidden rounded-lg border border-villa-smoke/10 bg-villa-ink/30 p-4">
                 <Image
                   src={sorneroFox.src}
                   alt="Sornero Zorror - Fox mascot illustration"
                   fill
                   loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  sizes="(min-width: 768px) 25vw, 33vw"
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Sornero Zorror</p>
+              <p className="text-center text-xs font-medium text-villa-smoke">Sornero Zorror</p>
             </div>
 
-            {/* La Villa SB */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
+            <div className="flex flex-col items-center gap-3">
+              <div className="logo-hover shine-hover relative aspect-square w-full max-w-[220px] mx-auto overflow-hidden rounded-lg border border-villa-smoke/10 bg-villa-ink/30 p-4">
                 <Image
                   src={lavillaSb.src}
                   alt="La Villa Skateboarding - Full brand logo"
                   fill
                   loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  sizes="(min-width: 768px) 25vw, 33vw"
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-bone">La Villa SB</p>
+              <p className="text-center text-xs font-medium text-villa-smoke">La Villa SB</p>
             </div>
 
-            {/* Logo OG */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
+            {/* Row 2 */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="logo-hover shine-hover relative aspect-square w-full max-w-[220px] mx-auto overflow-hidden rounded-lg border border-villa-smoke/10 bg-villa-ink/30 p-4">
                 <Image
                   src={logoOG.src}
                   alt="Logo OG - Original brand mark"
                   fill
                   loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  sizes="(min-width: 768px) 25vw, 33vw"
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Logo OG</p>
+              <p className="text-center text-xs font-medium text-villa-smoke">Logo OG</p>
             </div>
 
-            {/* Logo Fuego */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
+            <div className="flex flex-col items-center gap-3">
+              <div className="logo-hover shine-hover relative aspect-square w-full max-w-[220px] mx-auto overflow-hidden rounded-lg border border-villa-smoke/10 bg-villa-ink/30 p-4">
                 <Image
                   src={logoFuego.src}
                   alt="Logo Fuego - Fire variant brand mark"
                   fill
                   loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  sizes="(min-width: 768px) 25vw, 33vw"
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Logo Fuego</p>
+              <p className="text-center text-xs font-medium text-villa-smoke">Logo Fuego</p>
             </div>
 
-            {/* Azul Camo */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative aspect-square w-full overflow-hidden">
+            <div className="flex flex-col items-center gap-3">
+              <div className="logo-hover shine-hover relative aspect-square w-full max-w-[220px] mx-auto overflow-hidden rounded-lg border border-villa-smoke/10 bg-villa-ink/30 p-4">
                 <Image
                   src={brandManifest.azulCamo.src}
                   alt="Azul Camo - Blue camouflage pattern"
                   fill
                   loading="lazy"
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  sizes="(min-width: 768px) 25vw, 33vw"
                   className="object-contain"
                 />
               </div>
-              <p className="text-center text-sm font-medium text-villa-bone">Azul Camo</p>
+              <p className="text-center text-xs font-medium text-villa-smoke">Azul Camo</p>
             </div>
           </div>
         </div>

@@ -60,6 +60,12 @@ def to_product_out(product: Product) -> ProductOut:
     stored_category_group = product.category.category_group if product.category else None
     category_group = resolve_group(stored_category_group)
 
+    # If still uncategorized, try keyword mapping on the category NAME itself
+    # (handles cases where category_group column was not populated correctly)
+    if category_group == "uncategorized" and category_name:
+        from .category_groups import map_category_name
+        category_group = map_category_name(category_name)
+
     return ProductOut(
         id=product.id,
         name=product.name,

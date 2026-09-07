@@ -10,10 +10,10 @@ GROUPS: tuple[str, ...] = ("decks", "apparel", "gear", "accessories", "uncategor
 # Evaluation order matters: gear is checked before accessories so a name
 # like "Skate / Hardware y Accesorios" resolves to gear, per spec.
 KEYWORDS: dict[str, tuple[str, ...]] = {
-    "decks": ("long board", "maderos"),
-    "apparel": ("ropa", "tenis", "pantalones"),
-    "gear": ("rodamientos", "ruedas", "trucks", "hardware"),
-    "accessories": ("maletines", "canguros", "lijas"),
+    "decks": ("long board", "maderos", "tabla", "deck"),
+    "apparel": ("ropa", "tenis", "pantalones", "camiseta", "camisetas", "buzo", "hoodie", "sudadera", "chaqueta"),
+    "gear": ("rodamientos", "ruedas", "trucks", "hardware", "eje", "wheels", "bearings", "equipo"),
+    "accessories": ("maletines", "canguros", "lijas", "accesorios"),
 }
 
 
@@ -30,6 +30,15 @@ def map_category_name(name: str) -> str:
 
 
 def resolve_group(stored: str | None) -> str:
-    """Resolve a stored group value to a canonical group string."""
+    """Resolve a stored group value to a canonical group string.
+
+    First checks if the stored value is already a canonical group.
+    Falls back to keyword-based category name mapping when the stored
+    value is a raw category name (e.g. from Drive import) that doesn't
+    match a canonical group directly.
+    """
     normalized = (stored or "").strip().lower()
-    return normalized if normalized in GROUPS else "uncategorized"
+    if normalized in GROUPS:
+        return normalized
+    # Fallback: try keyword-based mapping on the raw stored value
+    return map_category_name(stored or "")
