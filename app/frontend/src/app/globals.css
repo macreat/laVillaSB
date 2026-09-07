@@ -5,6 +5,10 @@
 html {
   background-color: #050b18;
   color: #e9eef8;
+  /* Ship the site at the 125% the browser zoom control would give you.
+     `zoom` scales layout the way browser zoom does, so px sizes, images and
+     borders all grow together - a root font-size bump would only move rems. */
+  zoom: 1.25;
 }
 
 body {
