@@ -1,0 +1,30 @@
+flowchart TB
+  subgraph MONO["OPCIÓN A · MONOLITO"]
+    direction TB
+    MA["Una sola aplicación"]
+    MB["Catálogo · Inventario · Órdenes<br/>Pagos · Usuarios · Notificaciones"]
+    MC[("Una base de datos")]
+    MD["Un despliegue<br/><i>todo sube junto</i>"]
+    MA --> MB --> MC
+    MB --> MD
+  end
+
+  subgraph MICRO["OPCIÓN B · MICROSERVICIOS — la elegida"]
+    direction TB
+    NA["Gateway"]
+    NB["Catálogo<br/><i>lento y a ráfagas</i>"]
+    NC["Órdenes<br/><i>rápido y crítico</i>"]
+    ND["Notificaciones<br/><i>puede esperar</i>"]
+    NE["Inventario · Pagos · Usuarios"]
+    NA --> NB
+    NA --> NC
+    NA --> ND
+    NA --> NE
+  end
+
+  %% Invisible link pins A to the left of B; mermaid does not otherwise
+  %% guarantee subgraph order, and A-then-B is the reading order.
+  MD ~~~ NA
+
+  MONO -. "la sincronización del catálogo<br/>frena el checkout" .-> RIESGO["El proceso lento<br/>degrada al crítico"]
+  MICRO -. "cada uno escala y falla aparte" .-> BENEFICIO["El checkout sigue ágil<br/>bajo carga del catálogo"]
