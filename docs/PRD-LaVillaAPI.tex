@@ -133,6 +133,14 @@ El sistema consiste en una arquitectura de microservicios para una tienda en lí
 
 \subsection{Arquitectura}
 
+La plataforma se construyó como microservicios y no como una aplicación única. La razón no es preferencia sino aislamiento de carga: la sincronización del catálogo y el procesamiento de imágenes son lentos y ocurren a ráfagas, y en un solo proceso competirían por los mismos recursos que el checkout. Separados, el catálogo puede tardar sin degradar la compra.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth,height=0.74\textheight,keepaspectratio]{diagrams/monolito-vs-microservicios.png}
+\caption{Monolito frente a microservicios. En la opción A un proceso lento degrada al crítico; en la opción B cada servicio escala y falla por separado.}
+\end{figure}
+
 \begin{verbatim}
 Frontend (Next.js :3000)
         |
@@ -543,7 +551,7 @@ Muestra la estructura del sistema por capas: presentación, gateway, microservic
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{diagrams/arquitectura-sistema.png}
+\includegraphics[width=\textwidth,height=0.74\textheight,keepaspectratio]{diagrams/arquitectura-sistema.png}
 \caption{Diagrama de arquitectura del sistema. Las cuatro capas y el flujo de una petición, desde el navegador hasta la persistencia.}
 \end{figure}
 
@@ -553,7 +561,7 @@ Muestra las funcionalidades agrupadas por dominio de negocio.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{diagrams/bloques-funcionales.png}
+\includegraphics[width=\textwidth,height=0.74\textheight,keepaspectratio]{diagrams/bloques-funcionales.png}
 \caption{Diagrama de bloques funcionales. Las capacidades del sistema agrupadas por audiencia, con el servicio que implementa cada una.}
 \end{figure}
 
@@ -563,7 +571,7 @@ Muestra cómo se comunican los componentes durante un checkout: la parte síncro
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{diagrams/comunicacion.png}
+\includegraphics[width=\textwidth,height=0.74\textheight,keepaspectratio]{diagrams/comunicacion.png}
 \caption{Diagrama de comunicación. Los pasos 1 a 9 son REST síncrono; a partir del paso 10 el flujo continúa por RabbitMQ sin que el cliente espere.}
 \end{figure}
 
