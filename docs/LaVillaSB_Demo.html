@@ -1115,7 +1115,7 @@ section .metric:hover { border-top-color: var(--accent); }
 <div class="scroll-progress" id="progress"></div>
 <div class="grain"></div>
 <nav class="slide-nav" id="slideNav" aria-label="Navegacion de diapositivas"></nav>
-<div class="kbd-hint" id="kbdHint">&larr; &rarr; o espacio para navegar</div>
+<div class="kbd-hint" id="kbdHint">F pantalla completa &middot; &larr; &rarr; navegar</div>
 
 <!-- ================= HERO ================= -->
 <section id="hero">
@@ -2128,11 +2128,35 @@ section .metric:hover { border-top-color: var(--accent); }
       e.preventDefault(); goTo(i + 1);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
       e.preventDefault(); goTo(i - 1);
+    } else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault(); toggleFullscreen();
     } else if (e.key === 'Home') {
       e.preventDefault(); goTo(0);
     } else if (e.key === 'End') {
       e.preventDefault(); goTo(slides.length - 1);
     }
+  });
+
+  function toggleFullscreen() {
+    var el = document.documentElement;
+    if (!document.fullscreenElement) {
+      /* Prefixed fallback keeps this working in older WebKit. */
+      var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+      if (req) req.call(el).catch(function () {});
+    } else {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (exit) exit.call(document).catch(function () {});
+    }
+  }
+
+  /* Reflect the state so the hint stays truthful. */
+  document.addEventListener('fullscreenchange', function () {
+    hint.textContent = document.fullscreenElement
+      ? 'ESC para salir de pantalla completa'
+      : 'F pantalla completa \u00b7 \u2190 \u2192 navegar';
+    hint.classList.add('show');
+    clearTimeout(hint._t);
+    hint._t = setTimeout(function () { hint.classList.remove('show'); }, 2600);
   });
 
   /* Show the hint briefly on arrival, then let it go. */
