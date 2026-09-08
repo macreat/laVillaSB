@@ -953,68 +953,19 @@ section { padding: 8rem 3rem; }
    ============================================================ */
 @supports (animation-timeline: view()) {
 
-  /* Content rises and settles as it crosses into view. `both` fill means
-     anything already scrolled past is left in its finished state, so a slide
-     can never be stranded blank. */
-  .reveal,
-  section:nth-of-type(odd) .reveal,
-  section:nth-of-type(even) .reveal {
-    opacity: 0;
-    transform: none;
-    transition: none;
-    animation: scrollRise linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 45%;
-  }
+  /* Ambient only. Slide content is choreographed per section (below), not
+     scrubbed element by element - that piecemeal arrival was the problem. */
 
-  @keyframes scrollRise {
-    from { opacity: 0; transform: translate3d(0, 46px, 0); }
-    60%  { opacity: 1; }
-    to   { opacity: 1; transform: translate3d(0, 0, 0); }
-  }
-
-  /* Staggered depth: later delay groups travel a little further, so a grid
-     of cards arrives as a wave instead of a wall. */
-  .d2 { animation-range: entry 3%  cover 50%; }
-  .d3 { animation-range: entry 6%  cover 55%; }
-  .d4 { animation-range: entry 9%  cover 60%; }
-  .d5 { animation-range: entry 12% cover 65%; }
-  .d6 { animation-range: entry 15% cover 70%; }
-
-  /* The ghosted numeral drifts against the scroll - slow parallax, the one
-     piece of depth this design allows itself. */
+  /* The ghosted numeral drifts against the scroll. */
   .wrap::before {
     animation: numeralDrift linear both;
     animation-timeline: view();
     animation-range: entry 0% exit 100%;
   }
   @keyframes numeralDrift {
-    from { transform: translate3d(0, 90px, 0); opacity: 0.10; }
+    from { transform: translate3d(0, 90px, 0); opacity: 0.12; }
     50%  { opacity: 0.34; }
-    to   { transform: translate3d(0, -90px, 0); opacity: 0.10; }
-  }
-
-  /* Section headings settle from a slight over-scale. */
-  h2 {
-    animation: headSettle linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 38%;
-  }
-  @keyframes headSettle {
-    from { opacity: 0; transform: translate3d(0, 26px, 0) scale(1.03); letter-spacing: 0.01em; }
-    to   { opacity: 1; transform: none; letter-spacing: -0.035em; }
-  }
-
-  /* Hairlines draw themselves in rather than appearing. */
-  .card, .metric, .tier, .layer, .flow-node, .view {
-    animation: ruleDraw linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 42%;
-    transform-origin: left center;
-  }
-  @keyframes ruleDraw {
-    from { border-top-color: transparent; }
-    to   { border-top-color: var(--hairline); }
+    to   { transform: translate3d(0, -90px, 0); opacity: 0.12; }
   }
 
   /* The plate breathes with the scroll instead of drifting on a timer. */
@@ -1028,6 +979,102 @@ section { padding: 8rem 3rem; }
     to   { transform: scale(1.04) translate3d(0, 2.5%, 0); }
   }
 }
+
+
+/* ============================================================
+   SLIDE CHOREOGRAPHY
+   The unit is the slide, not the element. When a section becomes
+   the active slide its whole content generates in one continuous
+   sweep - a single gesture with an internal cascade, rather than
+   pieces trickling in at different scroll positions.
+   ============================================================ */
+
+section .reveal,
+section:nth-of-type(odd) .reveal,
+section:nth-of-type(even) .reveal {
+  opacity: 0;
+  transform: translate3d(0, 34px, 0);
+  transition:
+    opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0s;
+}
+
+section.slide-in .reveal,
+section.slide-in:nth-of-type(odd) .reveal,
+section.slide-in:nth-of-type(even) .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* The cascade. Tight enough that the whole slide lands inside ~1.1s and
+   reads as one movement, loose enough to feel like it unfolds. */
+section.slide-in .label   { transition-delay: 0.00s; }
+section.slide-in h2       { transition-delay: 0.07s; }
+section.slide-in .lede    { transition-delay: 0.14s; }
+section.slide-in .d1      { transition-delay: 0.22s; }
+section.slide-in .d2      { transition-delay: 0.30s; }
+section.slide-in .d3      { transition-delay: 0.38s; }
+section.slide-in .d4      { transition-delay: 0.46s; }
+section.slide-in .d5      { transition-delay: 0.54s; }
+section.slide-in .d6      { transition-delay: 0.62s; }
+
+/* The heading carries the slide, so it gets a touch more travel. */
+section h2.reveal { transform: translate3d(0, 44px, 0); }
+section.slide-in h2.reveal { transform: none; }
+
+/* A hairline sweeps across the slide as it arrives: the visual "next line". */
+section > .wrap::after {
+  content: '';
+  position: absolute;
+  top: -1.6rem; left: 0;
+  height: 1px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0;
+  transition: width 1.15s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+  pointer-events: none;
+}
+section.slide-in > .wrap::after { width: 100%; opacity: 0.55; }
+
+/* ============================================================
+   SECTION HOVER
+   The slide under the pointer lifts out of the dark. The glow
+   follows the mouse, so the page responds to where you are.
+   ============================================================ */
+section { --gx: 50%; --gy: 40%; }
+section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    680px circle at var(--gx) var(--gy),
+    rgba(205, 235, 217, 0.075),
+    rgba(205, 235, 217, 0.028) 38%,
+    transparent 68%
+  );
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+section:hover::after { opacity: 1; }
+
+/* Content and structure brighten a little while the slide is hovered. */
+section:hover .label,
+section:hover .lede { color: var(--text); transition: color 0.6s ease; }
+section:hover .card,
+section:hover .metric,
+section:hover .tier,
+section:hover .layer,
+section:hover .flow-node,
+section:hover .view { border-top-color: var(--accent-dim); }
+section:hover .wrap::before { opacity: 0.5; transition: opacity 0.7s ease; }
+
+/* The individual card under the pointer still wins over its neighbours. */
+section .card:hover,
+section .tier:hover,
+section .metric:hover { border-top-color: var(--accent); }
 
 </style>
 </head>
@@ -1864,6 +1911,40 @@ section { padding: 8rem 3rem; }
   }, { passive: true });
   onScroll();
 
+  /* ===== Slide choreography =====
+     A section becomes "active" once a real part of it is on screen, and its
+     whole content then unfolds as one sweep. Sections are never un-activated,
+     so scrolling back never replays or blanks a slide. */
+  var slideIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('slide-in'); slideIO.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -12% 0px' });
+  [].slice.call(document.querySelectorAll('section')).forEach(function (sec) { slideIO.observe(sec); });
+
+  /* The first slide should already be underway on arrival. */
+  requestAnimationFrame(function () {
+    var first = document.querySelector('section');
+    if (first) first.classList.add('slide-in');
+  });
+
+  /* ===== Section glow follows the pointer ===== */
+  var glowTicking = false, glowEv = null;
+  document.addEventListener('pointermove', function (ev) {
+    glowEv = ev;
+    if (glowTicking) return;
+    glowTicking = true;
+    requestAnimationFrame(function () {
+      var sec = glowEv.target.closest ? glowEv.target.closest('section') : null;
+      if (sec) {
+        var r = sec.getBoundingClientRect();
+        sec.style.setProperty('--gx', (glowEv.clientX - r.left) + 'px');
+        sec.style.setProperty('--gy', (glowEv.clientY - r.top) + 'px');
+      }
+      glowTicking = false;
+    });
+  }, { passive: true });
+
   /* ===== Reveal on enter ===== */
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
@@ -1942,6 +2023,7 @@ section { padding: 8rem 3rem; }
     /* Reveal the destination up front. The observer would normally handle it,
        but a jump can outrun it, and a blank slide mid-presentation is the one
        failure worth spending three lines to make impossible. */
+    slides[i].classList.add('slide-in');
     [].slice.call(slides[i].querySelectorAll('.reveal')).forEach(function (el) {
       el.classList.add('visible');
     });
@@ -1989,6 +2071,8 @@ section { padding: 8rem 3rem; }
         var r = el.getBoundingClientRect();
         if (r.top < window.innerHeight && !el.classList.contains('visible')) {
           el.classList.add('visible');
+          var sec = el.closest('section');
+          if (sec) sec.classList.add('slide-in');
         }
       });
     }, 1200);
