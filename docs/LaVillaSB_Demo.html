@@ -6,27 +6,36 @@
 <title>La Villa SB - Revisión de Arquitectura y Entrega</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg: #050b18;
-  --void: #02050d;
-  --surface: #0b1630;
-  --surface-elevated: #11213f;
-  --accent: #4f83f1;
-  --accent-hover: #6e99f4;
-  --cyan: #00d4ff;
-  --border: #1d3057;
-  --text: #e9eef8;
-  --text-muted: #93a5c9;
-  --danger: #a81c13;
-  --amber: #e0a419;
-  --slime: #a8d24a;
-  --teal: #2aa8c9;
-  --font-body: 'Inter', sans-serif;
-  --font-display: 'Orbitron', sans-serif;
+  /* Ground is near-black and neutral, not navy: the interface has to recede. */
+  --bg: #0a0a0a;
+  --void: #050505;
+  --surface: #0e0e0e;
+  --surface-elevated: #131313;
+  --border: #232323;
+  --hairline: #1a1a1a;
+
+  /* One accent. A pale mint sampled off the reference, lifted for screen. */
+  --accent: #c8e6d4;
+  --accent-dim: #7e9a8a;
+  --cyan: #c8e6d4;
+  --accent-hover: #dcf2e4;
+
+  --text: #e8e8e6;
+  --text-muted: #6f736f;
+  --text-faint: #3a3d3a;
+
+  --danger: #a8564a;
+  --amber: #a8925a;
+  --slime: #c8e6d4;
+  --teal: #c8e6d4;
+
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Archivo', 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -701,6 +710,236 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 .rate-table tr:last-child td { border-bottom: none; }
 .rate-hi { color: var(--cyan); }
 
+
+/* ============================================================
+   QUIET INTERFACE
+   "The more individual the subject becomes, the quieter the
+   interface becomes." Everything below removes chrome rather
+   than adding it: no glow, no fills, no shadows. Structure is
+   carried by hairlines, scale contrast and empty space.
+   ============================================================ */
+
+/* --- Type: one grotesque, one mono, extreme contrast between them --- */
+h1, h2, h3, .tier-price, .metric b, .hero-stat b, .bar-val, .cost-total b {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+h1 { font-weight: 600; text-shadow: none; letter-spacing: -0.045em; line-height: 0.88; }
+h2 {
+  font-size: clamp(2.2rem, 5.2vw, 4.4rem);
+  line-height: 0.92;
+  margin-bottom: 1.6rem;
+  color: var(--accent);
+}
+
+/* Metadata reads like a garment tag, never like body copy. */
+.label, .vname, .tier-tag, .metric span, .hero-stat span, .bar-lab,
+.tl-date, .rate-table th, .obj-check, .scroll-cue, .kbd-hint, footer {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.label { font-size: 0.62rem; color: var(--text-muted); margin-bottom: 2.4rem; }
+.label::after { background: var(--hairline); }
+
+.lede {
+  font-size: 0.94rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+  max-width: 52ch;
+  margin-bottom: 4rem;
+}
+
+/* --- Ghosted section numeral: the reference's signature move --- */
+.wrap { position: relative; }
+.wrap::before {
+  content: attr(data-n);
+  position: absolute;
+  top: -4.5rem; left: -2.2rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(9rem, 22vw, 20rem);
+  line-height: 0.8;
+  color: var(--text-faint);
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: -1;
+  letter-spacing: -0.06em;
+}
+
+/* --- Cards: hairline containers, not filled boxes --- */
+.card, .metric, .layer, .tier, .flow-node {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--hairline);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 1.5rem 0 0.4rem;
+  transition: border-color 0.5s ease;
+}
+.card::before { display: none; }
+.card:hover, .metric:hover, .layer:hover, .tier:hover, .flow-node:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--accent-dim);
+  background: transparent;
+}
+.card h3 {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-bottom: 1.1rem;
+}
+.card p, .tier li, .ticks li, .steps li, .stack-row span { font-size: 0.85rem; line-height: 1.7; }
+
+/* Numbers get the scale, labels get the whisper. */
+.metric { text-align: left; padding: 1.2rem 0 0.4rem; }
+.metric b {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  color: var(--text);
+  letter-spacing: -0.05em;
+  margin-bottom: 0.5rem;
+}
+.metric span { font-size: 0.56rem; color: var(--text-muted); }
+
+/* --- Kill every glow, particle and gradient flourish --- */
+.grid-bg, .particles, .glow-line { display: none; }
+.scroll-progress {
+  background: var(--accent);
+  box-shadow: none;
+  height: 1px;
+}
+.dot { box-shadow: none; background: var(--accent); animation: none; }
+.hero-badge {
+  border: none;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  border-radius: 0;
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  padding: 0.7rem 0;
+  letter-spacing: 0.26em;
+}
+.hero-rule { display: none; }
+.chip {
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.4rem 0;
+  margin-right: 1.6rem;
+}
+.chip:hover { color: var(--accent); border-color: var(--accent-dim); }
+.chips { gap: 0 0.4rem; }
+
+/* --- The plate recedes to texture. It is no longer the spectacle. --- */
+.plate { opacity: 0.30; filter: grayscale(0.75) contrast(1.05); }
+.plate--echo { opacity: 0.16; }
+.plate-veil {
+  background:
+    linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.30) 45%, var(--bg) 100%);
+}
+
+/* --- Hero: statement, not a dashboard --- */
+.hero-inner { text-align: left; }
+#hero .wrap { max-width: 1180px; }
+.hero-sub { margin: 2rem 0 3.5rem; max-width: 44ch; font-size: 0.95rem; line-height: 1.75; }
+.hero-stats { justify-content: flex-start; gap: 3.5rem; }
+.hero-stat b { font-size: 1.5rem; letter-spacing: -0.04em; }
+.hero-stat span { font-size: 0.55rem; color: var(--text-muted); }
+.scroll-cue { left: auto; right: 2rem; transform: none; font-size: 0.55rem; animation: none; }
+
+/* --- Structural bits --- */
+.view { border-left: none; border-top: 1px solid var(--hairline); padding: 1.2rem 0 0; }
+.view h3 { font-family: var(--font-display); font-size: 1.05rem; text-transform: uppercase;
+  letter-spacing: -0.02em; color: var(--text); margin-bottom: 0.5rem; }
+.layer { border-radius: 0; }
+.layer .n { border: none; color: var(--text-faint); font-size: 0.6rem; padding: 0; }
+.srow { border-bottom: 1px solid var(--hairline); font-size: 0.84rem; }
+.srow .sv { color: var(--accent); }
+.tick, .warn { color: var(--accent-dim); }
+.sn { border-color: var(--hairline); color: var(--text-muted); }
+.mono { color: var(--accent-dim); }
+.tier--current { border-top-color: var(--accent); }
+.tier-price { font-size: 2.6rem; letter-spacing: -0.05em; }
+.tier--min .tier-price, .tier--managed .tier-price { color: var(--text-muted); }
+.tier--current .tier-price { color: var(--accent); }
+.flow-arrow { color: var(--text-faint); }
+.flow-node--key { border-top-color: var(--accent); }
+.flow-node--key b { color: var(--accent); }
+.bar { background: var(--accent-dim); box-shadow: none; border-radius: 0; }
+.timeline::before { background: var(--hairline); }
+.tl-item::before { background: var(--bg); border-color: var(--accent-dim); box-shadow: none; }
+.cost-total { border-top-color: var(--hairline); }
+.rate-hi { color: var(--accent); }
+
+/* Buttons: a rule and a word. */
+.btn {
+  border: none;
+  border-bottom: 1px solid var(--text-muted);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.5rem 0;
+  margin-right: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.btn:hover { transform: none; border-color: var(--accent); color: var(--accent); }
+.btn--primary { background: transparent; color: var(--text); border-bottom-color: var(--accent); }
+.btn--primary:hover { background: transparent; color: var(--accent); }
+.links { justify-content: flex-start; }
+
+#closing { text-align: left; }
+#closing .lede { margin-left: 0; text-align: left; }
+
+/* Slide dots: hairline ticks, not glowing beads. */
+.slide-dot {
+  width: 14px; height: 1px;
+  border: none; border-radius: 0;
+  background: var(--text-faint);
+}
+.slide-dot:hover { background: var(--accent-dim); transform: none; width: 22px; }
+.slide-dot[aria-current='true'] {
+  background: var(--accent); box-shadow: none; transform: none; width: 26px;
+}
+.slide-nav { gap: 0.9rem; }
+.kbd-hint { border: none; background: transparent; font-size: 0.55rem; }
+
+/* Motion: a single quiet lift. No sideways travel, no bounce. */
+.reveal,
+section:nth-of-type(odd) .reveal,
+section:nth-of-type(even) .reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Must match the specificity of the nth-of-type selectors above, or the
+   hidden state wins and every slide renders blank. */
+.reveal.visible,
+section:nth-of-type(odd) .reveal.visible,
+section:nth-of-type(even) .reveal.visible { opacity: 1; transform: none; }
+
+section { padding: 8rem 3rem; }
+@media (max-width: 680px) {
+  section { padding: 5rem 1.4rem; }
+  .wrap::before { font-size: 7rem; top: -2rem; left: -0.5rem; }
+  .hero-stats { gap: 1.8rem; }
+}
+
 </style>
 </head>
 <body>
@@ -719,7 +958,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
   <div class="grid-bg"></div>
 
   <div class="wrap hero-inner">
-    <div class="hero-badge hero-anim ha1"><span class="dot"></span> MVP Completo &middot; 13 Contenedores Activos</div>
+    <div class="hero-badge hero-anim ha1"><span class="dot"></span> SERIE 001 &nbsp;/&nbsp; PLATAFORMA &nbsp;/&nbsp; 001 DE 001</div>
     <h1 class="hero-anim ha2">LA VILLA SB</h1>
     <div class="hero-rule hero-anim ha3"></div>
     <p class="hero-sub hero-anim ha3">
@@ -734,15 +973,15 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       <div class="hero-stat"><b>11.3k</b><span>Líneas de código</span></div>
     </div>
   </div>
-  <div class="scroll-cue hero-anim ha5">Desliza &darr;</div>
+  <div class="scroll-cue hero-anim ha5">Desliza</div>
 </section>
 
 
 <!-- ================= 01 EXECUTIVE SUMMARY ================= -->
 <section id="summary">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">01 &mdash; Resumen Ejecutivo</div>
+  <div class="wrap" data-n="01">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; RESUMEN</div>
     <h2 class="reveal d1">Lo Que Se Construyó</h2>
     <p class="lede reveal d1">
       Una tienda y un panel de administración en contenedores para un skate shop
@@ -759,15 +998,15 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g3">
       <div class="card reveal d2">
-        <h3>&#9733; Tienda</h3>
+        <h3>Tienda</h3>
         <p>Catálogo, búsqueda y carrito en Next.js 15, con checkout vía WhatsApp y localización al español.</p>
       </div>
       <div class="card reveal d3">
-        <h3>&#9881; Administración</h3>
+        <h3>Administración</h3>
         <p>Edición de inventario, seguimiento de pedidos y analítica de ingresos, con sesiones gestionadas por el gateway.</p>
       </div>
       <div class="card reveal d4">
-        <h3>&#128736; Plataforma</h3>
+        <h3>Plataforma</h3>
         <p>Seis servicios FastAPI sobre un bus de eventos RabbitMQ, detrás de un API gateway en Laravel 12.</p>
       </div>
     </div>
@@ -778,8 +1017,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 02 OBJETIVOS ================= -->
 <section id="objetivos">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">02 &mdash; Objetivos</div>
+  <div class="wrap" data-n="02">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; OBJETIVOS</div>
     <h2 class="reveal d1">Meta y Objetivos</h2>
     <p class="lede reveal d1">
       Una meta de negocio, seis objetivos técnicos que la sostienen. Cada objetivo
@@ -796,37 +1035,37 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g2">
       <div class="card reveal d1">
-        <h3>&#127919; 1. Vender por el canal que ya usan</h3>
+        <h3>1. Vender por el canal que ya usan</h3>
         <p>El checkout entrega el pedido a WhatsApp, donde el cliente colombiano ya compra. Sin registro obligatorio, sin fricción de tarjeta en el MVP.</p>
         <div class="obj-check obj-check--pending"><span class="warn">&#9679;</span> Implementado: flujo de checkout funcional. Pendiente de validar con ventas reales.</div>
       </div>
 
       <div class="card reveal d2">
-        <h3>&#9889; 2. Que el catálogo no frene la venta</h3>
+        <h3>2. Que el catálogo no frene la venta</h3>
         <p>La sincronización de catálogo y el procesamiento de imágenes son lentos e intermitentes. Aislarlos en servicios propios mantiene el checkout ágil bajo carga.</p>
         <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: 6 servicios independientes sobre bus de eventos</div>
       </div>
 
       <div class="card reveal d3">
-        <h3>&#128269; 3. Que encuentren lo que buscan</h3>
+        <h3>3. Que encuentren lo que buscan</h3>
         <p>Los clientes escriben mal las marcas de tablas. La búsqueda debe tolerar errores de tipeo o la venta se pierde en silencio.</p>
         <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: Meilisearch con tolerancia a errores</div>
       </div>
 
       <div class="card reveal d4">
-        <h3>&#128274; 4. Un solo punto de entrada seguro</h3>
+        <h3>4. Un solo punto de entrada seguro</h3>
         <p>Ningún microservicio queda expuesto a internet. Todo pasa por el gateway, que autentica, autoriza y limita la tasa antes de enrutar.</p>
         <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: Sanctum + EnsureAdmin + rate limiting por ruta</div>
       </div>
 
       <div class="card reveal d5">
-        <h3>&#128176; 5. Que el costo no supere la venta</h3>
+        <h3>5. Que el costo no supere la venta</h3>
         <p>Una tienda que arranca no puede pagar orquestación gestionada. La infraestructura debe costar una fracción de lo que factura.</p>
         <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: ~$66 USD/mes contra varios cientos</div>
       </div>
 
       <div class="card reveal d6">
-        <h3>&#128295; 6. Que se pueda operar sin el que lo construyó</h3>
+        <h3>6. Que se pueda operar sin el que lo construyó</h3>
         <p>Panel administrativo propio para inventario, pedidos y analítica. El dueño de la tienda no debe depender de un desarrollador para operar.</p>
         <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: panel con control de acceso multiusuario</div>
       </div>
@@ -838,8 +1077,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 02 ARCHITECTURE - SOMMERVILLE VIEWS ================= -->
 <section id="architecture">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">03 &mdash; Arquitectura</div>
+  <div class="wrap" data-n="03">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; ARQUITECTURA</div>
     <h2 class="reveal d1">Cuatro Vistas, Según Sommerville</h2>
     <p class="lede reveal d1">
       Sommerville sostiene que ningún diagrama describe un sistema por sí solo: hacen
@@ -908,8 +1147,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 04 API Y SEGURIDAD ================= -->
 <section id="api">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">04 &mdash; La API</div>
+  <div class="wrap" data-n="04">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; INTERFAZ</div>
     <h2 class="reveal d1">Cómo Viaja Una Petición</h2>
     <p class="lede reveal d1">
       Ningún microservicio está expuesto a internet. Todo entra por el gateway, que
@@ -930,7 +1169,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
     <div class="grid g2" style="margin-top:2rem;">
       <!-- Auth -->
       <div class="card reveal d2">
-        <h3>&#128273; Autenticación por token (Sanctum)</h3>
+        <h3>Autenticación por token (Sanctum)</h3>
         <ol class="steps">
           <li><span class="sn">1</span><span><b>Login.</b> <span class="mono">POST /admin/login</span> con email, contraseña y nombre del dispositivo. Limitado a 5 intentos por minuto.</span></li>
           <li><span class="sn">2</span><span><b>Emisión.</b> Si las credenciales son válidas <i>y</i> el usuario es admin, se emite un token con la habilidad <span class="mono">['admin']</span>.</span></li>
@@ -942,7 +1181,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
       <!-- Why -->
       <div class="card reveal d3">
-        <h3>&#129504; Por qué tokens y no sesiones</h3>
+        <h3>Por qué tokens y no sesiones</h3>
         <ul class="ticks">
           <li><span class="tick">&#10003;</span><span><b>Sin estado compartido.</b> El frontend vive en Vercel y el gateway en un VPS: dominios distintos. Una cookie de sesión obligaría a compartir dominio y a lidiar con CSRF y SameSite.</span></li>
           <li><span class="tick">&#10003;</span><span><b>Revocable al instante.</b> El token es una fila en base de datos. Borrarla cierra la sesión de inmediato, cosa que un JWT autocontenido no permite sin una lista de revocación.</span></li>
@@ -963,21 +1202,21 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g3" style="margin-top:1.6rem;">
       <div class="card reveal d3">
-        <h3>&#128274; Rutas protegidas</h3>
+        <h3>Rutas protegidas</h3>
         <p style="margin-bottom:0.7rem;">Exigen token admin. Cubren todo el panel administrativo.</p>
         <div class="srow"><span class="sk mono">/v1/{service}/{path}</span><span class="sv">admin</span></div>
         <div class="srow"><span class="sk mono">/admin/me</span><span class="sv">admin</span></div>
         <div class="srow"><span class="sk mono">/admin/logout</span><span class="sv">admin</span></div>
       </div>
       <div class="card reveal d4">
-        <h3>&#127760; Rutas públicas</h3>
+        <h3>Rutas públicas</h3>
         <p style="margin-bottom:0.7rem;">Lista blanca explícita, solo lectura o creación limitada.</p>
         <div class="srow"><span class="sk mono">GET /v1/catalog/*</span><span class="sv">libre</span></div>
         <div class="srow"><span class="sk mono">POST /catalog/search</span><span class="sv">10/min</span></div>
         <div class="srow"><span class="sk mono">POST /orders</span><span class="sv">20/min</span></div>
       </div>
       <div class="card reveal d5">
-        <h3>&#128737; Capas de defensa</h3>
+        <h3>Capas de defensa</h3>
         <ul class="ticks">
           <li><span class="tick">&#10003;</span><span>Lista blanca de rutas por expresión regular</span></li>
           <li><span class="tick">&#10003;</span><span>Rate limiting diferenciado por ruta</span></li>
@@ -993,8 +1232,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 05 STACK ================= -->
 <section id="stack">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">05 &mdash; Stack Tecnológico</div>
+  <div class="wrap" data-n="05">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; MATERIALES</div>
     <h2 class="reveal d1">Con Qué Está Hecho</h2>
     <p class="lede reveal d1">
       Tres lenguajes, elegidos por lo que cada uno hace mejor, no por gusto.
@@ -1003,7 +1242,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g3">
       <div class="card reveal d1">
-        <h3>&#128421; Capa de presentación</h3>
+        <h3>Capa de presentación</h3>
         <div class="stack-row"><b>Next.js 15</b><span>Renderizado en servidor: el catálogo es indexable y carga rápido en móvil.</span></div>
         <div class="stack-row"><b>React 18</b><span>Base de componentes del panel administrativo.</span></div>
         <div class="stack-row"><b>TypeScript</b><span>Contratos de datos verificados en compilación.</span></div>
@@ -1011,7 +1250,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d2">
-        <h3>&#127760; Capa de aplicación</h3>
+        <h3>Capa de aplicación</h3>
         <div class="stack-row"><b>Laravel 12</b><span>Gateway. Autenticación, sesiones y políticas ya resueltas.</span></div>
         <div class="stack-row"><b>Sanctum</b><span>Tokens con alcance, revocables por dispositivo.</span></div>
         <div class="stack-row"><b>FastAPI</b><span>Servicios de dominio. Asíncrono y con esquema OpenAPI automático.</span></div>
@@ -1019,7 +1258,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d3">
-        <h3>&#128451; Capa de datos e infraestructura</h3>
+        <h3>Capa de datos e infraestructura</h3>
         <div class="stack-row"><b>PostgreSQL</b><span>Fuente de verdad transaccional.</span></div>
         <div class="stack-row"><b>Redis</b><span>Caché y carrito de compras.</span></div>
         <div class="stack-row"><b>RabbitMQ</b><span>Bus de eventos entre servicios.</span></div>
@@ -1035,8 +1274,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 03 TRADE-OFFS ================= -->
 <section id="tradeoffs">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">06 &mdash; Balances</div>
+  <div class="wrap" data-n="06">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; BALANCES</div>
     <h2 class="reveal d1">Los Balances Que Hicimos</h2>
     <p class="lede reveal d1">
       Cada uno de estos fue una bifurcación con una alternativa real. Lo que importa no es
@@ -1046,7 +1285,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g2">
       <div class="card reveal d1">
-        <h3>&#128225; Checkout por WhatsApp</h3>
+        <h3>Checkout por WhatsApp</h3>
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Traspaso del pedido a WhatsApp</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Pasarela de tarjetas completa en el MVP</span></div>
@@ -1056,7 +1295,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d2">
-        <h3>&#127760; Gateway en Laravel en vez de FastAPI</h3>
+        <h3>Gateway en Laravel en vez de FastAPI</h3>
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Laravel 12 como único punto de entrada</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Un séptimo servicio FastAPI, o un gateway comercial</span></div>
@@ -1066,7 +1305,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d3">
-        <h3>&#9881; Seis servicios, no un monolito</h3>
+        <h3>Seis servicios, no un monolito</h3>
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Un servicio por capacidad de negocio</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Una sola aplicación Django o Laravel</span></div>
@@ -1076,7 +1315,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d4">
-        <h3>&#128269; Meilisearch en vez de Postgres FTS</h3>
+        <h3>Meilisearch en vez de Postgres FTS</h3>
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Un motor de búsqueda dedicado</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Búsqueda de texto completo de PostgreSQL</span></div>
@@ -1086,7 +1325,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d5">
-        <h3>&#128230; Backend autogestionado en VPS</h3>
+        <h3>Backend autogestionado en VPS</h3>
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Docker Compose en un solo VPS</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Kubernetes, o servicios totalmente gestionados</span></div>
@@ -1096,7 +1335,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d6">
-        <h3>&#127912; Entregables de un solo archivo</h3>
+        <h3>Entregables de un solo archivo</h3>
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">HTML autocontenido con el arte embebido</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Una presentación alojada o exportada a diapositivas</span></div>
@@ -1112,8 +1351,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 04 FEATURES SHIPPED ================= -->
 <section id="features">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">07 &mdash; Entregado</div>
+  <div class="wrap" data-n="07">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; ENTREGADO</div>
     <h2 class="reveal d1">Funcionalidades Implementadas</h2>
     <p class="lede reveal d1">
       Entregado y en ejecución en el stack actual. Todo lo que sigue pendiente está en
@@ -1122,7 +1361,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g3">
       <div class="card reveal d1">
-        <h3>&#9733; Tienda</h3>
+        <h3>Tienda</h3>
         <ul class="ticks">
           <li><span class="tick">&#10003;</span><span>Catálogo de productos con categorías y subpestañas</span></li>
           <li><span class="tick">&#10003;</span><span>Búsqueda tolerante a errores de tipeo con <b>Meilisearch</b></span></li>
@@ -1135,7 +1374,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d2">
-        <h3>&#9881; Panel de Administración</h3>
+        <h3>Panel de Administración</h3>
         <ul class="ticks">
           <li><span class="tick">&#10003;</span><span>Edición de inventario en tiempo real</span></li>
           <li><span class="tick">&#10003;</span><span>Gestión y seguimiento de pedidos</span></li>
@@ -1147,7 +1386,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d3">
-        <h3>&#128736; Plataforma</h3>
+        <h3>Plataforma</h3>
         <ul class="ticks">
           <li><span class="tick">&#10003;</span><span>Seis servicios de dominio en FastAPI</span></li>
           <li><span class="tick">&#10003;</span><span>Bus de eventos <b>RabbitMQ</b> entre servicios</span></li>
@@ -1166,8 +1405,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 05 DEVELOPMENT TIME ================= -->
 <section id="timeline">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">08 &mdash; Tiempo de Desarrollo</div>
+  <div class="wrap" data-n="08">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; ESFUERZO</div>
     <h2 class="reveal d1">Dos Meses, Trece Días de Trabajo</h2>
     <p class="lede reveal d1">
       Leído directamente del historial de git: <b>112 commits</b> entre el 9 de julio y el
@@ -1184,7 +1423,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g2">
       <div class="card reveal d2">
-        <h3>&#128200; Commits por mes</h3>
+        <h3>Commits por mes</h3>
         <div class="bars" style="margin-top:1.2rem;">
           <div class="bar-col">
             <span class="bar-val">9</span>
@@ -1209,7 +1448,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d3">
-        <h3>&#9201; En qué se fueron las horas</h3>
+        <h3>En qué se fueron las horas</h3>
         <div style="margin-top:0.5rem;">
           <div class="srow"><span class="sk">Desarrollo del MVP</span><span class="sv">~120 h</span></div>
           <div class="srow"><span class="sk">Endurecimiento del backend</span><span class="sv">~60 h</span></div>
@@ -1250,7 +1489,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g2 reveal d5" style="margin-top:2.2rem;">
       <div class="card">
-        <h3>&#128202; Esfuerzo medido</h3>
+        <h3>Esfuerzo medido</h3>
         <table class="rate-table">
           <tbody>
             <tr><td>Líneas de código fuente</td><td>11.279</td></tr>
@@ -1269,7 +1508,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card">
-        <h3>&#128181; Costo de desarrollo a tarifa de referencia</h3>
+        <h3>Costo de desarrollo a tarifa de referencia</h3>
         <table class="rate-table">
           <thead>
             <tr><th>Tarifa de referencia</th><th>220 h equivalen a</th></tr>
@@ -1295,8 +1534,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 06 STATUS ================= -->
 <section id="status">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">09 &mdash; Estado Actual</div>
+  <div class="wrap" data-n="09">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; ESTADO</div>
     <h2 class="reveal d1">En Marcha, Con Brechas Conocidas</h2>
     <p class="lede reveal d1">
       Una lectura honesta del stack. Las brechas están listadas porque son el trabajo
@@ -1305,7 +1544,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g3">
       <div class="card reveal d1">
-        <h3>&#128994; Salud del sistema</h3>
+        <h3>Salud del sistema</h3>
         <div class="srow"><span class="sk">Contenedores en ejecución</span><span class="sv">13/13</span></div>
         <div class="srow"><span class="sk">Microservicios saludables</span><span class="sv">6/6</span></div>
         <div class="srow"><span class="sk">PostgreSQL</span><span class="sv">Conectado</span></div>
@@ -1314,7 +1553,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d2">
-        <h3>&#128230; Operación comercial</h3>
+        <h3>Operación comercial</h3>
         <div style="text-align:center;padding:1.2rem 0;">
           <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--amber);line-height:1.1;">Pre-lanzamiento</div>
           <div style="font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-top:0.5rem;">Aún sin pedidos registrados</div>
@@ -1328,7 +1567,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d3">
-        <h3>&#9888; Brechas conocidas</h3>
+        <h3>Brechas conocidas</h3>
         <ul class="ticks">
           <li><span class="warn">!</span><span>Integración de pasarela de pagos pendiente</span></li>
           <li><span class="warn">!</span><span>Faltan plantillas de notificación por correo</span></li>
@@ -1344,8 +1583,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 07 COST ================= -->
 <section id="cost">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">10 &mdash; Costo Operativo</div>
+  <div class="wrap" data-n="10">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; COSTO</div>
     <h2 class="reveal d1">Tres Niveles, Un Elegido</h2>
     <p class="lede reveal d1">
       Presentar un solo precio esconde la decisión. Estos son los tres niveles que
@@ -1411,7 +1650,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
     <div class="grid g2">
       <div class="card reveal d1">
-        <h3>&#128181; Hospedaje mensual</h3>
+        <h3>Hospedaje mensual</h3>
         <div style="margin-top:0.5rem;">
           <div class="srow"><span class="sk">Vercel Pro &mdash; frontend</span><span class="sv">$20</span></div>
           <div class="srow"><span class="sk">VPS, 4 vCPU &mdash; backend</span><span class="sv">$40</span></div>
@@ -1425,7 +1664,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d2">
-        <h3>&#128640; Forma del despliegue</h3>
+        <h3>Forma del despliegue</h3>
         <ul class="ticks">
           <li><span class="tick">&#10003;</span><span><b>Frontend</b> &mdash; Vercel, serverless en el edge, preview por cada PR</span></li>
           <li><span class="tick">&#10003;</span><span><b>Backend</b> &mdash; Docker Compose en un solo VPS</span></li>
@@ -1446,8 +1685,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 <!-- ================= 08 ROADMAP ================= -->
 <section id="roadmap">
   <div class="grid-bg"></div>
-  <div class="wrap">
-    <div class="label reveal">11 &mdash; Próximos Pasos</div>
+  <div class="wrap" data-n="11">
+    <div class="label reveal">SERIE 001 &nbsp;/&nbsp; SIGUIENTE</div>
     <h2 class="reveal d1">Hoja de Ruta</h2>
     <p class="lede reveal d1">Tres fases entre este punto y un lanzamiento en producción endurecido.</p>
 
@@ -1500,8 +1739,8 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       y seis servicios de dominio, construidos y en ejecución.
     </p>
     <div class="links reveal d3">
-      <a class="btn btn--primary" href="https://api.whatsapp.com/send/?phone=573017602493" target="_blank" rel="noopener">&#128172; WhatsApp</a>
-      <a class="btn" href="https://www.instagram.com/la_villa_sb/" target="_blank" rel="noopener">&#128247; Instagram</a>
+      <a class="btn btn--primary" href="https://api.whatsapp.com/send/?phone=573017602493" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn" href="https://www.instagram.com/la_villa_sb/" target="_blank" rel="noopener">Instagram</a>
     </div>
     <footer class="reveal d4">La Villa SB &middot; Powered by Macreat</footer>
   </div>
