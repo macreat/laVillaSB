@@ -651,6 +651,56 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 .kbd-hint.show { opacity: 0.85; }
 @media (max-width: 900px) { .kbd-hint { display: none; } }
 
+
+/* ===== Cost tiers ===== */
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; align-items: stretch; }
+.tier {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(11,22,48,0.7);
+  padding: 1.4rem;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.tier:hover { border-color: rgba(79,131,241,0.55); transform: translateY(-3px); }
+.tier--current { border-color: var(--cyan); background: rgba(0,212,255,0.06); }
+.tier-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 0.5rem;
+}
+.tier--current .tier-tag { color: var(--cyan); }
+.tier-price {
+  font-family: var(--font-display);
+  font-size: 1.9rem; font-weight: 800; line-height: 1; margin-bottom: 0.15rem;
+}
+.tier--min .tier-price { color: var(--slime); }
+.tier--current .tier-price { color: var(--cyan); }
+.tier--managed .tier-price { color: var(--amber); }
+.tier-unit { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); margin-bottom: 1rem; }
+.tier ul { list-style: none; display: grid; gap: 0.45rem; margin-bottom: 0.9rem; }
+.tier li { display: flex; gap: 0.5rem; font-size: 0.82rem; color: var(--text-muted); }
+.tier-cost {
+  margin-top: auto; padding-top: 0.8rem;
+  border-top: 1px solid rgba(29,48,87,0.7);
+  font-size: 0.8rem; color: var(--text-muted);
+}
+.tier-cost b { color: var(--text); display: block; font-size: 0.72rem; font-family: var(--font-mono);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 0.25rem; }
+.obj-check--pending { color: var(--amber); }
+@media (max-width: 900px) { .tiers { grid-template-columns: 1fr; } }
+
+/* ===== Effort / cost table ===== */
+.rate-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.rate-table th, .rate-table td { padding: 0.55rem 0.4rem; text-align: left; border-bottom: 1px solid rgba(29,48,87,0.6); }
+.rate-table th {
+  font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-muted); font-weight: 500;
+}
+.rate-table td:last-child, .rate-table th:last-child { text-align: right; font-family: var(--font-mono); }
+.rate-table tr:last-child td { border-bottom: none; }
+.rate-hi { color: var(--cyan); }
+
 </style>
 </head>
 <body>
@@ -748,7 +798,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       <div class="card reveal d1">
         <h3>&#127919; 1. Vender por el canal que ya usan</h3>
         <p>El checkout entrega el pedido a WhatsApp, donde el cliente colombiano ya compra. Sin registro obligatorio, sin fricción de tarjeta en el MVP.</p>
-        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: 12 pedidos procesados, $480.000 COP entregados</div>
+        <div class="obj-check obj-check--pending"><span class="warn">&#9679;</span> Implementado: flujo de checkout funcional. Pendiente de validar con ventas reales.</div>
       </div>
 
       <div class="card reveal d2">
@@ -1040,7 +1090,7 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
         <div class="tradeoff">
           <div class="row"><span class="k k-chose">Elegimos</span><span class="v">Docker Compose en un solo VPS</span></div>
           <div class="row"><span class="k k-over">En vez de</span><span class="v muted">Kubernetes, o servicios totalmente gestionados</span></div>
-          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Unos $66 al mes todo incluido, frente a varios cientos. Al volumen de pedidos actual, la orquestación gestionada costaría más de lo que factura la tienda.</span></div>
+          <div class="row"><span class="k k-why">Por qué</span><span class="v muted">Unos $66 al mes todo incluido, frente a varios cientos. Antes de la primera venta, la orquestación gestionada costaría más de lo que factura la tienda.</span></div>
           <div class="row"><span class="k k-cost">Costo</span><span class="v muted">Una sola máquina es un único punto de falla. Sin escalado horizontal sin una migración.</span></div>
         </div>
       </div>
@@ -1197,6 +1247,47 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
         <p>Pagos, CI/CD y monitoreo &mdash; delimitados en la hoja de ruta más abajo.</p>
       </div>
     </div>
+
+    <div class="grid g2 reveal d5" style="margin-top:2.2rem;">
+      <div class="card">
+        <h3>&#128202; Esfuerzo medido</h3>
+        <table class="rate-table">
+          <tbody>
+            <tr><td>Líneas de código fuente</td><td>11.279</td></tr>
+            <tr><td>Archivos rastreados</td><td>145</td></tr>
+            <tr><td>Archivos de prueba</td><td>27</td></tr>
+            <tr><td>Commits</td><td>112</td></tr>
+            <tr><td>Horas estimadas</td><td>~220 h</td></tr>
+            <tr><td>Densidad</td><td class="rate-hi">~51 líneas / hora</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:0.9rem;font-size:0.8rem;">
+          Los 13 días son días <i>con commits</i>, no días trabajados. El diseño,
+          la depuración y la investigación no dejan rastro en git, y por eso 220
+          horas repartidas en 13 días con commits no es una contradicción.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>&#128181; Costo de desarrollo a tarifa de referencia</h3>
+        <table class="rate-table">
+          <thead>
+            <tr><th>Tarifa de referencia</th><th>220 h equivalen a</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>$15 USD/h &mdash; LatAm, semi-senior</td><td>$3.300</td></tr>
+            <tr><td>$25 USD/h &mdash; LatAm, senior</td><td>$5.500</td></tr>
+            <tr><td>$40 USD/h &mdash; EE. UU. / UE, medio</td><td>$8.800</td></tr>
+            <tr><td><b>Valor del contrato</b></td><td class="rate-hi"><b>$1.500 &ndash; $2.000</b></td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:0.9rem;font-size:0.8rem;">
+          El contrato equivale a unos <b>$7&ndash;9 USD por hora</b> sobre el esfuerzo
+          ya invertido. Las tarifas son referencias de mercado para dimensionar el
+          trabajo, no una facturación.
+        </p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1223,12 +1314,17 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
       </div>
 
       <div class="card reveal d2">
-        <h3>&#128176; Pedidos a la fecha</h3>
-        <div style="text-align:center;padding:1.4rem 0;">
-          <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:var(--cyan);line-height:1;">$480,000</div>
-          <div style="font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-top:0.5rem;">Ingresos COP &middot; entregados</div>
+        <h3>&#128230; Operación comercial</h3>
+        <div style="text-align:center;padding:1.2rem 0;">
+          <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--amber);line-height:1.1;">Pre-lanzamiento</div>
+          <div style="font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-top:0.5rem;">Aún sin pedidos registrados</div>
         </div>
-        <div class="srow"><span class="sk">Pedidos procesados</span><span class="sv">12</span></div>
+        <div class="srow"><span class="sk">Pedidos procesados</span><span class="sv" style="color:var(--text-muted);">0</span></div>
+        <div class="srow"><span class="sk">Ingresos registrados</span><span class="sv" style="color:var(--text-muted);">$0 COP</span></div>
+        <p style="margin-top:0.9rem;font-size:0.82rem;color:var(--text-muted);">
+          La plataforma está construida y corriendo; todavía no se ha abierto al
+          público. Las cifras de venta se reportarán cuando existan.
+        </p>
       </div>
 
       <div class="card reveal d3">
@@ -1250,11 +1346,68 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
   <div class="grid-bg"></div>
   <div class="wrap">
     <div class="label reveal">10 &mdash; Costo Operativo</div>
-    <h2 class="reveal d1">Sesenta y Seis Dólares al Mes</h2>
+    <h2 class="reveal d1">Tres Niveles, Un Elegido</h2>
     <p class="lede reveal d1">
-      El balance de autogestionar, con precio. Esto es lo que mantiene la plataforma
-      en línea al volumen actual.
+      Presentar un solo precio esconde la decisión. Estos son los tres niveles que
+      se evaluaron, con lo que cada uno cuesta y lo que cada uno cede.
     </p>
+
+    <div class="tiers reveal d1" style="margin-bottom:1.6rem;">
+
+      <div class="tier tier--min">
+        <div class="tier-tag">Mínimo viable</div>
+        <div class="tier-price">~$11</div>
+        <div class="tier-unit">USD / mes</div>
+        <ul>
+          <li><span class="tick">&#10003;</span><span>VPS 2 vCPU / 4 GB &mdash; $10</span></li>
+          <li><span class="tick">&#10003;</span><span>Vercel Hobby &mdash; $0</span></li>
+          <li><span class="tick">&#10003;</span><span>Dominio &mdash; $1</span></li>
+          <li><span class="warn">&minus;</span><span>Sin monitoreo pago</span></li>
+          <li><span class="warn">&minus;</span><span>Sin respaldos gestionados</span></li>
+        </ul>
+        <div class="tier-cost">
+          <b>Lo que se cede</b>
+          Vercel Hobby prohíbe uso comercial. Los 13 contenedores en 4 GB dejan
+          poco margen, y una caída se recupera a mano.
+        </div>
+      </div>
+
+      <div class="tier tier--current">
+        <div class="tier-tag">Actual &middot; elegido</div>
+        <div class="tier-price">~$66</div>
+        <div class="tier-unit">USD / mes</div>
+        <ul>
+          <li><span class="tick">&#10003;</span><span>Vercel Pro &mdash; $20</span></li>
+          <li><span class="tick">&#10003;</span><span>VPS 4 vCPU / 8 GB &mdash; $40</span></li>
+          <li><span class="tick">&#10003;</span><span>Dominio &mdash; $1</span></li>
+          <li><span class="tick">&#10003;</span><span>Monitoreo &mdash; $5</span></li>
+        </ul>
+        <div class="tier-cost">
+          <b>Lo que se cede</b>
+          Una sola máquina sigue siendo un único punto de falla. Sin escalado
+          horizontal sin migrar.
+        </div>
+      </div>
+
+      <div class="tier tier--managed">
+        <div class="tier-tag">Gestionado</div>
+        <div class="tier-price">~$340</div>
+        <div class="tier-unit">USD / mes (estimado)</div>
+        <ul>
+          <li><span class="tick">&#10003;</span><span>PostgreSQL gestionado &mdash; ~$60</span></li>
+          <li><span class="tick">&#10003;</span><span>Redis gestionado &mdash; ~$20</span></li>
+          <li><span class="tick">&#10003;</span><span>Contenedores + balanceador &mdash; ~$180</span></li>
+          <li><span class="tick">&#10003;</span><span>Vercel Pro + CDN &mdash; ~$40</span></li>
+          <li><span class="tick">&#10003;</span><span>Monitoreo y alertas &mdash; ~$40</span></li>
+        </ul>
+        <div class="tier-cost">
+          <b>Lo que se gana</b>
+          Respaldos y failover automáticos, escalado horizontal, sin
+          administración de servidor. Se justifica con volumen sostenido.
+        </div>
+      </div>
+
+    </div>
 
     <div class="grid g2">
       <div class="card reveal d1">
@@ -1280,8 +1433,9 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
           <li><span class="tick">&#10003;</span><span><b>Enrutamiento</b> &mdash; el frontend hace proxy a <span style="font-family:var(--font-mono);font-size:0.84rem;">api.lavillaskateboarding.com</span></span></li>
         </ul>
         <p style="margin-top:1rem;font-size:0.85rem;">
-          La orquestación gestionada se cotizó en varios cientos al mes. Con doce pedidos,
-          esa cuenta todavía no cierra &mdash; se revisa cuando cierre.
+          El nivel gestionado se cotizó en varios cientos al mes. Sin ventas todavía,
+          esa cuenta no cierra &mdash; se sube de nivel cuando el volumen lo pague,
+          no antes.
         </p>
       </div>
     </div>
