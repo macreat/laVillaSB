@@ -1,0 +1,40 @@
+flowchart TB
+  EXT(["Cliente · navegador"])
+
+  subgraph L1["L1 · PRESENTACIÓN — Next.js 15"]
+    direction LR
+    TIENDA["Tienda pública"]
+    ADMIN["Panel administrativo"]
+  end
+
+  subgraph L2["L2 · GATEWAY — Laravel 12 · :8010"]
+    GW["Sanctum · autorización · rate limit · proxy"]
+  end
+
+  subgraph L3["L3 · SERVICIOS DE DOMINIO — FastAPI"]
+    direction LR
+    CAT["Catálogo<br/>:9002"]
+    INV["Inventario<br/>:9003"]
+    ORD["Órdenes<br/>:9004"]
+    PAY["Pagos<br/>:9005"]
+    USR["Usuarios<br/>:9007"]
+    NOT["Notificaciones<br/>:9006"]
+  end
+
+  subgraph L4["L4 · INFRAESTRUCTURA"]
+    direction LR
+    PG[("PostgreSQL<br/>datos")]
+    RD[("Redis<br/>caché y carrito")]
+    MS[("Meilisearch<br/>índice")]
+    MO[("MinIO<br/>objetos")]
+    MQ{{"RabbitMQ<br/>bus de eventos"}}
+  end
+
+  WA(["WhatsApp API · externo"])
+
+  EXT ==> L1
+  L1 == "HTTPS · Bearer" ==> L2
+  L2 == "REST síncrono" ==> L3
+  L3 ==> L4
+  MQ -. "orden.creada" .-> NOT
+  NOT ==> WA

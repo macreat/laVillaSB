@@ -1,0 +1,27 @@
+sequenceDiagram
+  autonumber
+  actor C as Cliente
+  participant N as Next.js
+  participant G as Gateway<br/>Laravel
+  participant O as Órdenes<br/>:9004
+  participant I as Inventario<br/>:9003
+  participant Q as RabbitMQ
+  participant T as Notificaciones<br/>:9006
+  participant W as WhatsApp
+
+  C->>N: Confirma el carrito
+  N->>G: POST /v1/orders/orders
+  Note over G: Ruta pública<br/>límite 20/min
+  G->>O: Proxy REST (síncrono)
+  O->>I: Verifica disponibilidad
+  I-->>O: Stock confirmado
+  O->>O: Persiste la orden
+  O-->>G: 201 Created
+  G-->>N: Orden creada
+  N-->>C: Redirige a WhatsApp
+
+  Note over O,Q: A partir de aquí es asíncrono:<br/>el cliente ya no espera
+  O-)Q: Publica evento orden.creada
+  Q-)T: Entrega el evento
+  T->>W: Envía el mensaje
+  W-->>T: Acuse de recibo

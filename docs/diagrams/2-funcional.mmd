@@ -1,0 +1,33 @@
+flowchart TB
+  SIS(["LA VILLA SB · plataforma de comercio"])
+
+  SIS --> VENTA
+  SIS --> OPER
+  SIS --> SOP
+
+  subgraph VENTA["BLOQUE DE VENTA — cara al cliente"]
+    direction TB
+    F1["Navegar catálogo<br/><i>Catálogo :9002</i>"]
+    F2["Buscar producto<br/><i>Meilisearch</i>"]
+    F3["Gestionar carrito<br/><i>Órdenes :9004 · Redis</i>"]
+    F4["Cerrar compra<br/><i>Órdenes → WhatsApp</i>"]
+    F1 --- F2 --- F3 --- F4
+  end
+
+  subgraph OPER["BLOQUE DE OPERACIÓN — cara al negocio"]
+    direction TB
+    F5["Editar inventario<br/><i>Inventario :9003</i>"]
+    F6["Seguir pedidos<br/><i>Órdenes :9004</i>"]
+    F7["Ver analítica<br/><i>Órdenes :9004</i>"]
+    F8["Controlar acceso<br/><i>Usuarios :9007</i>"]
+    F5 --- F6 --- F7 --- F8
+  end
+
+  subgraph SOP["BLOQUE DE SOPORTE — transversal"]
+    direction TB
+    F9["Autenticar y autorizar<br/><i>Gateway · Sanctum</i>"]
+    F10["Notificar<br/><i>Notificaciones :9006</i>"]
+    F11["Almacenar media<br/><i>MinIO</i>"]
+    F12["Indexar búsqueda<br/><i>Meilisearch</i>"]
+    F9 --- F10 --- F11 --- F12
+  end

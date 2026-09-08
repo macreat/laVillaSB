@@ -41,7 +41,7 @@
 
 % --- Custom commands ---
 \newcommand{\apiversion}{v1.0}
-\newcommand{\docdate}{01 de Septiembre de 2026}
+\newcommand{\docdate}{08 de Septiembre de 2026}
 \newcommand{\contractvalue}{\$1.500 a \$2.000\ USD (estimado)}
 \newcommand{\contractperiod}{6 meses}
 
@@ -541,98 +541,31 @@ Usuarios & 5 & CRUD de usuarios \\
 
 Muestra la estructura del sistema por capas: presentación, gateway, microservicios y datos.
 
-\begin{verbatim}
-+====================================================================+
-|                      PRESENTACION (Capa de UI)                     |
-|  +-------------------+        +--------------------------------+  |
-|  | Tienda Publica    |        | Panel Administrativo           |  |
-|  | (Next.js :3000)   |        | (Next.js :3000/admin)          |  |
-|  +-------------------+        +--------------------------------+  |
-+====================================================================+
-                            |  HTTP/HTTPS
-                            v
-+====================================================================+
-|                    GATEWAY (Capa de Enrutamiento)                  |
-|  +--------------------------------------------------------------+  |
-|  | API Gateway (Laravel :8010)                                  |  |
-|  | - Autenticacion Sanctum                                      |  |
-|  | - Rate Limiting                                              |  |
-|  | - CORS / Headers                                             |  |
-|  | - Proxy a microservicios                                     |  |
-|  +--------------------------------------------------------------+  |
-+====================================================================+
-              |              |              |              |
-              v              v              v              v
-+====================================================================+
-|                 MICROSERVICIOS (Capa de Logica)                    |
-|  +-----------+ +-----------+ +-----------+ +-----------+           |
-|  | Catalog   | | Inventory | | Orders    | | Payments  |           |
-|  | :9002     | | :9003     | | :9004     | | :9005     |           |
-|  +-----------+ +-----------+ +-----------+ +-----------+           |
-|  +-----------+ +-----------+                                      |
-|  | Notifs    | | Users     |                                      |
-|  | :9006     | | :9007     |                                      |
-|  +-----------+ +-----------+                                      |
-+====================================================================+
-              |              |              |
-              v              v              v
-+====================================================================+
-|                      DATOS (Capa de Persistencia)                  |
-|  +--------------+  +--------------+  +--------------+              |
-|  | PostgreSQL   |  | Redis        |  | MinIO (S3)   |              |
-|  | :5432        |  | :6379        |  | :9000        |              |
-|  | - products   |  | - carrito    |  | - imagenes   |              |
-|  | - orders     |  | - cache      |  | - media      |              |
-|  | - users      |  | - sessions   |  |              |              |
-|  +--------------+  +--------------+  +--------------+              |
-+====================================================================+
-\end{verbatim}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{diagrams/arquitectura-sistema.png}
+\caption{Diagrama de arquitectura del sistema. Las cuatro capas y el flujo de una petición, desde el navegador hasta la persistencia.}
+\end{figure}
 
 \subsection{Diagrama de Arquitectura Funcional}
 
 Muestra las funcionalidades agrupadas por dominio de negocio.
 
-\begin{verbatim}
-+====================================================================+
-|                     DOMINIO: TIENDA PUBLICA                        |
-|  +------------------+  +------------------+  +------------------+  |
-|  | Catalogo         |  | Busqueda         |  | Carrito           |  |
-|  | - Listar prod.   |  | - Por keywords   |  | - Agregar item   |  |
-|  | - Ver detalle    |  | - Por categoria  |  | - Eliminar item  |  |
-|  | - Filtrar        |  | - Por precio     |  | - Ver carrito    |  |
-|  +------------------+  +------------------+  +------------------+  |
-|  +------------------+  +------------------+  +------------------+  |
-|  | Checkout         |  | Suscripcion      |  | Contenido Marca  |  |
-|  | - Crear orden    |  | - Email signup   |  | - Hero           |  |
-|  | - Pago           |  | - Newsletter     |  | - Editorial      |  |
-|  +------------------+  +------------------+  +------------------+  |
-+====================================================================+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{diagrams/bloques-funcionales.png}
+\caption{Diagrama de bloques funcionales. Las capacidades del sistema agrupadas por audiencia, con el servicio que implementa cada una.}
+\end{figure}
 
-+====================================================================+
-|                     DOMINIO: ADMINISTRACION                        |
-|  +------------------+  +------------------+  +------------------+  |
-|  | Dashboard        |  | Gestion Prod.    |  | Gestion Ordenes  |  |
-|  | - Metricas       |  | - CRUD           |  | - Estados        |  |
-|  | - Ingresos       |  | - Imagenes S3    |  | - Cancelar       |  |
-|  | - Hoy/Ayer       |  | - Categorias     |  | - Historial      |  |
-|  +------------------+  +------------------+  +------------------+  |
-|  +------------------+  +------------------+                       |
-|  | Inventario       |  | Auth             |                       |
-|  | - Stock          |  | - Login          |                       |
-|  | - Ajustes        |  | - Tokens         |                       |
-|  | - Alertas        |  | - Permisos       |                       |
-|  +------------------+  +------------------+                       |
-+====================================================================+
+\subsection{Diagrama de Comunicación}
 
-+====================================================================+
-|                     DOMINIO: EXTERNO                               |
-|  +------------------+  +------------------+  +------------------+  |
-|  | WhatsApp API     |  | Twilio SMS       |  | MinIO / S3       |  |
-|  | - Notificaciones |  | - Ordenes        |  | - Upload imgs    |  |
-|  | - Catalogo       |  | - Confirmaciones |  | - CDN publico    |  |
-|  +------------------+  +------------------+  +------------------+  |
-+====================================================================+
-\end{verbatim}
+Muestra cómo se comunican los componentes durante un checkout: la parte síncrona que el cliente espera, y la asíncrona que ocurre después por el bus de eventos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{diagrams/comunicacion.png}
+\caption{Diagrama de comunicación. Los pasos 1 a 9 son REST síncrono; a partir del paso 10 el flujo continúa por RabbitMQ sin que el cliente espere.}
+\end{figure}
 
 \subsection{Diagrama de Endpoints por Servicio}
 
