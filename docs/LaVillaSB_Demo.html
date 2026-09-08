@@ -520,12 +520,145 @@ footer {
   .reveal { opacity: 1 !important; transform: none !important; }
   .hero-anim { opacity: 1 !important; transform: none !important; animation: none !important; }
 }
+
+/* ===== Objectives ===== */
+.obj-check {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(29,48,87,0.7);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--slime);
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+/* ===== Request flow ===== */
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.flow-node {
+  flex: 1 1 160px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(11,22,48,0.75);
+  padding: 0.9rem 1rem;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.flow-node:hover { border-color: rgba(79,131,241,0.6); transform: translateY(-2px); }
+.flow-node b { display: block; font-size: 0.92rem; margin-bottom: 0.2rem; }
+.flow-node span { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); }
+.flow-node--key { border-color: rgba(0,212,255,0.5); background: rgba(0,212,255,0.06); }
+.flow-node--key b { color: var(--cyan); }
+.flow-arrow { display: flex; align-items: center; color: var(--accent); font-size: 1.2rem; flex: 0 0 auto; }
+
+/* ===== Numbered steps ===== */
+.steps { list-style: none; display: grid; gap: 0.75rem; }
+.steps li { display: flex; gap: 0.75rem; font-size: 0.88rem; color: var(--text-muted); }
+.steps li b { color: var(--text); font-weight: 600; }
+.sn {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,212,255,0.45);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.mono { font-family: var(--font-mono); font-size: 0.84em; color: var(--cyan); }
+
+/* ===== Stack rows ===== */
+.stack-row {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(29,48,87,0.55);
+}
+.stack-row:last-child { border-bottom: none; }
+.stack-row b { display: block; font-size: 0.9rem; margin-bottom: 0.15rem; }
+.stack-row span { font-size: 0.82rem; color: var(--text-muted); }
+
+/* ===== Presentation mechanics =====
+   Proximity snapping, not mandatory: sections taller than the viewport would
+   otherwise trap the scroll halfway down. */
+html { scroll-snap-type: y proximity; }
+section { scroll-snap-align: start; scroll-snap-stop: normal; }
+
+/* Slide-in transition. Sections alternate direction so moving between them
+   reads as travel rather than a stack of fades. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 38px, 0);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+section:nth-of-type(odd) .reveal  { transform: translate3d(-34px, 26px, 0); }
+section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
+.reveal.visible { opacity: 1; transform: translate3d(0, 0, 0); }
+
+/* ===== Slide dot navigation ===== */
+.slide-nav {
+  position: fixed;
+  right: 1.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 160;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.slide-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(147,165,201,0.55);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.slide-dot:hover { border-color: var(--cyan); transform: scale(1.35); }
+.slide-dot[aria-current='true'] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px rgba(0,212,255,0.7);
+  transform: scale(1.3);
+}
+@media (max-width: 900px) { .slide-nav { display: none; } }
+
+/* ===== Keyboard hint ===== */
+.kbd-hint {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.4rem;
+  z-index: 160;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(5,11,24,0.8);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.35rem 0.65rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.kbd-hint.show { opacity: 0.85; }
+@media (max-width: 900px) { .kbd-hint { display: none; } }
+
 </style>
 </head>
 <body>
 
 <div class="scroll-progress" id="progress"></div>
 <div class="grain"></div>
+<nav class="slide-nav" id="slideNav" aria-label="Navegacion de diapositivas"></nav>
+<div class="kbd-hint" id="kbdHint">&larr; &rarr; o espacio para navegar</div>
 
 <!-- ================= HERO ================= -->
 <section id="hero">
@@ -592,11 +725,71 @@ footer {
 </section>
 
 
+<!-- ================= 02 OBJETIVOS ================= -->
+<section id="objetivos">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <div class="label reveal">02 &mdash; Objetivos</div>
+    <h2 class="reveal d1">Meta y Objetivos</h2>
+    <p class="lede reveal d1">
+      Una meta de negocio, seis objetivos técnicos que la sostienen. Cada objetivo
+      tiene un criterio de cumplimiento verificable, no una intención.
+    </p>
+
+    <div class="card reveal d1" style="margin-bottom:1.8rem;border-color:rgba(0,212,255,0.4);">
+      <div class="vname" style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:0.6rem;">Meta</div>
+      <div style="font-family:var(--font-display);font-size:clamp(1.1rem,2.4vw,1.5rem);line-height:1.3;">
+        Que La Villa venda en línea sin depender de un intermediario, con la misma
+        voz que tiene en la calle.
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card reveal d1">
+        <h3>&#127919; 1. Vender por el canal que ya usan</h3>
+        <p>El checkout entrega el pedido a WhatsApp, donde el cliente colombiano ya compra. Sin registro obligatorio, sin fricción de tarjeta en el MVP.</p>
+        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: 12 pedidos procesados, $480.000 COP entregados</div>
+      </div>
+
+      <div class="card reveal d2">
+        <h3>&#9889; 2. Que el catálogo no frene la venta</h3>
+        <p>La sincronización de catálogo y el procesamiento de imágenes son lentos e intermitentes. Aislarlos en servicios propios mantiene el checkout ágil bajo carga.</p>
+        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: 6 servicios independientes sobre bus de eventos</div>
+      </div>
+
+      <div class="card reveal d3">
+        <h3>&#128269; 3. Que encuentren lo que buscan</h3>
+        <p>Los clientes escriben mal las marcas de tablas. La búsqueda debe tolerar errores de tipeo o la venta se pierde en silencio.</p>
+        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: Meilisearch con tolerancia a errores</div>
+      </div>
+
+      <div class="card reveal d4">
+        <h3>&#128274; 4. Un solo punto de entrada seguro</h3>
+        <p>Ningún microservicio queda expuesto a internet. Todo pasa por el gateway, que autentica, autoriza y limita la tasa antes de enrutar.</p>
+        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: Sanctum + EnsureAdmin + rate limiting por ruta</div>
+      </div>
+
+      <div class="card reveal d5">
+        <h3>&#128176; 5. Que el costo no supere la venta</h3>
+        <p>Una tienda que arranca no puede pagar orquestación gestionada. La infraestructura debe costar una fracción de lo que factura.</p>
+        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: ~$66 USD/mes contra varios cientos</div>
+      </div>
+
+      <div class="card reveal d6">
+        <h3>&#128295; 6. Que se pueda operar sin el que lo construyó</h3>
+        <p>Panel administrativo propio para inventario, pedidos y analítica. El dueño de la tienda no debe depender de un desarrollador para operar.</p>
+        <div class="obj-check"><span class="tick">&#10003;</span> Cumplido: panel con control de acceso multiusuario</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- ================= 02 ARCHITECTURE - SOMMERVILLE VIEWS ================= -->
 <section id="architecture">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">02 &mdash; Arquitectura</div>
+    <div class="label reveal">03 &mdash; Arquitectura</div>
     <h2 class="reveal d1">Cuatro Vistas, Según Sommerville</h2>
     <p class="lede reveal d1">
       Sommerville sostiene que ningún diagrama describe un sistema por sí solo: hacen
@@ -662,11 +855,138 @@ footer {
 </section>
 
 
+<!-- ================= 04 API Y SEGURIDAD ================= -->
+<section id="api">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <div class="label reveal">04 &mdash; La API</div>
+    <h2 class="reveal d1">Cómo Viaja Una Petición</h2>
+    <p class="lede reveal d1">
+      Ningún microservicio está expuesto a internet. Todo entra por el gateway, que
+      autentica, autoriza y limita la tasa antes de enrutar. Ese es el diseño completo.
+    </p>
+
+    <!-- Request path -->
+    <div class="flow reveal d1">
+      <div class="flow-node"><b>Next.js</b><span>:3000</span></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node flow-node--key"><b>Gateway Laravel</b><span>:8010 &middot; Sanctum</span></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node"><b>Microservicio</b><span>:9002&ndash;:9007</span></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node"><b>PostgreSQL</b><span>Redis &middot; MinIO</span></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:2rem;">
+      <!-- Auth -->
+      <div class="card reveal d2">
+        <h3>&#128273; Autenticación por token (Sanctum)</h3>
+        <ol class="steps">
+          <li><span class="sn">1</span><span><b>Login.</b> <span class="mono">POST /admin/login</span> con email, contraseña y nombre del dispositivo. Limitado a 5 intentos por minuto.</span></li>
+          <li><span class="sn">2</span><span><b>Emisión.</b> Si las credenciales son válidas <i>y</i> el usuario es admin, se emite un token con la habilidad <span class="mono">['admin']</span>.</span></li>
+          <li><span class="sn">3</span><span><b>Uso.</b> El frontend lo envía en <span class="mono">Authorization: Bearer</span>. El guard <span class="mono">auth:sanctum</span> lo resuelve a un usuario.</span></li>
+          <li><span class="sn">4</span><span><b>Doble verificación.</b> <span class="mono">EnsureAdmin</span> exige <span class="mono">is_admin</span> en el usuario <i>y</i> <span class="mono">tokenCan('admin')</span> en el token.</span></li>
+          <li><span class="sn">5</span><span><b>Logout.</b> Se borra el token actual y se purgan los expirados. Revocación real, no expiración pasiva.</span></li>
+        </ol>
+      </div>
+
+      <!-- Why -->
+      <div class="card reveal d3">
+        <h3>&#129504; Por qué tokens y no sesiones</h3>
+        <ul class="ticks">
+          <li><span class="tick">&#10003;</span><span><b>Sin estado compartido.</b> El frontend vive en Vercel y el gateway en un VPS: dominios distintos. Una cookie de sesión obligaría a compartir dominio y a lidiar con CSRF y SameSite.</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Revocable al instante.</b> El token es una fila en base de datos. Borrarla cierra la sesión de inmediato, cosa que un JWT autocontenido no permite sin una lista de revocación.</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Uno por dispositivo.</b> El token se nombra al emitirlo, así que se puede revocar el del celular sin tumbar el del escritorio.</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Con alcance.</b> La habilidad <span class="mono">['admin']</span> viaja en el token: un token filtrado sigue sin poder hacer más de lo que se le concedió.</span></li>
+          <li><span class="tick">&#10003;</span><span><b>Defensa en profundidad.</b> Degradar a un usuario a no-admin lo bloquea aunque su token siga vivo, porque se revisan las dos cosas.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Endpoint map -->
+    <div class="grid g4" style="margin-top:1.6rem;">
+      <div class="metric reveal d2"><b data-count="50">0</b><span>Endpoints totales</span></div>
+      <div class="metric reveal d3"><b data-count="7">0</b><span>Servicios expuestos</span></div>
+      <div class="metric reveal d4"><b data-count="3">0</b><span>Rutas públicas</span></div>
+      <div class="metric reveal d5"><b data-count="1">0</b><span>Punto de entrada</span></div>
+    </div>
+
+    <div class="grid g3" style="margin-top:1.6rem;">
+      <div class="card reveal d3">
+        <h3>&#128274; Rutas protegidas</h3>
+        <p style="margin-bottom:0.7rem;">Exigen token admin. Cubren todo el panel administrativo.</p>
+        <div class="srow"><span class="sk mono">/v1/{service}/{path}</span><span class="sv">admin</span></div>
+        <div class="srow"><span class="sk mono">/admin/me</span><span class="sv">admin</span></div>
+        <div class="srow"><span class="sk mono">/admin/logout</span><span class="sv">admin</span></div>
+      </div>
+      <div class="card reveal d4">
+        <h3>&#127760; Rutas públicas</h3>
+        <p style="margin-bottom:0.7rem;">Lista blanca explícita, solo lectura o creación limitada.</p>
+        <div class="srow"><span class="sk mono">GET /v1/catalog/*</span><span class="sv">libre</span></div>
+        <div class="srow"><span class="sk mono">POST /catalog/search</span><span class="sv">10/min</span></div>
+        <div class="srow"><span class="sk mono">POST /orders</span><span class="sv">20/min</span></div>
+      </div>
+      <div class="card reveal d5">
+        <h3>&#128737; Capas de defensa</h3>
+        <ul class="ticks">
+          <li><span class="tick">&#10003;</span><span>Lista blanca de rutas por expresión regular</span></li>
+          <li><span class="tick">&#10003;</span><span>Rate limiting diferenciado por ruta</span></li>
+          <li><span class="tick">&#10003;</span><span>Credenciales solo en variables de entorno</span></li>
+          <li><span class="tick">&#10003;</span><span>CORS por dominio, HTTPS en producción</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= 05 STACK ================= -->
+<section id="stack">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <div class="label reveal">05 &mdash; Stack Tecnológico</div>
+    <h2 class="reveal d1">Con Qué Está Hecho</h2>
+    <p class="lede reveal d1">
+      Tres lenguajes, elegidos por lo que cada uno hace mejor, no por gusto.
+      Al lado de cada uno, por qué está ahí.
+    </p>
+
+    <div class="grid g3">
+      <div class="card reveal d1">
+        <h3>&#128421; Capa de presentación</h3>
+        <div class="stack-row"><b>Next.js 15</b><span>Renderizado en servidor: el catálogo es indexable y carga rápido en móvil.</span></div>
+        <div class="stack-row"><b>React 18</b><span>Base de componentes del panel administrativo.</span></div>
+        <div class="stack-row"><b>TypeScript</b><span>Contratos de datos verificados en compilación.</span></div>
+        <div class="stack-row"><b>Tailwind CSS</b><span>Sistema de diseño con tokens de marca.</span></div>
+      </div>
+
+      <div class="card reveal d2">
+        <h3>&#127760; Capa de aplicación</h3>
+        <div class="stack-row"><b>Laravel 12</b><span>Gateway. Autenticación, sesiones y políticas ya resueltas.</span></div>
+        <div class="stack-row"><b>Sanctum</b><span>Tokens con alcance, revocables por dispositivo.</span></div>
+        <div class="stack-row"><b>FastAPI</b><span>Servicios de dominio. Asíncrono y con esquema OpenAPI automático.</span></div>
+        <div class="stack-row"><b>Python 3</b><span>Lenguaje de los seis microservicios.</span></div>
+      </div>
+
+      <div class="card reveal d3">
+        <h3>&#128451; Capa de datos e infraestructura</h3>
+        <div class="stack-row"><b>PostgreSQL</b><span>Fuente de verdad transaccional.</span></div>
+        <div class="stack-row"><b>Redis</b><span>Caché y carrito de compras.</span></div>
+        <div class="stack-row"><b>RabbitMQ</b><span>Bus de eventos entre servicios.</span></div>
+        <div class="stack-row"><b>Meilisearch</b><span>Búsqueda con tolerancia a errores de tipeo.</span></div>
+        <div class="stack-row"><b>MinIO</b><span>Almacenamiento de objetos compatible con S3.</span></div>
+        <div class="stack-row"><b>Docker Compose</b><span>13 contenedores, entorno reproducible.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- ================= 03 TRADE-OFFS ================= -->
 <section id="tradeoffs">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">03 &mdash; Balances</div>
+    <div class="label reveal">06 &mdash; Balances</div>
     <h2 class="reveal d1">Los Balances Que Hicimos</h2>
     <p class="lede reveal d1">
       Cada uno de estos fue una bifurcación con una alternativa real. Lo que importa no es
@@ -743,7 +1063,7 @@ footer {
 <section id="features">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">04 &mdash; Entregado</div>
+    <div class="label reveal">07 &mdash; Entregado</div>
     <h2 class="reveal d1">Funcionalidades Implementadas</h2>
     <p class="lede reveal d1">
       Entregado y en ejecución en el stack actual. Todo lo que sigue pendiente está en
@@ -797,7 +1117,7 @@ footer {
 <section id="timeline">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">05 &mdash; Tiempo de Desarrollo</div>
+    <div class="label reveal">08 &mdash; Tiempo de Desarrollo</div>
     <h2 class="reveal d1">Dos Meses, Trece Días de Trabajo</h2>
     <p class="lede reveal d1">
       Leído directamente del historial de git: <b>112 commits</b> entre el 9 de julio y el
@@ -885,7 +1205,7 @@ footer {
 <section id="status">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">06 &mdash; Estado Actual</div>
+    <div class="label reveal">09 &mdash; Estado Actual</div>
     <h2 class="reveal d1">En Marcha, Con Brechas Conocidas</h2>
     <p class="lede reveal d1">
       Una lectura honesta del stack. Las brechas están listadas porque son el trabajo
@@ -929,7 +1249,7 @@ footer {
 <section id="cost">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">07 &mdash; Costo Operativo</div>
+    <div class="label reveal">10 &mdash; Costo Operativo</div>
     <h2 class="reveal d1">Sesenta y Seis Dólares al Mes</h2>
     <p class="lede reveal d1">
       El balance de autogestionar, con precio. Esto es lo que mantiene la plataforma
@@ -973,7 +1293,7 @@ footer {
 <section id="roadmap">
   <div class="grid-bg"></div>
   <div class="wrap">
-    <div class="label reveal">08 &mdash; Próximos Pasos</div>
+    <div class="label reveal">11 &mdash; Próximos Pasos</div>
     <h2 class="reveal d1">Hoja de Ruta</h2>
     <p class="lede reveal d1">Tres fases entre este punto y un lanzamiento en producción endurecido.</p>
 
@@ -1107,6 +1427,72 @@ footer {
     card.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
     card.style.setProperty('--my', (ev.clientY - r.top) + 'px');
   }, { passive: true });
+
+  /* ===== Slide navigation: dots, keyboard, and a first-run hint ===== */
+  var slides = [].slice.call(document.querySelectorAll('section'));
+  var nav = document.getElementById('slideNav');
+  var hint = document.getElementById('kbdHint');
+
+  slides.forEach(function (sec, i) {
+    var dot = document.createElement('button');
+    dot.className = 'slide-dot';
+    dot.type = 'button';
+    var heading = sec.querySelector('h1, h2');
+    dot.setAttribute('aria-label', 'Ir a: ' + (heading ? heading.textContent.trim() : 'Diapositiva ' + (i + 1)));
+    dot.addEventListener('click', function () { goTo(i); });
+    nav.appendChild(dot);
+  });
+  var dots = [].slice.call(nav.children);
+
+  function currentIndex() {
+    /* The slide whose top is nearest the viewport top, biased to the one
+       actually filling the screen. */
+    var best = 0, bestDist = Infinity;
+    for (var i = 0; i < slides.length; i++) {
+      var d = Math.abs(slides[i].getBoundingClientRect().top);
+      if (d < bestDist) { bestDist = d; best = i; }
+    }
+    return best;
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= slides.length) return;
+    slides[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function markActive() {
+    var idx = currentIndex();
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].setAttribute('aria-current', i === idx ? 'true' : 'false');
+    }
+  }
+  markActive();
+  window.addEventListener('scroll', function () {
+    if (!navTicking) { navTicking = true; window.requestAnimationFrame(function () { markActive(); navTicking = false; }); }
+  }, { passive: true });
+  var navTicking = false;
+
+  document.addEventListener('keydown', function (e) {
+    /* Never hijack typing or a modified shortcut. */
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    var i = currentIndex();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault(); goTo(i + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault(); goTo(i - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault(); goTo(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); goTo(slides.length - 1);
+    }
+  });
+
+  /* Show the hint briefly on arrival, then let it go. */
+  setTimeout(function () { hint.classList.add('show'); }, 1800);
+  setTimeout(function () { hint.classList.remove('show'); }, 7000);
 
   /* ===== Safety net: nothing may stay invisible ===== */
   window.addEventListener('load', function () {
