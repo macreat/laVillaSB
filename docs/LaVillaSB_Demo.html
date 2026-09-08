@@ -12,27 +12,27 @@
 
 :root {
   /* Ground is near-black and neutral, not navy: the interface has to recede. */
-  --bg: #0a0a0a;
-  --void: #050505;
-  --surface: #0e0e0e;
-  --surface-elevated: #131313;
-  --border: #232323;
-  --hairline: #1a1a1a;
+  --bg: #0d0d0d;
+  --void: #070707;
+  --surface: #121212;
+  --surface-elevated: #181818;
+  --border: #474d46;
+  --hairline: #3d423c;
 
   /* One accent. A pale mint sampled off the reference, lifted for screen. */
-  --accent: #c8e6d4;
-  --accent-dim: #7e9a8a;
-  --cyan: #c8e6d4;
+  --accent: #cdebd9;
+  --accent-dim: #8fae9c;
+  --cyan: #cdebd9;
   --accent-hover: #dcf2e4;
 
-  --text: #e8e8e6;
-  --text-muted: #6f736f;
-  --text-faint: #3a3d3a;
+  --text: #f2f2f0;
+  --text-muted: #a8aea8;
+  --text-faint: #5c615c;
 
   --danger: #a8564a;
   --amber: #a8925a;
-  --slime: #c8e6d4;
-  --teal: #c8e6d4;
+  --slime: #cdebd9;
+  --teal: #cdebd9;
 
   --font-body: 'Inter', system-ui, sans-serif;
   --font-display: 'Archivo', 'Inter', sans-serif;
@@ -89,7 +89,10 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  /* clip, not hidden: `hidden` would make every section a scroll container,
+     and view() timelines would then resolve against the section instead of
+     the page - leaving every scroll animation permanently finished. */
+  overflow: clip;
   padding: 6rem 2rem;
 }
 
@@ -746,7 +749,7 @@ h2 {
 .label::after { background: var(--hairline); }
 
 .lede {
-  font-size: 0.94rem;
+  font-size: 1rem;
   line-height: 1.75;
   color: var(--text-muted);
   max-width: 52ch;
@@ -764,7 +767,7 @@ h2 {
   font-size: clamp(9rem, 22vw, 20rem);
   line-height: 0.8;
   color: var(--text-faint);
-  opacity: 0.22;
+  opacity: 0.34;
   pointer-events: none;
   z-index: -1;
   letter-spacing: -0.06em;
@@ -796,7 +799,7 @@ h2 {
   font-weight: 400;
   margin-bottom: 1.1rem;
 }
-.card p, .tier li, .ticks li, .steps li, .stack-row span { font-size: 0.85rem; line-height: 1.7; }
+.card p, .tier li, .ticks li, .steps li, .stack-row span { font-size: 0.9rem; line-height: 1.72; }
 
 /* Numbers get the scale, labels get the whisper. */
 .metric { text-align: left; padding: 1.2rem 0 0.4rem; }
@@ -843,8 +846,8 @@ h2 {
 .chips { gap: 0 0.4rem; }
 
 /* --- The plate recedes to texture. It is no longer the spectacle. --- */
-.plate { opacity: 0.30; filter: grayscale(0.75) contrast(1.05); }
-.plate--echo { opacity: 0.16; }
+.plate { opacity: 0.42; filter: grayscale(0.55) contrast(1.08); }
+.plate--echo { opacity: 0.24; }
 .plate-veil {
   background:
     linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.30) 45%, var(--bg) 100%);
@@ -938,6 +941,92 @@ section { padding: 8rem 3rem; }
   section { padding: 5rem 1.4rem; }
   .wrap::before { font-size: 7rem; top: -2rem; left: -0.5rem; }
   .hero-stats { gap: 1.8rem; }
+}
+
+
+/* ============================================================
+   SCROLL-LINKED MOTION
+   The reveal below is driven by scroll position, not by a
+   trigger: turning the wheel scrubs the animation, so motion
+   tracks the hand exactly. The IntersectionObserver path stays
+   as the fallback for engines without scroll timelines.
+   ============================================================ */
+@supports (animation-timeline: view()) {
+
+  /* Content rises and settles as it crosses into view. `both` fill means
+     anything already scrolled past is left in its finished state, so a slide
+     can never be stranded blank. */
+  .reveal,
+  section:nth-of-type(odd) .reveal,
+  section:nth-of-type(even) .reveal {
+    opacity: 0;
+    transform: none;
+    transition: none;
+    animation: scrollRise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 45%;
+  }
+
+  @keyframes scrollRise {
+    from { opacity: 0; transform: translate3d(0, 46px, 0); }
+    60%  { opacity: 1; }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+
+  /* Staggered depth: later delay groups travel a little further, so a grid
+     of cards arrives as a wave instead of a wall. */
+  .d2 { animation-range: entry 3%  cover 50%; }
+  .d3 { animation-range: entry 6%  cover 55%; }
+  .d4 { animation-range: entry 9%  cover 60%; }
+  .d5 { animation-range: entry 12% cover 65%; }
+  .d6 { animation-range: entry 15% cover 70%; }
+
+  /* The ghosted numeral drifts against the scroll - slow parallax, the one
+     piece of depth this design allows itself. */
+  .wrap::before {
+    animation: numeralDrift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  @keyframes numeralDrift {
+    from { transform: translate3d(0, 90px, 0); opacity: 0.10; }
+    50%  { opacity: 0.34; }
+    to   { transform: translate3d(0, -90px, 0); opacity: 0.10; }
+  }
+
+  /* Section headings settle from a slight over-scale. */
+  h2 {
+    animation: headSettle linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 38%;
+  }
+  @keyframes headSettle {
+    from { opacity: 0; transform: translate3d(0, 26px, 0) scale(1.03); letter-spacing: 0.01em; }
+    to   { opacity: 1; transform: none; letter-spacing: -0.035em; }
+  }
+
+  /* Hairlines draw themselves in rather than appearing. */
+  .card, .metric, .tier, .layer, .flow-node, .view {
+    animation: ruleDraw linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+    transform-origin: left center;
+  }
+  @keyframes ruleDraw {
+    from { border-top-color: transparent; }
+    to   { border-top-color: var(--hairline); }
+  }
+
+  /* The plate breathes with the scroll instead of drifting on a timer. */
+  .plate {
+    animation: plateScroll linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  @keyframes plateScroll {
+    from { transform: scale(1.16) translate3d(0, -2.5%, 0); }
+    to   { transform: scale(1.04) translate3d(0, 2.5%, 0); }
+  }
 }
 
 </style>
