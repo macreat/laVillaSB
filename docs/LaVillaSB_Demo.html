@@ -1457,6 +1457,12 @@ section:nth-of-type(even) .reveal { transform: translate3d(34px, 26px, 0); }
 
   function goTo(i) {
     if (i < 0 || i >= slides.length) return;
+    /* Reveal the destination up front. The observer would normally handle it,
+       but a jump can outrun it, and a blank slide mid-presentation is the one
+       failure worth spending three lines to make impossible. */
+    [].slice.call(slides[i].querySelectorAll('.reveal')).forEach(function (el) {
+      el.classList.add('visible');
+    });
     slides[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
