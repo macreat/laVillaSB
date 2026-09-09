@@ -73,6 +73,23 @@ log "Cloning the repository"
   || git clone --branch ${BRANCH} ${REPO_URL} ${APP_DIR}"
 "${SSH[@]}" "cd ${APP_DIR} && git fetch --quiet origin && git checkout --quiet ${BRANCH} && git pull --quiet"
 
+log "Checking the branch actually carries the current storefront"
+# Deploying a branch that predates the section/category/size taxonomy silently
+# ships the old two-level storefront - the containers come up healthy and the
+# mistake only surfaces when someone browses the site. Fail loudly instead.
+if ! "${SSH[@]}" "test -f ${APP_DIR}/app/microservices/catalog/src/taxonomy.py"; then
+  cat >&2 <<EOF
+Branch '${BRANCH}' does not contain the catalog taxonomy, so this would deploy
+the storefront as it was before the section/category/size work.
+
+Either merge that work into '${BRANCH}', or deploy the branch that has it:
+
+  BRANCH=feat/catalog-taxonomy-and-deploy VPS_HOST=${VPS_HOST} \\
+    ROOT_DOMAIN=${ROOT_DOMAIN} ACME_EMAIL=${ACME_EMAIL} bash deploy/deploy-vps.sh
+EOF
+  exit 1
+fi
+
 log "Generating secrets"
 if "${SSH[@]}" "test -f ${APP_DIR}/.env"; then
   echo "  .env already exists on the host, keeping it"

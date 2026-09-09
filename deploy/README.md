@@ -25,6 +25,10 @@ VPS_HOST=<ip> ROOT_DOMAIN=<domain> ACME_EMAIL=<you> bash deploy/deploy-vps.sh
 VERCEL_TOKEN=<token> ROOT_DOMAIN=<domain> bash deploy/deploy-vercel.sh
 ```
 
+`deploy-vps.sh` clones `main` by default. Until the section/category/size work
+is merged there, add `BRANCH=feat/catalog-taxonomy-and-deploy` - the script
+checks and refuses rather than quietly shipping the older storefront.
+
 `deploy-vps.sh` gates on DNS, provisions the host, generates every secret on
 the server, starts the stack and waits for the API to answer over TLS.
 `deploy-vercel.sh` sets all six production environment variables, builds,
