@@ -5,10 +5,12 @@
 html {
   background-color: #050b18;
   color: #e9eef8;
-  /* Ship the site at the 125% the browser zoom control would give you.
+  /* Ship the site at the 77% the browser zoom control would give you.
      `zoom` scales layout the way browser zoom does, so px sizes, images and
-     borders all grow together - a root font-size bump would only move rems. */
-  zoom: 1.25;
+     borders all shrink together - a root font-size change would only move rems.
+     Note this also widens the effective viewport, so breakpoints trigger at
+     smaller physical widths than the raw pixel values suggest. */
+  zoom: 0.77;
 }
 
 body {
@@ -168,7 +170,11 @@ input:-webkit-autofill:focus {
   inset: 0;
   z-index: 0;
   background-image: url('/brand/pattern-camo-azul.png');
-  background-size: 300px auto;
+  /* Sized against the page zoom, not the raw pixel value: `zoom` shrinks the
+     tile too, so a fixed size would pack visibly more repeats behind the grid
+     and read as noise rather than a watermark. 480 x 0.77 lands where 300 did
+     at the previous zoom. */
+  background-size: 480px auto;
   background-repeat: repeat;
   opacity: 0.16;
   pointer-events: none;

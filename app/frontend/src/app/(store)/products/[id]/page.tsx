@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart';
 import { ProductImage } from '@/components/store/product/ProductImage';
 import { displayCategoryGroup, fetchStoreProduct, type StoreProduct } from '@/lib/store-catalog';
 import { buildWhatsAppHref, EXTERNAL_LINK_REL } from '@/lib/site-links';
+import { formatCOP } from '@/lib/money';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -64,7 +65,7 @@ export default function ProductDetailPage() {
       </div>
     );
   }
-  const whatsappText = `Hola, me interesa ${product.name} ($${product.price.toFixed(2)})`;
+  const whatsappText = `Hola, me interesa ${product.name} (${formatCOP(product.price)})`;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 lg:px-8">
@@ -93,7 +94,7 @@ export default function ProductDetailPage() {
             {product.name}
           </h1>
           <p className="mt-4 font-display text-2xl text-text">
-            ${product.price.toFixed(2)}
+            {formatCOP(product.price)}
           </p>
           <p className="mt-4 text-sm text-text-muted leading-relaxed">
             {product.description ?? 'Live catalog product.'}

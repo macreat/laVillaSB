@@ -7,6 +7,7 @@ import { Trash2, Plus, Minus, Check } from 'lucide-react';
 import { ProductImage } from '@/components/store/product/ProductImage';
 import { buildWhatsAppHref, EXTERNAL_LINK_REL } from '@/lib/site-links';
 import { api } from '@/lib/api';
+import { formatCOP } from '@/lib/money';
 
 export default function CartPage() {
   const { items, total, removeItem, updateQuantity, clearCart } = useCart();
@@ -55,8 +56,8 @@ export default function CartPage() {
   }
 
   const whatsappText = [
-    items.map((i) => `${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`).join('\n'),
-    `Total: $${total.toFixed(2)}`,
+    items.map((i) => `${i.name} x${i.quantity} — ${formatCOP(i.price * i.quantity)}`).join('\n'),
+    `Total: ${formatCOP(total)}`,
   ].join('\n\n');
 
   const handleOrder = async () => {
@@ -82,8 +83,8 @@ export default function CartPage() {
         },
       );
       const orderText = `New order #${order.id} for ${customerName}:\n${items
-        .map((i) => `- ${i.name} x${i.quantity} — $${(i.price * i.quantity).toFixed(2)}`)
-        .join('\n')}\n\nTotal: $${order.total.toFixed(2)}\nPhone: ${customerPhone}`;
+        .map((i) => `- ${i.name} x${i.quantity} — ${formatCOP(i.price * i.quantity)}`)
+        .join('\n')}\n\nTotal: ${formatCOP(order.total)}\nPhone: ${customerPhone}`;
       window.open(buildWhatsAppHref(orderText), '_blank', 'noopener,noreferrer');
       clearCart();
       setPlaced(true);
@@ -126,7 +127,7 @@ export default function CartPage() {
                 {item.name}
               </Link>
               <p className="mt-0.5 font-display text-lg text-text">
-                ${item.price.toFixed(2)}
+                {formatCOP(item.price)}
               </p>
             </div>
 
@@ -153,7 +154,7 @@ export default function CartPage() {
             {/* Subtotal + remove */}
             <div className="text-right">
               <p className="font-display text-lg text-text">
-                ${(item.price * item.quantity).toFixed(2)}
+                {formatCOP(item.price * item.quantity)}
               </p>
               <button
                 onClick={() => removeItem(item.id)}
@@ -171,7 +172,7 @@ export default function CartPage() {
       <div className="mt-8 border-t border-border pt-6">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-text-muted">Subtotal</span>
-          <span className="font-display text-2xl text-text">${total.toFixed(2)}</span>
+          <span className="font-display text-2xl text-text">{formatCOP(total)}</span>
         </div>
       </div>
 

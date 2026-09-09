@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCart } from '@/hooks/useCart';
 import { ShoppingCart } from 'lucide-react';
 import { ProductImage } from './ProductImage';
+import { formatCOP } from '@/lib/money';
 
 interface Product {
   id: string;
@@ -33,7 +34,7 @@ export function ProductCard({ product }: { product: Product }) {
         </Link>
         <div className="mt-1 flex items-center justify-between">
           <span className="font-display text-lg text-text">
-            ${product.price.toFixed(2)}
+            {formatCOP(product.price)}
           </span>
           <button
             onClick={() =>
