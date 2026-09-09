@@ -122,8 +122,14 @@ services:
         limits:
           memory: 384M
 
+  # Every FastAPI service hardcodes the development database URL as its config
+  # default, so each one needs the production password injected explicitly.
+  # Missing even one leaves a service that starts, fails to connect, and is only
+  # noticed when the feature behind it is used.
   inventory:
     ports: !override []
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:${DB_PASSWORD}@postgres:5432/lavilla
     deploy:
       resources:
         limits:
@@ -131,6 +137,8 @@ services:
 
   orders:
     ports: !override []
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:${DB_PASSWORD}@postgres:5432/lavilla
     deploy:
       resources:
         limits:
@@ -145,6 +153,8 @@ services:
 
   payments:
     ports: !override []
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:${DB_PASSWORD}@postgres:5432/lavilla
     deploy:
       resources:
         limits:
@@ -152,6 +162,8 @@ services:
 
   users:
     ports: !override []
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:${DB_PASSWORD}@postgres:5432/lavilla
     deploy:
       resources:
         limits:
