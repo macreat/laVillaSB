@@ -58,6 +58,25 @@ media.{$ROOT_DOMAIN} {
 	reverse_proxy minio:9000
 }
 
+# --- Storefront on the apex --------------------------------------------------
+# The bare domain and www serve the same storefront container. www redirects
+# rather than duplicating the site, so there is one canonical URL for search
+# engines and for the links customers paste into WhatsApp.
+www.{$ROOT_DOMAIN} {
+	redir https://{$ROOT_DOMAIN}{uri} permanent
+}
+
+{$ROOT_DOMAIN} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+	reverse_proxy frontend:3000
+}
+
 # --- Storefront fallback -----------------------------------------------------
 # Vercel serves the apex in the $11 plan. This block keeps the VPS able to serve
 # the storefront on its own, which is the escape hatch if Vercel Hobby's
