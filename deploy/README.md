@@ -12,6 +12,27 @@ single domain ties them together.
 Read [Before you commit to this shape](#before-you-commit-to-this-shape) first.
 Vercel Hobby forbids commercial use, and this is a store.
 
+## The short version
+
+Three inputs are needed, and each is a purchase or a login that only the account
+owner can make. Once you have them, each half is one command:
+
+```bash
+# 1. Buy a domain and point api/media/storefront at the VPS.
+# 2. Buy the VPS, then:
+VPS_HOST=<ip> ROOT_DOMAIN=<domain> ACME_EMAIL=<you> bash deploy/deploy-vps.sh
+# 3. Then the storefront:
+VERCEL_TOKEN=<token> ROOT_DOMAIN=<domain> bash deploy/deploy-vercel.sh
+```
+
+`deploy-vps.sh` gates on DNS, provisions the host, generates every secret on
+the server, starts the stack and waits for the API to answer over TLS.
+`deploy-vercel.sh` sets all six production environment variables, builds,
+promotes and attaches the domain. Both are idempotent.
+
+Checked 2026-09-09 and free at the time: `lavillasb.com`,
+`lavillaskateboarding.com`, `lavillasb.co`, `lavillasb.net`, `lavillasb.store`.
+
 ---
 
 ## How the pieces talk
@@ -71,15 +92,31 @@ Caddy cannot complete the ACME challenge and will not get certificates.
 
 Any 2 vCPU / 4 GB Ubuntu box: Hetzner CX22, DigitalOcean, Vultr, Linode.
 
+The one-command path, which also does step 3 for you:
+
+```bash
+VPS_HOST=<vps-ip> ROOT_DOMAIN=<domain> ACME_EMAIL=<you@example.com> \
+  bash deploy/deploy-vps.sh
+```
+
+It refuses to start until `api`, `media` and `storefront` resolve to the VPS,
+because a failed ACME challenge is rate-limited by the CA.
+
+To provision only, without deploying:
+
 ```bash
 scp deploy/provision-vps.sh root@<vps-ip>:/tmp/
 ssh root@<vps-ip> 'bash /tmp/provision-vps.sh'
 ```
 
-That installs Docker, adds 2 GB of swap, caps container log growth, closes
-everything but SSH and 80/443, and turns on unattended security updates.
+Either way that installs Docker, adds 2 GB of swap, caps container log growth,
+closes everything but SSH and 80/443, and turns on unattended security
+updates.
 
 ## 3. Start the stack
+
+`deploy-vps.sh` already did this. What follows is the manual equivalent, for
+when you want to see each step or are recovering a half-finished deploy.
 
 ```bash
 ssh lavilla@<vps-ip>
@@ -111,12 +148,14 @@ caps, not reservations. Idle draw across all thirteen is about 0.9 GB.
 ## 4. Deploy the storefront to Vercel
 
 ```bash
-cd app/frontend
-vercel login
-vercel link
+VERCEL_TOKEN=<token> ROOT_DOMAIN=<domain> bash deploy/deploy-vercel.sh
 ```
 
-Set the environment variables on the Vercel project (Production scope):
+Get a token at <https://vercel.com/account/tokens>. Omit `VERCEL_TOKEN` to use
+an existing `vercel login` session instead.
+
+That script sets these for you. To do it by hand, they are the Production
+scope variables the storefront needs:
 
 | Variable | Value | Why |
 | --- | --- | --- |
@@ -130,11 +169,6 @@ Set the environment variables on the Vercel project (Production scope):
 `GATEWAY_ORIGIN` must be set **before** the first production build. It is
 inlined into the routes manifest, so changing it later needs a redeploy, not a
 restart.
-
-```bash
-vercel --prod
-vercel domains add <domain>
-```
 
 Then add `STOREFRONT_ORIGIN=https://<domain>` to the VPS `.env` and restart, so
 Caddy sends the matching CORS header and Laravel Sanctum treats the storefront
