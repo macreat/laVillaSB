@@ -1,0 +1,74 @@
+# Caddy terminates TLS for the VPS side of the deployment and is the only
+# process bound to the public interface. Certificates are issued and renewed
+# automatically from Let's Encrypt, so there is nothing to rotate by hand.
+#
+# {$VAR} placeholders are read from the environment at start time; see
+# deploy/.env.prod.example for the full list.
+
+{
+	email {$ACME_EMAIL}
+	# Trim Caddy's own footprint on a 4 GB box.
+	admin off
+}
+
+# --- API gateway -------------------------------------------------------------
+api.{$ROOT_DOMAIN} {
+	encode zstd gzip
+
+	# The storefront runs on Vercel, so browser calls to the API are
+	# cross-origin. Only the storefront's own origins may call it.
+	@preflight method OPTIONS
+	handle @preflight {
+		header {
+			Access-Control-Allow-Origin "{$STOREFRONT_ORIGIN}"
+			Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+			Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
+			Access-Control-Allow-Credentials "true"
+			Access-Control-Max-Age "86400"
+		}
+		respond 204
+	}
+
+	header {
+		Access-Control-Allow-Origin "{$STOREFRONT_ORIGIN}"
+		Access-Control-Allow-Credentials "true"
+		Vary Origin
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+
+	reverse_proxy gateway:8010
+}
+
+# --- Product media -----------------------------------------------------------
+# Read-only bucket reads. Writes go through the gateway, never through here.
+media.{$ROOT_DOMAIN} {
+	encode zstd gzip
+
+	@writes not method GET HEAD
+	respond @writes 405
+
+	header {
+		Cache-Control "public, max-age=300, s-maxage=86400, stale-while-revalidate=604800"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+
+	reverse_proxy minio:9000
+}
+
+# --- Storefront fallback -----------------------------------------------------
+# Vercel serves the apex in the $11 plan. This block keeps the VPS able to serve
+# the storefront on its own, which is the escape hatch if Vercel Hobby's
+# non-commercial terms become a problem. Point DNS here to switch.
+storefront.{$ROOT_DOMAIN} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+	reverse_proxy frontend:3000
+}

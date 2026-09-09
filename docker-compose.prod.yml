@@ -1,0 +1,177 @@
+# Production overlay for the single-VPS deployment.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# What it changes on top of the base compose file:
+#   - Caddy becomes the only process on the public interface and terminates TLS.
+#   - Every other service stops publishing host ports; they talk over the
+#     internal network only.
+#   - Secrets come from the environment instead of the development defaults.
+#   - Each container gets a memory ceiling so one runaway service cannot take
+#     the whole 4 GB box down with it.
+#
+# The 13 containers draw ~0.9 GB at idle, so 4 GB is comfortable when nothing
+# is misbehaving. The ceilings below are blast-radius caps, not reservations:
+# they deliberately oversubscribe the box, because their job is to stop one
+# runaway service from taking the other twelve down with it, not to carve the
+# RAM into fixed slices. Provision swap (see deploy/README.md) so a burst pages
+# out instead of triggering the OOM killer.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: lavilla_caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      ROOT_DOMAIN: ${ROOT_DOMAIN:?set ROOT_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+      STOREFRONT_ORIGIN: ${STOREFRONT_ORIGIN:?set STOREFRONT_ORIGIN}
+    depends_on:
+      - gateway
+      - minio
+      - frontend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    networks: [lavilla]
+
+  postgres:
+    ports: !override []
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+
+  redis:
+    ports: !override []
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  rabbitmq:
+    ports: !override []
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?set RABBITMQ_DEFAULT_PASS}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  meilisearch:
+    ports: !override []
+    environment:
+      MEILI_ENV: production
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?set MEILI_MASTER_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+
+  minio:
+    ports: !override []
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  gateway:
+    ports: !override []
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY:?set APP_KEY}
+      APP_URL: https://api.${ROOT_DOMAIN}
+      DB_PASSWORD: ${DB_PASSWORD}
+      FRONTEND_URL: ${STOREFRONT_ORIGIN}
+      SANCTUM_STATEFUL_DOMAINS: ${STOREFRONT_DOMAIN:?set STOREFRONT_DOMAIN}
+      SESSION_DOMAIN: .${ROOT_DOMAIN}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?set ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 320M
+
+  catalog:
+    ports: !override []
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lavilla:${DB_PASSWORD}@postgres:5432/lavilla
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      # Public media host, so product image URLs the API hands out resolve
+      # from a browser instead of pointing at the internal MinIO address.
+      CDN_BASE_URL: https://media.${ROOT_DOMAIN}/catalog-media
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+
+  inventory:
+    ports: !override []
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  orders:
+    ports: !override []
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  notifications:
+    ports: !override []
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  payments:
+    ports: !override []
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  users:
+    ports: !override []
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  frontend:
+    ports: !override []
+    build:
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ""
+        NEXT_PUBLIC_SITE_URL: ${STOREFRONT_ORIGIN}
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_SITE_URL: ${STOREFRONT_ORIGIN}
+      MEDIA_ORIGIN_BASE_URL: https://media.${ROOT_DOMAIN}
+    deploy:
+      resources:
+        limits:
+          memory: 320M
+
+volumes:
+  caddy_data:
+  caddy_config:

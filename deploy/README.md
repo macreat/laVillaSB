@@ -1,0 +1,253 @@
+# Deploying La Villa SB - the ~$11/month plan
+
+The storefront runs on Vercel, the thirteen containers run on one VPS, and a
+single domain ties them together.
+
+| Piece | Where | Cost |
+| --- | --- | --- |
+| Storefront (Next.js) | Vercel Hobby | $0 |
+| API, microservices, Postgres, Redis, RabbitMQ, Meilisearch, MinIO | VPS, 2 vCPU / 4 GB | ~$10 |
+| Domain | Registrar first-year promo | ~$1 |
+
+Read [Before you commit to this shape](#before-you-commit-to-this-shape) first.
+Vercel Hobby forbids commercial use, and this is a store.
+
+---
+
+## How the pieces talk
+
+```
+        browser
+           |
+           | https://lavillasb.com
+           v
+   +----------------+        /api/v1/*, /api/admin/*        +-------------------+
+   |     Vercel     | ----------------------------------->  |  Caddy (TLS)      |
+   |  Next.js SSR   |        https://api.lavillasb.com      |  on the VPS       |
+   |                |                                       +---------+---------+
+   |  /api/media/*  | --------------------------------------> media.  |
+   +----------------+        https://media.lavillasb.com             |
+                                                            +---------v---------+
+                                                            | gateway (Laravel) |
+                                                            | catalog inventory |
+                                                            | orders users ...  |
+                                                            | postgres redis    |
+                                                            | rabbitmq meili    |
+                                                            | minio             |
+                                                            +-------------------+
+```
+
+The browser only ever talks to two hosts: the Vercel storefront and, through
+it, the VPS. Nothing on the VPS except Caddy is reachable from the internet -
+Postgres, RabbitMQ, MinIO and every microservice stay on the internal Docker
+network with no published port.
+
+`GATEWAY_ORIGIN` is what makes the same codebase work in both places. Compose
+leaves it unset and Next rewrites `/api/v1/*` to `http://gateway:8010` over the
+Docker network; the Vercel build sets it to `https://api.<domain>`. It is read
+at build time on purpose, because Next bakes rewrites into the routes manifest.
+
+---
+
+## 1. Buy the domain
+
+Any registrar with a first-year promo works. Cloudflare Registrar sells at cost
+with no markup and includes free DNS, which is the cheapest steady state after
+the promo year ends - worth preferring over a $1 first year that renews at $20.
+
+Create these DNS records once the VPS exists:
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `api` | VPS IPv4 |
+| A | `media` | VPS IPv4 |
+| A | `storefront` | VPS IPv4 |
+| A / CNAME | `@` and `www` | whatever Vercel tells you when you add the domain |
+
+The three VPS records must resolve **before** the first `docker compose up`, or
+Caddy cannot complete the ACME challenge and will not get certificates.
+
+## 2. Provision the VPS
+
+Any 2 vCPU / 4 GB Ubuntu box: Hetzner CX22, DigitalOcean, Vultr, Linode.
+
+```bash
+scp deploy/provision-vps.sh root@<vps-ip>:/tmp/
+ssh root@<vps-ip> 'bash /tmp/provision-vps.sh'
+```
+
+That installs Docker, adds 2 GB of swap, caps container log growth, closes
+everything but SSH and 80/443, and turns on unattended security updates.
+
+## 3. Start the stack
+
+```bash
+ssh lavilla@<vps-ip>
+git clone <repo-url> /opt/lavillasb
+cd /opt/lavillasb
+cp deploy/env.prod.example .env
+```
+
+Fill every secret in `.env`:
+
+```bash
+openssl rand -base64 32     # once per password / master key
+docker compose run --rm gateway php artisan key:generate --show   # APP_KEY
+```
+
+Then:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
+curl -fsS https://api.<domain>/api/v1/catalog/health
+```
+
+The production overlay publishes only Caddy's 80/443, swaps every development
+default for a secret from `.env`, and puts a memory ceiling on each container.
+Those ceilings deliberately add up to more than 4 GB: they are blast-radius
+caps, not reservations. Idle draw across all thirteen is about 0.9 GB.
+
+## 4. Deploy the storefront to Vercel
+
+```bash
+cd app/frontend
+vercel login
+vercel link
+```
+
+Set the environment variables on the Vercel project (Production scope):
+
+| Variable | Value | Why |
+| --- | --- | --- |
+| `GATEWAY_ORIGIN` | `https://api.<domain>` | Build-time rewrite target |
+| `MEDIA_ORIGIN_BASE_URL` | `https://media.<domain>` | Runtime media proxy upstream |
+| `NEXT_PUBLIC_API_BASE_URL` | *(empty string)* | Keeps API calls same-origin |
+| `NEXT_PUBLIC_SITE_URL` | `https://<domain>` | Canonical URLs |
+| `NEXT_PUBLIC_WHATSAPP_URL` | the store's wa.me link | Contact affordances |
+| `NEXT_PUBLIC_INSTAGRAM_URL` | the store's profile | Footer |
+
+`GATEWAY_ORIGIN` must be set **before** the first production build. It is
+inlined into the routes manifest, so changing it later needs a redeploy, not a
+restart.
+
+```bash
+vercel --prod
+vercel domains add <domain>
+```
+
+Then add `STOREFRONT_ORIGIN=https://<domain>` to the VPS `.env` and restart, so
+Caddy sends the matching CORS header and Laravel Sanctum treats the storefront
+as first-party:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d caddy gateway
+```
+
+## 5. Verify
+
+```bash
+curl -fsS https://api.<domain>/api/v1/catalog/health
+curl -fsS "https://api.<domain>/api/v1/catalog/products" | head -c 200
+CATALOG_SMOKE_URL=https://api.<domain>/api/v1/catalog/products \
+STOREFRONT_SMOKE_URL="https://<domain>/products?section=ropa&category=busos&size=L" \
+  node app/frontend/scripts/category-subtabs-smoke.mjs
+```
+
+The smoke script asserts every product routes into a section, the sizes are
+populated, and the storefront serves a built page - it is the fastest proof the
+two halves are actually talking.
+
+---
+
+## Before you commit to this shape
+
+### Vercel Hobby forbids commercial use
+
+This is the real problem, not a footnote. Vercel's Hobby plan is for
+non-commercial personal projects. A storefront that takes orders, links to
+WhatsApp checkout, and advertises free shipping over $250.000 COP is a
+commercial site by any reading of that term.
+
+What that means in practice:
+
+- **Enforcement is by suspension, not a bill.** Vercel does not silently
+  upgrade you. They notice - usually from traffic patterns or a report - email
+  you, and can disable the deployment. The storefront goes dark until you move
+  or upgrade to Pro at $20/month per member, which triples the plan's cost.
+- **There is no appeal that keeps you on Hobby.** The remedy is always to
+  upgrade or leave.
+- **Recovery is not instant.** Repointing DNS to the VPS is a few minutes of
+  work plus propagation, but only if you have already proved the VPS can serve
+  the storefront. That is why `storefront.<domain>` exists in the Caddyfile and
+  in this deployment: it is a tested escape hatch, not a plan you have to
+  invent under pressure.
+
+Other Hobby limits you will feel before the terms do:
+
+- **No commercial support and no SLA.** An outage is resolved when it is
+  resolved.
+- **100 GB/month bandwidth and 100 GB-hours of function execution.** Product
+  images go through `/api/media/*`, which is a Next route, so every image view
+  burns both bandwidth *and* function time. A catalog of 1500 products with
+  photos will move this faster than you expect. Serving images straight from
+  `media.<domain>` instead of proxying them is the single biggest saving
+  available.
+- **Twelve-second function timeout**, versus sixty on Pro. The natural-language
+  search calls an LLM; a slow upstream will cut off rather than degrade.
+- **One concurrent build**, and deployment protection features are Pro-only.
+
+**The honest recommendation:** run the storefront on the VPS behind Caddy from
+day one and skip Vercel. The container is already built, `storefront.<domain>`
+is already configured, and the box has room. That costs $11/month with no terms
+problem, no Hobby limits, and one less moving part. Use Vercel when the traffic
+justifies Pro, not to save $0 on a plan whose terms the site does not meet.
+
+### The other things this plan gives up
+
+- **Thirteen containers in 4 GB leaves little headroom.** Fine at idle (~0.9 GB
+  measured), and the memory ceilings stop one service taking the box down. But
+  a traffic spike during a Meilisearch reindex will page hard. The 2 GB of swap
+  the provisioning script adds is what turns that from an outage into a slow
+  minute.
+- **A crash is recovered by hand.** `restart: unless-stopped` covers a process
+  dying. It does not cover a full box, a bad deploy, or a disk filling up - for
+  those, someone has to SSH in. There is no paid monitoring, so you find out
+  when a customer tells you. A free uptime check on `api.<domain>/api/v1/
+  catalog/health` closes most of that gap for $0.
+- **No managed backups.** The Postgres volume and the MinIO bucket are the
+  business; both live on one disk. Add the provider's block-storage snapshots
+  (usually ~$1-2/month) or a nightly `pg_dump` to object storage before you
+  take a real order. This is the cheapest insurance on the list and the only
+  omission that can lose data rather than uptime.
+- **Single region, single machine.** Any maintenance is downtime.
+
+---
+
+## Operations
+
+```bash
+# Where everything is, and what it is using
+docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
+docker stats --no-stream
+
+# Logs for one service
+docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f catalog
+
+# Ship a new version
+git pull
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+# Back up the database
+docker compose exec -T postgres pg_dump -U lavilla lavilla | gzip > "lavilla-$(date +%F).sql.gz"
+```
+
+### Falling back off Vercel
+
+If the Hobby terms become a problem, point the apex DNS at the VPS instead of
+Vercel and the `storefront.<domain>` block in the Caddyfile serves the same
+container that is already running. Verify it first, while nothing is on fire:
+
+```bash
+curl -fsS https://storefront.<domain>/products | head -c 200
+```
