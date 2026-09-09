@@ -249,11 +249,14 @@ services:
     build:
       context: ./app/frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ""
+        NEXT_PUBLIC_SITE_URL: http://localhost:3000
     container_name: lavilla_frontend
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:8010
+      NEXT_PUBLIC_API_BASE_URL: ""
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       API_INTERNAL_URL: http://gateway:8010
       MEDIA_ORIGIN_BASE_URL: http://minio:9000

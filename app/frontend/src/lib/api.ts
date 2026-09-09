@@ -1,6 +1,8 @@
 import type { LoginPayload, LoginResponse, User } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
+// Empty means same-origin: the browser hits /api/... on whatever host served
+// the page, and next.config rewrites it to the gateway internally.
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 export class ApiError extends Error {
   readonly status: number | null;
