@@ -69,9 +69,15 @@ scp -o StrictHostKeyChecking=accept-new \
 "${SSH[@]}" 'bash /tmp/provision-vps.sh'
 
 log "Cloning the repository"
+# provision-vps.sh creates APP_DIR owned by the deploy user, while this script
+# runs as root, so git's dubious-ownership guard blocks every operation here.
+# Mark it safe for root rather than cloning as another user: docker compose
+# below needs root anyway, and the directory stays owned by the deploy user.
+"${SSH[@]}" "git config --global --add safe.directory ${APP_DIR} 2>/dev/null || true"
 "${SSH[@]}" "test -d ${APP_DIR}/.git \
   || git clone --branch ${BRANCH} ${REPO_URL} ${APP_DIR}"
 "${SSH[@]}" "cd ${APP_DIR} && git fetch --quiet origin && git checkout --quiet ${BRANCH} && git pull --quiet"
+"${SSH[@]}" "chown -R lavilla:lavilla ${APP_DIR}"
 
 log "Checking the branch actually carries the current storefront"
 # Deploying a branch that predates the section/category/size taxonomy silently
