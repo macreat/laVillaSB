@@ -53,7 +53,7 @@ export default function StoreHomePage() {
                 Comprar Ahora
               </Link>
               <Link
-                href="/products?category=decks"
+                href="/products?section=skate&category=tablas"
                 className="text-sm font-semibold uppercase tracking-wide text-villa-bone underline decoration-villa-fox decoration-2 underline-offset-4 transition-colors hover:text-villa-fox text-glow-hover"
               >
                 Ver Tablas
@@ -169,7 +169,7 @@ export default function StoreHomePage() {
               Hecho para rodar. Hecho para durar. Hecho en La Villa.
             </p>
             <Link
-              href="/products?category=apparel"
+              href="/products?section=ropa"
               className="mt-8 inline-flex items-center gap-2 border-b-2 border-villa-slime pb-1 text-sm font-semibold uppercase tracking-wide text-villa-black transition-colors hover:text-villa-slime text-glow-hover"
             >
               Ver Ropa &rarr;
@@ -250,10 +250,10 @@ export default function StoreHomePage() {
           </div>
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {[
-              { label: 'Tablas', href: '/products?category=decks' },
-              { label: 'Ropa', href: '/products?category=apparel' },
-              { label: 'Accesorios', href: '/products?category=accessories' },
-              { label: 'Equipo', href: '/products?category=gear' },
+              { label: 'Tablas', href: '/products?section=skate&category=tablas' },
+              { label: 'Ropa', href: '/products?section=ropa' },
+              { label: 'Accesorios', href: '/products?section=skate&category=herramientas-accesorios' },
+              { label: 'Trucks', href: '/products?section=skate&category=trucks' },
             ].map((cat) => (
               <Link
                 key={cat.label}

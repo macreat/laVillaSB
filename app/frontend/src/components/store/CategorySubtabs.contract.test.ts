@@ -13,9 +13,14 @@ const smokeSource = readFileSync(
 
 describe('CategorySubtabs source contract', () => {
   it('exposes keyboard-focusable named links with active page semantics', () => {
-    expect(componentSource).toMatch(/<a[\s\S]*?href=\{buildCategoryHref\(group, tab\)\}/);
+    expect(componentSource).toMatch(/<a[\s\S]*?href=\{hrefFor\(tab\)\}/);
     expect(componentSource).toContain("aria-current={isActive ? 'page' : undefined}");
     expect(componentSource).toContain('aria-label={`View ${tab} products`}');
+  });
+
+  it('lets the caller own the navigation level so one row serves categories and sizes', () => {
+    expect(componentSource).toContain('hrefFor: (tab: string) => string');
+    expect(componentSource).toContain('aria-label={label}');
   });
 
   it('keeps the control in one horizontal overflow line', () => {
@@ -33,11 +38,22 @@ describe('CategorySubtabs source contract', () => {
     );
   });
 
+  it('tiles the blue camo mark behind the buy-products grid', () => {
+    expect(stylesSource).toMatch(
+      /\.products-camo-bg::before\s*\{[\s\S]*?url\('\/brand\/pattern-camo-azul\.png'\)/,
+    );
+    expect(stylesSource).toMatch(
+      /\.products-camo-bg::before\s*\{[\s\S]*?background-repeat:\s*repeat/,
+    );
+    expect(stylesSource).toMatch(/\.products-camo-bg > \*\s*\{[\s\S]*?z-index:\s*1/);
+  });
+
   it('defines deterministic API and rendered-code-path smoke evidence', () => {
-    expect(smokeSource).toContain('categorySubcategory');
-    expect(smokeSource).toContain('Hoodies');
+    expect(smokeSource).toContain('categorySection');
+    expect(smokeSource).toContain('categoryKey');
+    expect(smokeSource).toContain('categorySize');
     expect(smokeSource).toContain('CategorySubtabs');
-    expect(smokeSource).toContain("searchParams.get('subcategory')");
+    expect(smokeSource).toContain("searchParams.get('size')");
     expect(smokeSource).toContain('browserDom: false');
   });
 });

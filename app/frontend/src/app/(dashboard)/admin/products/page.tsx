@@ -13,7 +13,7 @@ import {
   ServiceOfflinePanel,
   SkeletonRows,
 } from '@/components/admin/DataStates';
-import { Plus, Search } from 'lucide-react';
+import { Check, Pencil, Plus, Search, X } from 'lucide-react';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,9 +22,10 @@ export default function ProductsPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [stockMap, setStockMap] = useState<Record<number, number>>({});
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newProduct, setNewProduct] = useState({ name: '', sku: '', price: '', category: '', stock: '12' });
-  const [creating, setCreating] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [priceDraft, setPriceDraft] = useState('');
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   const fetchProducts = useCallback((search = '') => {
     setLoading(true);
@@ -66,27 +67,56 @@ export default function ProductsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery, fetchProducts]);
 
-  const handleCreateProduct = async () => {
-    if (!newProduct.name.trim()) return;
-    setCreating(true);
+  const startEditing = (product: Product) => {
+    setEditingId(product.id);
+    setPriceDraft(product.price.toFixed(2));
+    setPriceError(null);
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setPriceDraft('');
+    setPriceError(null);
+  };
+
+  /**
+   * Write the new price straight into the table before the request resolves so
+   * the change is visible immediately, then reconcile with what the catalog
+   * service returns. A failure restores the previous price.
+   */
+  const savePrice = async (product: Product) => {
+    const parsed = Number(priceDraft);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      setPriceError('Ingresa un precio valido');
+      return;
+    }
+
+    const previousPrice = product.price;
+    setSavingId(product.id);
+    setPriceError(null);
+    setProducts((current) =>
+      current.map((item) => (item.id === product.id ? { ...item, price: parsed } : item)),
+    );
+
     try {
-      const created = await api.proxyPost<Product>('catalog', 'products', {
-        name: newProduct.name.trim(),
-        sku: newProduct.sku.trim() || undefined,
-        price: parseFloat(newProduct.price) || 0,
-        active: true,
+      const updated = await api.proxyPut<Product>('catalog', `products/${product.id}`, {
+        price: parsed,
       });
-
-      const stockQty = parseInt(newProduct.stock) || 12;
-      await api.proxyPut('inventory', `inventory/${created.id}`, { quantity: stockQty });
-
-      setShowAddModal(false);
-      setNewProduct({ name: '', sku: '', price: '', category: '', stock: '12' });
-      fetchProducts(searchQuery);
+      setProducts((current) =>
+        current.map((item) =>
+          item.id === product.id ? { ...item, price: Number(updated.price) } : item,
+        ),
+      );
+      cancelEditing();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error al crear producto');
+      setProducts((current) =>
+        current.map((item) =>
+          item.id === product.id ? { ...item, price: previousPrice } : item,
+        ),
+      );
+      setPriceError(e instanceof Error ? e.message : 'No se pudo guardar el precio');
     } finally {
-      setCreating(false);
+      setSavingId(null);
     }
   };
 
@@ -112,10 +142,12 @@ export default function ProductsPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button onClick={() => setShowAddModal(true)}>
-            <Plus className="mr-2 h-4 w-4" />
+          {/* Non-interactive on purpose: products enter the catalog through the
+              Drive import, so this only labels where they come from. */}
+          <span className="inline-flex items-center rounded-[2px] border border-border bg-surface px-4 py-2.5 text-sm font-medium uppercase tracking-wide text-text-muted">
+            <Plus aria-hidden="true" className="mr-2 h-4 w-4" />
             Agregar Producto
-          </Button>
+          </span>
         </div>
 
         {state === 'loading' ? (
@@ -146,91 +178,126 @@ export default function ProductsPage() {
           />
         ) : (
           <Card className="overflow-hidden p-0">
-            <table className="w-full">
+            {/* The actions column pushes the row past the panel on narrow
+                screens, so the table scrolls inside the card instead of
+                clipping its trailing columns. */}
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[60rem]">
               <caption className="sr-only">
                 Catalog products with SKU, category, group, price, and status
               </caption>
               <thead>
                 <tr className="border-b border-villa-smoke/25">
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">ID</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Nombre</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">SKU</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Categoria</th>
-                  <th scope="col" className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Grupo</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Precio</th>
-                  <th scope="col" className="px-5 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Stock</th>
-                  <th scope="col" className="px-5 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Estado</th>
+                  <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">ID</th>
+                  <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Nombre</th>
+                  <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">SKU</th>
+                  <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Categoria</th>
+                  <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Grupo</th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Precio</th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Stock</th>
+                  <th scope="col" className="px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Estado</th>
+                  <th scope="col" className="px-4 py-2.5 text-right text-xs font-semibold uppercase tracking-[0.12em] text-text-muted">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-villa-smoke/25">
-                {products.map((product) => (
-                  <tr key={product.id} className="transition-colors hover:bg-surface-elevated/50">
-                    <td className="whitespace-nowrap px-5 py-2.5 text-sm tabular-nums text-text-muted">{product.id}</td>
-                    <td className="px-5 py-2.5 text-sm font-medium text-text">{product.name}</td>
-                    <td className="whitespace-nowrap px-5 py-2.5 text-sm text-text-muted">{product.sku || 'N/A'}</td>
-                    <td className="px-5 py-2.5 text-sm text-text-muted">{product.category || 'Sin Categoria'}</td>
-                    <td className="px-5 py-2.5 text-sm text-text-muted">{displayCategoryGroup(product.categoryGroup)}</td>
-                    <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text">${product.price.toFixed(2)}</td>
-                    <td className="whitespace-nowrap px-5 py-2.5 text-right text-sm tabular-nums text-text">
-                      {stockMap[product.id] ?? '—'}
-                    </td>
-                    <td className="px-5 py-2.5 text-center">
-                      <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium ${
-                        product.active !== false
-                          ? 'bg-accent/10 text-accent'
-                          : 'bg-surface-elevated text-text-muted'
-                      }`}>
-                        {product.active !== false ? 'Activo' : 'Inactivo'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {products.map((product) => {
+                  const isEditing = editingId === product.id;
+                  const isSaving = savingId === product.id;
+                  return (
+                    <tr key={product.id} className="transition-colors hover:bg-surface-elevated/50">
+                      <td className="whitespace-nowrap px-4 py-2.5 text-sm tabular-nums text-text-muted">{product.id}</td>
+                      <td className="px-4 py-2.5 text-sm font-medium text-text">{product.name}</td>
+                      <td className="whitespace-nowrap px-4 py-2.5 text-sm text-text-muted">{product.sku || 'N/A'}</td>
+                      <td className="px-4 py-2.5 text-sm text-text-muted">
+                        {/* Drive category paths run long; truncate to keep the
+                            row one line and expose the full value on hover. */}
+                        <span
+                          className="block max-w-[11rem] truncate"
+                          title={product.category || 'Sin Categoria'}
+                        >
+                          {product.category || 'Sin Categoria'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 text-sm text-text-muted">{displayCategoryGroup(product.categoryGroup)}</td>
+                      <td className="whitespace-nowrap px-4 py-2.5 text-right text-sm tabular-nums text-text">
+                        {isEditing ? (
+                          <input
+                            className="input-field w-28 py-1 text-right"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            autoFocus
+                            aria-label={`Precio de ${product.name}`}
+                            value={priceDraft}
+                            onChange={(e) => setPriceDraft(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') savePrice(product);
+                              if (e.key === 'Escape') cancelEditing();
+                            }}
+                          />
+                        ) : (
+                          `$${product.price.toFixed(2)}`
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-2.5 text-right text-sm tabular-nums text-text">
+                        {stockMap[product.id] ?? '—'}
+                      </td>
+                      <td className="px-4 py-2.5 text-center">
+                        <span className={`inline-flex rounded-[2px] px-2 py-0.5 text-xs font-medium ${
+                          product.active !== false
+                            ? 'bg-accent/10 text-accent'
+                            : 'bg-surface-elevated text-text-muted'
+                        }`}>
+                          {product.active !== false ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-2.5 text-right">
+                        {isEditing ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="primary"
+                              className="px-2 py-1"
+                              isLoading={isSaving}
+                              aria-label={`Guardar precio de ${product.name}`}
+                              onClick={() => savePrice(product)}
+                            >
+                              <Check aria-hidden="true" className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              className="px-2 py-1"
+                              aria-label="Cancelar edicion"
+                              onClick={cancelEditing}
+                            >
+                              <X aria-hidden="true" className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="secondary"
+                            className="px-2 py-1"
+                            title="Editar precio"
+                            aria-label={`Editar precio de ${product.name}`}
+                            onClick={() => startEditing(product)}
+                          >
+                            <Pencil aria-hidden="true" className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
+            </div>
+            {priceError && (
+              <p aria-live="polite" className="border-t border-villa-smoke/25 px-4 py-3 text-sm text-villa-blood">
+                {priceError}
+              </p>
+            )}
           </Card>
         )}
       </div>
-
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <Card className="w-full max-w-md space-y-4 p-6">
-            <h2 className="text-lg font-semibold text-text">Agregar Nuevo Producto</h2>
-            <input
-              className="input-field w-full"
-              placeholder="Nombre del producto *"
-              value={newProduct.name}
-              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-            />
-            <input
-              className="input-field w-full"
-              placeholder="SKU (opcional)"
-              value={newProduct.sku}
-              onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
-            />
-            <input
-              className="input-field w-full"
-              placeholder="Precio"
-              type="number"
-              step="0.01"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-            />
-            <input
-              className="input-field w-full"
-              placeholder="Stock inicial"
-              type="number"
-              value={newProduct.stock}
-              onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
-            />
-            <div className="flex justify-end gap-3">
-              <Button variant="secondary" onClick={() => setShowAddModal(false)}>Cancelar</Button>
-              <Button onClick={handleCreateProduct} disabled={creating || !newProduct.name.trim()}>
-                {creating ? 'Creando...' : 'Crear Producto'}
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

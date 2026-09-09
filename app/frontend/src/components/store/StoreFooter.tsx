@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { BrandWordmark } from '@/components/brand/BrandWordmark';
 import { INSTAGRAM_URL, WHATSAPP_URL, YOUTUBE_URL, EXTERNAL_LINK_REL } from '@/lib/site-links';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
+// Empty means same-origin: the browser hits /api/... on whatever host served
+// the page, and next.config rewrites it to the gateway internally.
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 const SOCIAL_LINKS = [
   { label: 'Instagram', href: INSTAGRAM_URL },
@@ -17,9 +19,10 @@ const FOOTER_LINKS = [
   {
     title: 'Tienda',
     links: [
-      { label: 'Tablas', href: '/products?category=decks' },
-      { label: 'Ropa', href: '/products?category=apparel' },
-      { label: 'Accesorios', href: '/products?category=accessories' },
+      { label: 'Tablas', href: '/products?section=skate&category=tablas' },
+      { label: 'Trucks', href: '/products?section=skate&category=trucks' },
+      { label: 'Ruedas', href: '/products?section=skate&category=ruedas' },
+      { label: 'Zapatos', href: '/products?section=ropa&category=zapatos' },
       { label: 'Todos Los Productos', href: '/products' },
     ],
   },
@@ -55,9 +58,6 @@ export function StoreFooter() {
     setSubscribing(true);
     setSubStatus('idle');
     try {
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8010';
-
-// ... inside the component:
       const res = await fetch(`${API_BASE}/api/v1/catalog/subscribers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
