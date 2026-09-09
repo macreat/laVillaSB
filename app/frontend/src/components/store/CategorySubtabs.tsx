@@ -1,37 +1,34 @@
-import {
-  buildCategoryHref,
-  displayCategoryGroup,
-  displaySubcategory,
-} from '@/lib/store-catalog';
+import { displayTab } from '@/lib/store-catalog';
 
 interface CategorySubtabsProps {
-  group: string;
+  /** Describes the row for screen readers, e.g. "Skate categories". */
+  label: string;
   tabs: string[];
-  activeSubcategory: string;
+  activeTab: string;
+  /** Destination for a tab. The caller owns which navigation level it moves. */
+  hrefFor: (tab: string) => string;
 }
 
 export function CategorySubtabs({
-  group,
+  label,
   tabs,
-  activeSubcategory,
+  activeTab,
+  hrefFor,
 }: CategorySubtabsProps) {
   return (
-    <nav
-      className="category-subtabs"
-      aria-label={`${displayCategoryGroup(group)} subcategories`}
-    >
+    <nav className="category-subtabs" aria-label={label}>
       <div className="category-subtabs__track">
         {tabs.map((tab) => {
-          const isActive = tab === activeSubcategory;
+          const isActive = tab === activeTab;
           return (
             <a
               key={tab}
-              href={buildCategoryHref(group, tab)}
+              href={hrefFor(tab)}
               className="category-subtabs__link"
               aria-label={`View ${tab} products`}
               aria-current={isActive ? 'page' : undefined}
             >
-              {displaySubcategory(tab)}
+              {displayTab(tab)}
             </a>
           );
         })}

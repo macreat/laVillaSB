@@ -8,13 +8,55 @@ export interface StoreProduct {
   categoryGroup: string;
   category?: string;
   categorySubcategory?: string | null;
+  /** Top storefront section the catalog service routed this product into. */
+  categorySection?: string | null;
+  /** Browsable category inside the section (`tablas`, `zapatos`, ...). */
+  categoryKey?: string | null;
+  /** Size or measure a shopper filters by, when the product has one. */
+  categorySize?: string | null;
   description?: string;
   image?: string;
 }
 
-export const CATEGORIES = ['all', 'decks', 'apparel', 'accessories', 'gear'] as const;
+/** The storefront browses section -> category -> size. `all` is the unfiltered root. */
+export const SECTIONS = ['all', 'skate', 'ropa'] as const;
+
+const SECTION_LABELS: Record<string, string> = {
+  all: 'Todos',
+  skate: 'Skate',
+  ropa: 'Ropa',
+};
+
+/** Category order per section mirrors `taxonomy.py` in the catalog service. */
+const SECTION_CATEGORIES: Record<string, readonly string[]> = {
+  skate: [
+    'tablas',
+    'long-board',
+    'trucks',
+    'rodamientos',
+    'ruedas',
+    'herramientas-accesorios',
+  ],
+  ropa: ['zapatos', 'chaquetas', 'busos', 'camisetas', 'pantalones', 'otros'],
+};
 
 const CATEGORY_LABELS: Record<string, string> = {
+  tablas: 'Tablas',
+  'long-board': 'Long Board',
+  trucks: 'Trucks',
+  rodamientos: 'Rodamientos',
+  ruedas: 'Ruedas',
+  'herramientas-accesorios': 'Herramientas y Accesorios',
+  zapatos: 'Zapatos',
+  chaquetas: 'Chaquetas',
+  busos: 'Busos',
+  camisetas: 'Camisetas',
+  pantalones: 'Pantalones',
+  otros: 'Otros',
+};
+
+/** Legacy group labels, still used by the admin product table. */
+const CATEGORY_GROUP_LABELS: Record<string, string> = {
   all: 'Todos',
   decks: 'Tablas',
   apparel: 'Ropa',
@@ -22,48 +64,71 @@ const CATEGORY_LABELS: Record<string, string> = {
   gear: 'Equipo',
 };
 
-const SUBCATEGORY_LABELS: Record<string, readonly string[]> = {
-  decks: ['7.75', '8.0', '8.125', '8.25', '8.4', '8.5'],
-  apparel: [
-    'Shoes',
-    'Hoodies',
-    'Sweatshirts',
-    'T-Shirts',
-    'Jackets & Outerwear',
-    'Pants',
-  ],
-  accessories: ['Bags & Waist Packs', 'Grip Tape'],
-  gear: ['Trucks', 'Wheels', 'Bearings', 'Hardware & Accessories', 'Long Board'],
-};
+export const ALL_TAB = 'Todos';
 
-const SUBCATEGORY_DISPLAY: Record<string, string> = {
-  'Shoes': 'Tenis',
-  'Hoodies': 'Buzos',
-  'Sweatshirts': 'Sudaderas',
-  'T-Shirts': 'Camisetas',
-  'Jackets & Outerwear': 'Chaquetas',
-  'Pants': 'Pantalones',
-  'Bags & Waist Packs': 'Maletines y Canguros',
-  'Grip Tape': 'Lijas',
-  'Trucks': 'Trucks',
-  'Wheels': 'Ruedas',
-  'Bearings': 'Rodamientos',
-  'Hardware & Accessories': 'Hardware y Accesorios',
-  'Long Board': 'Long Board',
-};
-
-// Reverse map: Spanish display -> English key for URL matching
-const REVERSE_SUBCATEGORY_DISPLAY: Record<string, string> = Object.fromEntries(
-  Object.entries(SUBCATEGORY_DISPLAY).map(([en, es]) => [es, en]),
-);
+const APPAREL_SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
 const FALLBACK_PRODUCTS: StoreProduct[] = [
-  { id: '1', name: 'Dark Realm Deck', price: 64.99, categoryGroup: 'decks', image: '' },
-  { id: '2', name: 'Lurk Tee', price: 32.0, categoryGroup: 'apparel', image: '' },
-  { id: '3', name: 'Hesh Wheels 54mm', price: 42.0, categoryGroup: 'gear', image: '' },
-  { id: '4', name: 'Creature Grip Tape', price: 18.0, categoryGroup: 'accessories', image: '' },
-  { id: '5', name: 'Prowler Deck 8.25', price: 68.0, categoryGroup: 'decks', image: '' },
-  { id: '6', name: 'Skull Logo Hoodie', price: 58.0, categoryGroup: 'apparel', image: '' },
+  {
+    id: '1',
+    name: 'Dark Realm Deck',
+    price: 64.99,
+    categoryGroup: 'decks',
+    categorySection: 'skate',
+    categoryKey: 'tablas',
+    categorySize: '8.25"',
+    image: '',
+  },
+  {
+    id: '2',
+    name: 'Lurk Tee',
+    price: 32.0,
+    categoryGroup: 'apparel',
+    categorySection: 'ropa',
+    categoryKey: 'camisetas',
+    categorySize: 'M',
+    image: '',
+  },
+  {
+    id: '3',
+    name: 'Hesh Wheels 54mm',
+    price: 42.0,
+    categoryGroup: 'gear',
+    categorySection: 'skate',
+    categoryKey: 'ruedas',
+    categorySize: '54mm',
+    image: '',
+  },
+  {
+    id: '4',
+    name: 'Creature Grip Tape',
+    price: 18.0,
+    categoryGroup: 'accessories',
+    categorySection: 'skate',
+    categoryKey: 'herramientas-accesorios',
+    categorySize: null,
+    image: '',
+  },
+  {
+    id: '5',
+    name: 'Prowler Deck 8.25',
+    price: 68.0,
+    categoryGroup: 'decks',
+    categorySection: 'skate',
+    categoryKey: 'tablas',
+    categorySize: '8.25"',
+    image: '',
+  },
+  {
+    id: '6',
+    name: 'Skull Logo Hoodie',
+    price: 58.0,
+    categoryGroup: 'apparel',
+    categorySection: 'ropa',
+    categoryKey: 'busos',
+    categorySize: 'L',
+    image: '',
+  },
 ];
 
 interface CatalogProduct {
@@ -74,6 +139,9 @@ interface CatalogProduct {
   category?: string | null;
   categoryGroup?: string | null;
   categorySubcategory?: string | null;
+  categorySection?: string | null;
+  categoryKey?: string | null;
+  categorySize?: string | null;
   imageUrl?: string | null;
 }
 
@@ -88,115 +156,161 @@ export function mapCatalogProduct(item: CatalogProduct): StoreProduct {
     price: Number(item.price),
     category: item.category ?? undefined,
     categorySubcategory: item.categorySubcategory,
+    categorySection: item.categorySection ?? null,
+    categoryKey: item.categoryKey ?? null,
+    categorySize: item.categorySize ?? null,
     description: item.description ?? undefined,
     categoryGroup: (item.categoryGroup ?? 'uncategorized').toLowerCase(),
     image: toSameOriginMediaUrl(item.imageUrl),
   };
 }
 
-export function filterByCategoryGroup(
-  products: StoreProduct[],
-  group: string,
-): StoreProduct[] {
-  if (group === 'all') {
-    return products;
-  }
-  return products.filter((product) => product.categoryGroup === group);
+export function normalizeSection(section: string | null | undefined): string {
+  const normalized = (section ?? '').trim().toLowerCase();
+  return SECTIONS.includes(normalized as (typeof SECTIONS)[number]) ? normalized : 'all';
 }
 
-export function normalizeCategory(group: string | null | undefined): string {
-  const normalized = (group ?? '').trim().toLowerCase();
-  return CATEGORIES.includes(normalized as (typeof CATEGORIES)[number]) ? normalized : 'all';
+/**
+ * Resolve a requested category to one that exists inside the section, falling
+ * back to `Todos` so a stale or hand-typed URL still renders the section.
+ */
+export function normalizeCategoryKey(
+  section: string | null | undefined,
+  categoryKey: string | null | undefined,
+): string {
+  const normalizedSection = normalizeSection(section);
+  const requested = (categoryKey ?? '').trim().toLowerCase();
+  if (!requested || requested === ALL_TAB.toLowerCase()) return ALL_TAB;
+  return (SECTION_CATEGORIES[normalizedSection] ?? []).includes(requested)
+    ? requested
+    : ALL_TAB;
 }
 
-export function deriveSubcategoryTabs(products: StoreProduct[], group: string): string[] {
-  const normalizedGroup = normalizeCategory(group);
-  if (normalizedGroup === 'all') {
-    return ['Todos'];
-  }
+/** Categories of a section that actually have products behind them. */
+export function deriveCategoryTabs(products: StoreProduct[], section: string): string[] {
+  const normalizedSection = normalizeSection(section);
+  if (normalizedSection === 'all') return [ALL_TAB];
 
   const populated = new Set(
     products
-      .filter((product) => product.categoryGroup.toLowerCase() === normalizedGroup)
-      .map((product) => product.categorySubcategory)
-      .filter((subcategory): subcategory is string => Boolean(subcategory)),
+      .filter((product) => product.categorySection === normalizedSection)
+      .map((product) => product.categoryKey)
+      .filter((key): key is string => Boolean(key)),
   );
 
   return [
-    'Todos',
-    ...(SUBCATEGORY_LABELS[normalizedGroup] ?? [])
-      .filter((label) => populated.has(label))
-      .map((label) => SUBCATEGORY_DISPLAY[label] ?? label),
+    ALL_TAB,
+    ...(SECTION_CATEGORIES[normalizedSection] ?? []).filter((key) => populated.has(key)),
   ];
 }
 
-/** Resolve a Spanish subcategory URL param back to the English DB value. */
-function resolveSubcategoryParam(
-  products: StoreProduct[],
-  group: string,
-  requestedSubcategory: string,
-): string | null {
-  const tabs = deriveSubcategoryTabs(products, group);
-  if (!tabs.includes(requestedSubcategory)) return null;
-  // "Todos" stays as-is
-  if (requestedSubcategory === 'Todos') return 'Todos';
-  // Map Spanish display back to English key
-  return REVERSE_SUBCATEGORY_DISPLAY[requestedSubcategory] ?? requestedSubcategory;
+export function sizeSortKey(size: string): [number, number, string] {
+  const normalized = size.trim().toUpperCase();
+
+  const apparelIndex = APPAREL_SIZE_ORDER.indexOf(normalized);
+  if (apparelIndex !== -1) return [0, apparelIndex, normalized];
+
+  const firstNumber = normalized.match(/\d+(?:\.\d+)?/);
+  if (firstNumber) return [1, Number(firstNumber[0]), normalized];
+
+  return [2, 0, normalized];
 }
 
-export function resolveSubcategorySelection(
+function compareSizes(a: string, b: string): number {
+  const [aBucket, aValue, aText] = sizeSortKey(a);
+  const [bBucket, bValue, bText] = sizeSortKey(b);
+  if (aBucket !== bBucket) return aBucket - bBucket;
+  if (aValue !== bValue) return aValue - bValue;
+  return aText.localeCompare(bText);
+}
+
+/** Sizes available inside one category, ordered S->XL then numerically. */
+export function deriveSizeTabs(
   products: StoreProduct[],
-  group: string,
-  requestedSubcategory: string | null | undefined,
+  section: string,
+  categoryKey: string,
+): string[] {
+  const normalizedSection = normalizeSection(section);
+  const normalizedCategory = normalizeCategoryKey(normalizedSection, categoryKey);
+  if (normalizedSection === 'all' || normalizedCategory === ALL_TAB) return [ALL_TAB];
+
+  const sizes = new Set(
+    products
+      .filter(
+        (product) =>
+          product.categorySection === normalizedSection &&
+          product.categoryKey === normalizedCategory,
+      )
+      .map((product) => product.categorySize)
+      .filter((size): size is string => Boolean(size)),
+  );
+
+  if (sizes.size === 0) return [ALL_TAB];
+  return [ALL_TAB, ...[...sizes].sort(compareSizes)];
+}
+
+export function normalizeSize(
+  products: StoreProduct[],
+  section: string,
+  categoryKey: string,
+  requestedSize: string | null | undefined,
 ): string {
-  if (!requestedSubcategory || requestedSubcategory === 'Todos') {
-    return 'Todos';
-  }
-  const resolved = resolveSubcategoryParam(products, group, requestedSubcategory);
-  if (!resolved || resolved === 'Todos') return 'Todos';
-  return resolved;
+  if (!requestedSize || requestedSize === ALL_TAB) return ALL_TAB;
+  const tabs = deriveSizeTabs(products, section, categoryKey);
+  return tabs.includes(requestedSize) ? requestedSize : ALL_TAB;
 }
 
-export function filterByCategoryAndSubcategory(
+export function filterProducts(
   products: StoreProduct[],
-  group: string,
-  resolvedSubcategory?: string | null,
+  section: string,
+  categoryKey: string = ALL_TAB,
+  size: string = ALL_TAB,
 ): StoreProduct[] {
-  const normalizedGroup = normalizeCategory(group);
-  const groupProducts = filterByCategoryGroup(products, normalizedGroup);
-  if (normalizedGroup === 'all') {
-    return groupProducts;
-  }
+  const normalizedSection = normalizeSection(section);
+  if (normalizedSection === 'all') return products;
 
-  // resolvedSubcategory is already the English DB key (e.g. "Shoes") or "Todos"
-  // from resolveSubcategorySelection — no double-resolution needed.
-  if (!resolvedSubcategory || resolvedSubcategory === 'Todos') {
-    return groupProducts;
-  }
-  return groupProducts.filter((product) => product.categorySubcategory === resolvedSubcategory);
+  const normalizedCategory = normalizeCategoryKey(normalizedSection, categoryKey);
+  let result = products.filter((product) => product.categorySection === normalizedSection);
+
+  if (normalizedCategory === ALL_TAB) return result;
+  result = result.filter((product) => product.categoryKey === normalizedCategory);
+
+  if (!size || size === ALL_TAB) return result;
+  return result.filter((product) => product.categorySize === size);
 }
 
-export function buildCategoryHref(group: string, subcategory?: string): string {
-  const normalizedGroup = normalizeCategory(group);
-  if (normalizedGroup === 'all') {
-    return '/products';
-  }
+export function buildStoreHref(
+  section: string,
+  categoryKey?: string,
+  size?: string,
+): string {
+  const normalizedSection = normalizeSection(section);
+  if (normalizedSection === 'all') return '/products';
 
-  const params = new URLSearchParams({ category: normalizedGroup });
-  if (subcategory && subcategory !== 'Todos') {
-    params.set('subcategory', subcategory);
+  const params = new URLSearchParams({ section: normalizedSection });
+  if (categoryKey && categoryKey !== ALL_TAB) {
+    params.set('category', categoryKey);
+    if (size && size !== ALL_TAB) {
+      params.set('size', size);
+    }
   }
   return `/products?${params.toString()}`;
 }
 
-export function displayCategoryGroup(group: string | undefined): string {
-  const normalized = (group ?? '').trim().toLowerCase();
-  return CATEGORY_LABELS[normalized] ?? 'Sin Categoria';
+export function displaySection(section: string | undefined): string {
+  const normalized = (section ?? '').trim().toLowerCase();
+  return SECTION_LABELS[normalized] ?? 'Sin Seccion';
 }
 
-export function displaySubcategory(subcategory: string | undefined): string {
-  if (!subcategory) return subcategory ?? '';
-  return SUBCATEGORY_DISPLAY[subcategory] ?? subcategory;
+/** Label a category key, a size, or the `Todos` tab with one call. */
+export function displayTab(tab: string | undefined): string {
+  if (!tab) return '';
+  return CATEGORY_LABELS[tab] ?? tab;
+}
+
+export function displayCategoryGroup(group: string | undefined): string {
+  const normalized = (group ?? '').trim().toLowerCase();
+  return CATEGORY_GROUP_LABELS[normalized] ?? 'Sin Categoria';
 }
 
 export async function fetchStoreProducts(): Promise<StoreProduct[]> {

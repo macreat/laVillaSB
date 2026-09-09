@@ -3,16 +3,21 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { api } from '@/lib/api';
 
 import {
+  ALL_TAB,
+  buildStoreHref,
+  deriveCategoryTabs,
+  deriveSizeTabs,
   displayCategoryGroup,
-  deriveSubcategoryTabs,
+  displaySection,
+  displayTab,
   fetchStoreProduct,
   fetchStoreProducts,
-  filterByCategoryAndSubcategory,
-  filterByCategoryGroup,
+  filterProducts,
   mapCatalogProduct,
-  buildCategoryHref,
-  normalizeCategory,
-  resolveSubcategorySelection,
+  normalizeCategoryKey,
+  normalizeSection,
+  normalizeSize,
+  sizeSortKey,
   type StoreProduct,
 } from './store-catalog';
 
@@ -26,37 +31,75 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-const DECK: StoreProduct = {
+function product(overrides: Partial<StoreProduct> & { id: string }): StoreProduct {
+  return {
+    name: `Product ${overrides.id}`,
+    price: 10,
+    categoryGroup: 'uncategorized',
+    categorySection: null,
+    categoryKey: null,
+    categorySize: null,
+    image: '',
+    ...overrides,
+  };
+}
+
+const DECK = product({
   id: '1',
   name: 'Dark Realm Deck',
   price: 64.99,
   categoryGroup: 'decks',
-  image: '',
-};
+  categorySection: 'skate',
+  categoryKey: 'tablas',
+  categorySize: '8.25"',
+});
 
-const APPAREL: StoreProduct = {
+const HOODIE = product({
   id: '2',
-  name: 'Lurk Tee',
-  price: 32.0,
+  name: 'Skull Logo Hoodie',
+  price: 58,
   categoryGroup: 'apparel',
-  image: '',
-};
+  categorySection: 'ropa',
+  categoryKey: 'busos',
+  categorySize: 'L',
+});
 
-const NO_GROUP: StoreProduct = {
-  id: '7',
-  name: 'Mystery Item',
-  price: 10.0,
-  categoryGroup: 'uncategorized',
-  image: '',
-};
+const SHOE = product({
+  id: '3',
+  name: 'Nike SB',
+  price: 120,
+  categoryGroup: 'apparel',
+  categorySection: 'ropa',
+  categoryKey: 'zapatos',
+  categorySize: '8 US / 39 COL',
+});
+
+const GRIP = product({
+  id: '4',
+  name: 'Grizzly Naranjas',
+  price: 18,
+  categoryGroup: 'accessories',
+  categorySection: 'skate',
+  categoryKey: 'herramientas-accesorios',
+  categorySize: null,
+});
+
+const UNROUTED = product({ id: '9', name: 'Mystery Item' });
+
+const CATALOG = [DECK, HOODIE, SHOE, GRIP, UNROUTED];
 
 describe('mapCatalogProduct', () => {
-  it('maps categoryGroup lowercase and keeps existing fields', () => {
+  it('maps the three-level taxonomy alongside the legacy group', () => {
     const mapped = mapCatalogProduct({
       id: 1,
       name: 'Deck 8.0',
       price: '120.00',
+      category: 'Skate / Maderos / 8.0',
       categoryGroup: 'Decks',
+      categorySubcategory: '8.0',
+      categorySection: 'skate',
+      categoryKey: 'tablas',
+      categorySize: '8.0"',
       imageUrl: null,
     });
 
@@ -65,178 +108,156 @@ describe('mapCatalogProduct', () => {
       name: 'Deck 8.0',
       price: 120,
       description: undefined,
+      category: 'Skate / Maderos / 8.0',
       categoryGroup: 'decks',
-      category: undefined,
-      categorySubcategory: undefined,
+      categorySubcategory: '8.0',
+      categorySection: 'skate',
+      categoryKey: 'tablas',
+      categorySize: '8.0"',
       image: '',
     });
   });
 
-  it('falls back to uncategorized when payload lacks categoryGroup', () => {
+  it('falls back to uncategorized and null taxonomy when the payload omits them', () => {
     const mapped = mapCatalogProduct({ id: 2, name: 'Tee', price: '30.00' });
 
     expect(mapped.categoryGroup).toBe('uncategorized');
-  });
-
-  it('keeps raw category and additive subcategory values', () => {
-    const mapped = mapCatalogProduct({
-      id: 3,
-      name: 'Hoddie',
-      price: 50,
-      category: 'Ropa / Talla M',
-      categoryGroup: 'apparel',
-      categorySubcategory: 'Hoodies',
-    });
-
-    expect(mapped.category).toBe('Ropa / Talla M');
-    expect(mapped.categorySubcategory).toBe('Hoodies');
-
-    const uncategorized = mapCatalogProduct({
-      id: 4,
-      name: 'Mystery item',
-      price: 10,
-      category: null,
-      categoryGroup: null,
-      categorySubcategory: null,
-    });
-
-    expect(uncategorized.categorySubcategory).toBeNull();
+    expect(mapped.categorySection).toBeNull();
+    expect(mapped.categoryKey).toBeNull();
+    expect(mapped.categorySize).toBeNull();
   });
 });
 
-describe('filterByCategoryGroup', () => {
-  it('returns only products matching the selected group', () => {
-    const filtered = filterByCategoryGroup([DECK, APPAREL, NO_GROUP], 'decks');
-
-    expect(filtered).toEqual([DECK]);
+describe('section and category URL state', () => {
+  it('normalizes an unsupported section to all', () => {
+    expect(normalizeSection('skate')).toBe('skate');
+    expect(normalizeSection('ropa')).toBe('ropa');
+    expect(normalizeSection('not-a-section')).toBe('all');
+    expect(normalizeSection(null)).toBe('all');
   });
 
-  it('hides products without a group from group filters', () => {
-    const filtered = filterByCategoryGroup([DECK, NO_GROUP], 'apparel');
-
-    expect(filtered).toEqual([]);
+  it('keeps a category only when it belongs to the section', () => {
+    expect(normalizeCategoryKey('skate', 'tablas')).toBe('tablas');
+    expect(normalizeCategoryKey('ropa', 'tablas')).toBe(ALL_TAB);
+    expect(normalizeCategoryKey('skate', null)).toBe(ALL_TAB);
   });
 
-  it('returns the full list for all', () => {
-    const filtered = filterByCategoryGroup([DECK, APPAREL, NO_GROUP], 'all');
-
-    expect(filtered).toHaveLength(3);
-    expect(filtered.map((p) => p.id)).toEqual(['1', '2', '7']);
-  });
-});
-
-describe('subcategory derivation and filtering', () => {
-  const products: StoreProduct[] = [
-    { ...DECK, categorySubcategory: '8.25', category: 'Skate / Maderos / 8.25' },
-    {
-      ...APPAREL,
-      id: '3',
-      categorySubcategory: 'Hoodies',
-      category: 'Ropa / Talla M',
-    },
-    {
-      ...APPAREL,
-      id: '4',
-      categorySubcategory: 'Shoes',
-      category: 'Tenis / Talla 8Us',
-    },
-    {
-      ...APPAREL,
-      id: '5',
-      categorySubcategory: 'Future Family',
-      category: 'Ropa / Unknown',
-    },
-    { ...APPAREL, id: '6', categorySubcategory: null, category: undefined },
-  ];
-
-  it('returns All plus populated known labels in the specified order', () => {
-    expect(deriveSubcategoryTabs(products, 'apparel')).toEqual([
-      'All',
-      'Shoes',
-      'Hoodies',
-    ]);
-  });
-
-  it('orders deck sizes numerically and omits unsupported or empty labels', () => {
-    const deckProducts = ['8.5', '7.75', 'Long Board', '8.125', 'Future Size'].map(
-      (subcategory, index) => ({
-        ...DECK,
-        id: `deck-${index}`,
-        categorySubcategory: subcategory,
-      }),
+  it('builds hrefs that drop levels below the one being linked', () => {
+    expect(buildStoreHref('all')).toBe('/products');
+    expect(buildStoreHref('skate')).toBe('/products?section=skate');
+    expect(buildStoreHref('skate', 'tablas')).toBe('/products?section=skate&category=tablas');
+    expect(buildStoreHref('skate', 'tablas', '8.25"')).toBe(
+      '/products?section=skate&category=tablas&size=8.25%22',
     );
+    // A size without a category has nothing to filter, so it is dropped.
+    expect(buildStoreHref('skate', ALL_TAB, '8.25"')).toBe('/products?section=skate');
+  });
+});
 
-    expect(deriveSubcategoryTabs(deckProducts, 'decks')).toEqual([
-      'All',
-      '7.75',
-      '8.125',
-      '8.5',
-      'Long Board',
+describe('deriveCategoryTabs', () => {
+  it('lists only the categories of the section that hold products, in taxonomy order', () => {
+    expect(deriveCategoryTabs(CATALOG, 'skate')).toEqual([
+      ALL_TAB,
+      'tablas',
+      'herramientas-accesorios',
     ]);
+    expect(deriveCategoryTabs(CATALOG, 'ropa')).toEqual([ALL_TAB, 'zapatos', 'busos']);
   });
 
-  it('omits an empty known accessory label while keeping All discoverable', () => {
-    const accessoryProducts: StoreProduct[] = [
-      {
-        id: 'accessory-bag',
-        name: 'Waist Pack',
-        price: 24,
-        categoryGroup: 'accessories',
-        categorySubcategory: 'Bags & Waist Packs',
-      },
+  it('offers no category breakdown at the all-products root', () => {
+    expect(deriveCategoryTabs(CATALOG, 'all')).toEqual([ALL_TAB]);
+  });
+});
+
+describe('deriveSizeTabs', () => {
+  it('lists the sizes present in the category', () => {
+    const busos = [
+      HOODIE,
+      product({ ...HOODIE, id: '5', categorySize: 'S' }),
+      product({ ...HOODIE, id: '6', categorySize: 'XL' }),
+      product({ ...HOODIE, id: '7', categorySize: 'M' }),
     ];
 
-    expect(deriveSubcategoryTabs(accessoryProducts, 'accessories')).toEqual([
-      'All',
-      'Bags & Waist Packs',
-    ]);
+    expect(deriveSizeTabs(busos, 'ropa', 'busos')).toEqual([ALL_TAB, 'S', 'M', 'L', 'XL']);
   });
 
-  it('keeps unknown and uncategorized products in the group All result', () => {
-    expect(filterByCategoryAndSubcategory(products, 'apparel', 'All').map((p) => p.id)).toEqual([
-      '3',
-      '4',
-      '5',
-      '6',
-    ]);
+  it('collapses to All when the category has no sized products', () => {
+    expect(deriveSizeTabs(CATALOG, 'skate', 'herramientas-accesorios')).toEqual([ALL_TAB]);
   });
 
-  it('filters by group and known subcategory in original order', () => {
-    expect(filterByCategoryAndSubcategory(products, 'apparel', 'Hoodies').map((p) => p.id)).toEqual([
-      '3',
-    ]);
-  });
-
-  it('falls back to the group when a subcategory is stale or unknown', () => {
-    expect(filterByCategoryAndSubcategory(products, 'apparel', 'Stale').map((p) => p.id)).toEqual([
-      '3',
-      '4',
-      '5',
-      '6',
-    ]);
-    expect(resolveSubcategorySelection(products, 'apparel', 'Stale')).toBe('All');
+  it('collapses to All before a category is chosen', () => {
+    expect(deriveSizeTabs(CATALOG, 'skate', ALL_TAB)).toEqual([ALL_TAB]);
   });
 });
 
-describe('category URL state', () => {
-  it('normalizes unsupported categories to all and encodes subcategory labels', () => {
-    expect(normalizeCategory('not-a-group')).toBe('all');
-    expect(buildCategoryHref('all')).toBe('/products');
-    expect(buildCategoryHref('apparel', 'Jackets & Outerwear')).toBe(
-      '/products?category=apparel&subcategory=Jackets+%26+Outerwear',
-    );
+describe('sizeSortKey', () => {
+  it('orders apparel by scale, everything else numerically, unknowns last', () => {
+    expect(['XL', 'S', 'L', 'M'].sort((a, b) => sizeSortKey(a)[1] - sizeSortKey(b)[1])).toEqual([
+      'S',
+      'M',
+      'L',
+      'XL',
+    ]);
+    expect(sizeSortKey('L')[0]).toBe(0);
+    expect(sizeSortKey('8.25"')[0]).toBe(1);
+    expect(sizeSortKey('8.25"')[1]).toBe(8.25);
+    expect(sizeSortKey('ABEC 9')[1]).toBe(9);
+    expect(sizeSortKey('Talla unica')[0]).toBe(2);
   });
 });
 
-describe('displayCategoryGroup', () => {
-  it('title-cases a stored group', () => {
-    expect(displayCategoryGroup('decks')).toBe('Decks');
-    expect(displayCategoryGroup('uncategorized')).toBe('Uncategorized');
+describe('filterProducts', () => {
+  it('returns everything at the all-products root, unrouted products included', () => {
+    expect(filterProducts(CATALOG, 'all').map((p) => p.id)).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '9',
+    ]);
   });
 
-  it('falls back to Uncategorized when group is missing', () => {
-    expect(displayCategoryGroup(undefined)).toBe('Uncategorized');
-    expect(displayCategoryGroup('')).toBe('Uncategorized');
+  it('narrows by section, then category, then size', () => {
+    expect(filterProducts(CATALOG, 'skate').map((p) => p.id)).toEqual(['1', '4']);
+    expect(filterProducts(CATALOG, 'skate', 'tablas').map((p) => p.id)).toEqual(['1']);
+    expect(filterProducts(CATALOG, 'skate', 'tablas', '8.25"').map((p) => p.id)).toEqual(['1']);
+    expect(filterProducts(CATALOG, 'skate', 'tablas', '7.75"')).toEqual([]);
+  });
+
+  it('falls back to the section when the category does not belong to it', () => {
+    expect(filterProducts(CATALOG, 'ropa', 'tablas').map((p) => p.id)).toEqual(['2', '3']);
+  });
+});
+
+describe('normalizeSize', () => {
+  it('keeps a size that the category actually offers', () => {
+    expect(normalizeSize(CATALOG, 'skate', 'tablas', '8.25"')).toBe('8.25"');
+  });
+
+  it('drops a stale or unknown size back to All', () => {
+    expect(normalizeSize(CATALOG, 'skate', 'tablas', '9.99"')).toBe(ALL_TAB);
+    expect(normalizeSize(CATALOG, 'skate', 'tablas', null)).toBe(ALL_TAB);
+  });
+});
+
+describe('labels', () => {
+  it('names sections and category keys in Spanish', () => {
+    expect(displaySection('skate')).toBe('Skate');
+    expect(displaySection('ropa')).toBe('Ropa');
+    expect(displaySection('all')).toBe('Todos');
+    expect(displaySection(undefined)).toBe('Sin Seccion');
+
+    expect(displayTab('herramientas-accesorios')).toBe('Herramientas y Accesorios');
+    expect(displayTab('zapatos')).toBe('Zapatos');
+    // Sizes are already display-ready and pass through untouched.
+    expect(displayTab('8.25"')).toBe('8.25"');
+    expect(displayTab(ALL_TAB)).toBe(ALL_TAB);
+  });
+
+  it('still labels the legacy group used by the admin table', () => {
+    expect(displayCategoryGroup('decks')).toBe('Tablas');
+    expect(displayCategoryGroup('apparel')).toBe('Ropa');
+    expect(displayCategoryGroup(undefined)).toBe('Sin Categoria');
   });
 });
 
@@ -250,7 +271,7 @@ describe('fetchStoreProducts', () => {
 
     const products = await fetchStoreProducts();
 
-    expect(products.map((product) => product.id)).toEqual(['15', '3', '8']);
+    expect(products.map((p) => p.id)).toEqual(['15', '3', '8']);
   });
 });
 
@@ -261,17 +282,25 @@ describe('fetchStoreProduct', () => {
       name: 'Dark Side Deck 8.5',
       price: '72.00',
       categoryGroup: 'Decks',
+      categorySection: 'skate',
+      categoryKey: 'tablas',
+      categorySize: '8.5"',
       imageUrl: 'http://localhost:9000/catalog-media/uploads/deck-12.png',
     });
 
-    const product = await fetchStoreProduct('12');
+    const detail = await fetchStoreProduct('12');
 
-    expect(product).toEqual({
+    expect(detail).toEqual({
       id: '12',
       name: 'Dark Side Deck 8.5',
       price: 72,
       description: undefined,
+      category: undefined,
       categoryGroup: 'decks',
+      categorySubcategory: undefined,
+      categorySection: 'skate',
+      categoryKey: 'tablas',
+      categorySize: '8.5"',
       image: '/api/media/catalog-media/uploads/deck-12.png',
     });
   });

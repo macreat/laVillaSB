@@ -89,8 +89,19 @@ export function NLSearchBar({ onResults, onLoading }: NLSearchBarProps) {
     };
   }, []);
 
+  /* Arriving from the header magnifier: scroll the field into view and focus
+     it, so the user lands ready to type instead of hunting for the box. */
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.location.hash !== '#buscar') return;
+    const t = window.setTimeout(() => {
+      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      inputRef.current?.focus({ preventScroll: true });
+    }, 120);
+    return () => window.clearTimeout(t);
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit} className="relative w-full max-w-xl mx-auto">
+    <form id="buscar" onSubmit={handleSubmit} className="relative w-full max-w-xl mx-auto scroll-mt-28">
       <div className="relative">
         <Search
           aria-hidden="true"

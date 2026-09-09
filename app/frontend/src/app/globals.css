@@ -148,6 +148,37 @@ input:-webkit-autofill:focus {
   }
 }
 
+/* Stacked navigation rows (categories above sizes) read as one control. */
+.category-subtabs + .category-subtabs {
+  margin-top: -1.25rem;
+}
+
+/* Buy-products backdrop: the blue camo "La Villa" mark, tiled.
+   The tile is built from brand/Azul.png with its white paper margin cropped and
+   its black plate knocked out to alpha, plus padding so repeats keep air
+   between marks. A pre-cut tile beats blending the original: blend modes left
+   the plate's antialiased edge showing as a grid of seams. */
+.products-camo-bg {
+  position: relative;
+}
+
+.products-camo-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/brand/pattern-camo-azul.png');
+  background-size: 300px auto;
+  background-repeat: repeat;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.products-camo-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
 .category-tile {
   position: relative;
   border: 1px solid rgba(147, 165, 201, 0.25);

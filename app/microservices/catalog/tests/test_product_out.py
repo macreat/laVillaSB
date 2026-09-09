@@ -54,13 +54,13 @@ def test_to_product_out_serializes_stored_category_group():
     assert out.categorySubcategory == "8.25"
 
 
-def test_to_product_out_serializes_uncategorized_when_stored_group_is_null():
+def test_to_product_out_falls_back_to_category_name_when_stored_group_is_null():
     product = make_product(category=make_category("Ropa / Talla L", None))
 
     out = to_product_out(product)
 
-    assert out.categoryGroup == "uncategorized"
-    assert out.categorySubcategory is None
+    assert out.categoryGroup == "apparel"
+    assert out.categorySubcategory == "Other Apparel"
 
 
 def test_to_product_out_serializes_uncategorized_when_no_category():
@@ -81,13 +81,13 @@ def test_to_product_out_serializes_null_subcategory_for_unknown_non_apparel_cate
     assert out.categorySubcategory is None
 
 
-def test_to_product_out_serializes_uncategorized_and_null_for_unrecognized_stored_group():
+def test_to_product_out_falls_back_to_category_name_for_unrecognized_stored_group():
     product = make_product(category=make_category("Ropa / Talla L", "not-a-group"))
 
     out = to_product_out(product)
 
-    assert out.categoryGroup == "uncategorized"
-    assert out.categorySubcategory is None
+    assert out.categoryGroup == "apparel"
+    assert out.categorySubcategory == "Other Apparel"
 
 
 def test_to_product_out_preserves_existing_fields():
@@ -98,3 +98,13 @@ def test_to_product_out_preserves_existing_fields():
     assert out.category == "Skate / Maderos / 8.25"
     assert out.name == "Deck 8.25"
     assert out.price == Decimal("120.00")
+
+
+def test_to_product_out_serializes_the_three_level_storefront_taxonomy():
+    product = make_product(category=make_category("Skate / Maderos / 8.25", "decks"))
+
+    out = to_product_out(product)
+
+    assert out.categorySection == "skate"
+    assert out.categoryKey == "tablas"
+    assert out.categorySize == '8.25"'

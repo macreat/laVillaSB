@@ -65,6 +65,6 @@ async def test_list_products_applies_merchandising_order_instead_of_id_order() -
     ]
     session = FakeSession(products)
 
-    response = await list_products(session=session)
+    response = await list_products(search=None, id=None, session=session)
 
     assert [item.id for item in response] == [9, 10, 8]

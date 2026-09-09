@@ -61,17 +61,24 @@ def _classify_apparel(category: str, name: str) -> str:
         return "Jackets & Outerwear"
     if "pantalones" in category or "pantalon" in name:
         return "Pants"
-    return None
+    # Apparel always resolves to a bucket so a garment the keyword list does not
+    # recognize stays reachable in the storefront instead of dropping out.
+    return "Other Apparel"
 
 
 def _classify_gear_by_name(name: str) -> str | None:
-    """Classify gear products by product name keywords (primary signal)."""
+    """Classify gear products by product name keywords (primary signal).
+
+    Bearings are matched first: their keywords are brand- and spec-specific
+    ("rodamiento", "abec", "reds"), while truck and wheel brand names are broad
+    enough to swallow a bearing that happens to share a brand.
+    """
+    if any(kw in name for kw in _BEARING_KEYWORDS):
+        return "Bearings"
     if any(kw in name for kw in _TRUCK_KEYWORDS):
         return "Trucks"
     if any(kw in name for kw in _WHEEL_KEYWORDS):
         return "Wheels"
-    if any(kw in name for kw in _BEARING_KEYWORDS):
-        return "Bearings"
     if any(kw in name for kw in _HARDWARE_KEYWORDS):
         return "Hardware & Accessories"
     return None
