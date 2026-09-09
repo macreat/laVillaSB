@@ -22,12 +22,14 @@ from .schemas import (
     NLSearchResponse,
     ProductCreate,
     ProductOut,
+    ProductUpdate,
     SubscriberCreate,
     SubscriberOut,
 )
 from .nl_search import SearchFilters, _stem_es, parse_query
 from .storage import build_public_url, build_put_url, build_storage_key, ensure_public_bucket
 from .subcategory import classify_subcategory
+from .taxonomy import resolve_category, resolve_section, resolve_size
 
 
 @asynccontextmanager
@@ -66,6 +68,15 @@ def to_product_out(product: Product) -> ProductOut:
         from .category_groups import map_category_name
         category_group = map_category_name(category_name)
 
+    # Classify against the resolved group, not the stored one, so a product whose
+    # category_group column is null or stale is classified the same way it is
+    # serialized instead of silently losing its subcategory.
+    subcategory = (
+        classify_subcategory(category_name, product.name, category_group)
+        if category_group != "uncategorized"
+        else None
+    )
+
     return ProductOut(
         id=product.id,
         name=product.name,
@@ -74,11 +85,10 @@ def to_product_out(product: Product) -> ProductOut:
         price=product.price,
         category=category_name,
         categoryGroup=category_group,
-        categorySubcategory=(
-            classify_subcategory(category_name, product.name, stored_category_group)
-            if category_group != "uncategorized"
-            else None
-        ),
+        categorySubcategory=subcategory,
+        categorySection=resolve_section(subcategory, product.name),
+        categoryKey=resolve_category(subcategory, product.name),
+        categorySize=resolve_size(category_name, product.name, subcategory),
         active=product.active,
         created_at=product.created_at,
         updated_at=product.updated_at,
@@ -255,6 +265,38 @@ async def create_product(
         active=payload.active,
     )
     session.add(product)
+    await session.commit()
+    await session.refresh(product, ["category", "media"])
+    return to_product_out(product)
+
+
+@app.put("/products/{product_id}", response_model=ProductOut)
+async def update_product(
+    product_id: int,
+    payload: ProductUpdate,
+    session: AsyncSession = Depends(get_session),
+):
+    """Apply a partial update to a product and return the refreshed record.
+
+    Admin-only via the gateway. Sending just ``{"price": ...}`` is the
+    storefront price edit; every other field is left untouched.
+    """
+    product = await session.get(
+        Product,
+        product_id,
+        options=[selectinload(Product.category), selectinload(Product.media)],
+    )
+
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    changes = payload.model_dump(exclude_unset=True)
+    if "price" in changes and changes["price"] is not None and changes["price"] < 0:
+        raise HTTPException(status_code=422, detail="Price cannot be negative")
+
+    for field, value in changes.items():
+        setattr(product, field, value)
+
     await session.commit()
     await session.refresh(product, ["category", "media"])
     return to_product_out(product)

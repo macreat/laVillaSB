@@ -15,6 +15,9 @@ class ProductOut(BaseModel):
     category: str | None = None
     categoryGroup: str
     categorySubcategory: str | None = None
+    categorySection: str | None = None
+    categoryKey: str | None = None
+    categorySize: str | None = None
     active: bool
     created_at: datetime
     updated_at: datetime
@@ -29,6 +32,18 @@ class ProductCreate(BaseModel):
     category_id: int | None = None
     media_id: int | None = None
     active: bool = True
+
+
+class ProductUpdate(BaseModel):
+    """Partial product update. Only the fields present in the body are applied."""
+
+    name: str | None = None
+    description: str | None = None
+    sku: str | None = None
+    price: Decimal | None = None
+    category_id: int | None = None
+    media_id: int | None = None
+    active: bool | None = None
 
 
 class MediaPresignRequest(BaseModel):
