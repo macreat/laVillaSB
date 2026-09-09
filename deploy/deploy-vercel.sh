@@ -45,9 +45,12 @@ log "Setting production environment"
 # routes manifest, so a value added afterwards needs a redeploy, not a restart.
 set_env() {
   local name="$1" value="$2"
-  # Remove first so a re-run replaces rather than erroring on a duplicate.
-  "${VC[@]}" env rm "$name" production --yes >/dev/null 2>&1 || true
-  printf '%s' "$value" | "${VC[@]}" env add "$name" production >/dev/null
+  # --value keeps it non-interactive (an empty string over stdin hangs the CLI),
+  # --force overwrites on a re-run, and --no-sensitive opts out of the
+  # Production default: none of these are secrets, they are public URLs, and
+  # sensitive values cannot be read back when something needs debugging.
+  "${VC[@]}" env add "$name" production \
+    --value "$value" --force --no-sensitive --yes >/dev/null
   echo "  set $name"
 }
 
@@ -58,11 +61,24 @@ set_env NEXT_PUBLIC_SITE_URL "$STOREFRONT_ORIGIN"
 set_env NEXT_PUBLIC_WHATSAPP_URL "$WHATSAPP_URL"
 set_env NEXT_PUBLIC_INSTAGRAM_URL "$INSTAGRAM_URL"
 
+# Optional, and opt-in because it spends money: Vercel can register the domain
+# itself. Expect registry price (~$20/yr for a .com), not a first-year promo -
+# a registrar promo is cheaper for year one, Cloudflare Registrar cheaper after.
+if [[ "${BUY_DOMAIN:-}" == "1" ]]; then
+  log "Purchasing ${ROOT_DOMAIN}"
+  "${VC[@]}" domains buy "$ROOT_DOMAIN" || {
+    echo "  purchase did not complete - buy it at a registrar and re-run without BUY_DOMAIN" >&2
+    exit 1
+  }
+fi
+
 log "Building and promoting to production"
 "${VC[@]}" deploy --prod --yes
 
-log "Attaching ${ROOT_DOMAIN}"
-"${VC[@]}" domains add "$ROOT_DOMAIN" --yes 2>&1 || \
+log "Attaching ${ROOT_DOMAIN} to ${PROJECT_NAME}"
+# `domains add` takes the project as a positional argument; without it the
+# domain lands on the team but is not wired to this deployment.
+"${VC[@]}" domains add "$ROOT_DOMAIN" "$PROJECT_NAME" 2>&1 || \
   echo "  (already attached, or finish the DNS step Vercel just printed)"
 
 cat <<EOF

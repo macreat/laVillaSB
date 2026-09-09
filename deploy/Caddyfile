@@ -4,7 +4,6 @@
 #
 # {$VAR} placeholders are read from the environment at start time; see
 # deploy/.env.prod.example for the full list.
-
 {
 	email {$ACME_EMAIL}
 	# Trim Caddy's own footprint on a 4 GB box.

@@ -158,6 +158,14 @@ VERCEL_TOKEN=<token> ROOT_DOMAIN=<domain> bash deploy/deploy-vercel.sh
 Get a token at <https://vercel.com/account/tokens>. Omit `VERCEL_TOKEN` to use
 an existing `vercel login` session instead.
 
+Vercel can also register the domain, which collapses two of the three purchases
+into one account. It is opt-in because it spends money, and it charges registry
+price rather than a promo - budget ~$20/yr for a `.com`, not $1:
+
+```bash
+BUY_DOMAIN=1 VERCEL_TOKEN=<token> ROOT_DOMAIN=<domain> bash deploy/deploy-vercel.sh
+```
+
 That script sets these for you. To do it by hand, they are the Production
 scope variables the storefront needs:
 
