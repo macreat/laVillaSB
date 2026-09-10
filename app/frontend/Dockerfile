@@ -13,8 +13,12 @@ COPY . .
 # server-side rendering but leaves the browser calling the baked-in default.
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8010
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
+ARG NEXT_PUBLIC_WHATSAPP_URL=https://api.whatsapp.com/send/?phone=573017602493&app_absent=0&utm_source=ig
+ARG NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/la_villa_sb/
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_WHATSAPP_URL=$NEXT_PUBLIC_WHATSAPP_URL
+ENV NEXT_PUBLIC_INSTAGRAM_URL=$NEXT_PUBLIC_INSTAGRAM_URL
 
 RUN npm run build
 

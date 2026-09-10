@@ -252,6 +252,10 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: ""
         NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        # NEXT_PUBLIC_* values are inlined by `next build`, so they must be
+        # build args, not just runtime `environment:` below (see Dockerfile).
+        NEXT_PUBLIC_WHATSAPP_URL: ${NEXT_PUBLIC_WHATSAPP_URL:-https://api.whatsapp.com/send/?phone=573017602493&app_absent=0&utm_source=ig}
+        NEXT_PUBLIC_INSTAGRAM_URL: ${NEXT_PUBLIC_INSTAGRAM_URL:-https://www.instagram.com/la_villa_sb/}
     container_name: lavilla_frontend
     ports:
       - "3000:3000"
@@ -260,8 +264,6 @@ services:
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       API_INTERNAL_URL: http://gateway:8010
       MEDIA_ORIGIN_BASE_URL: http://minio:9000
-      NEXT_PUBLIC_INSTAGRAM_URL: https://www.instagram.com/la_villa_sb/
-      NEXT_PUBLIC_WHATSAPP_URL: https://api.whatsapp.com/send/?phone=573017602493&app_absent=0&utm_source=ig
     depends_on:
       gateway:
         condition: service_started
