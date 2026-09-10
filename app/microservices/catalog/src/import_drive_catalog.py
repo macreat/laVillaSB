@@ -12,6 +12,7 @@ from botocore.exceptions import ClientError
 from sqlalchemy import select
 
 from .category_groups import map_category_name
+from .descriptions import build_description
 from .config import settings
 from .database import AsyncSessionLocal, init_db
 from .models import Category, Media, Product
@@ -165,7 +166,7 @@ async def import_catalog(source_root: Path, dry_run: bool = False) -> dict[str, 
             if product is None:
                 product = Product(
                     name=item.product_name,
-                    description=f"Imported from drive catalog path: {item.relative_file.as_posix()}",
+                    description=build_description(item.category_label, item.product_name),
                     sku=item.sku,
                     price=0,
                     category_id=category.id,
@@ -176,7 +177,7 @@ async def import_catalog(source_root: Path, dry_run: bool = False) -> dict[str, 
                 created_products += 1
             else:
                 product.name = item.product_name
-                product.description = f"Imported from drive catalog path: {item.relative_file.as_posix()}"
+                product.description = build_description(item.category_label, item.product_name)
                 product.category_id = category.id
                 product.media_id = media.id
                 product.active = True

@@ -97,7 +97,7 @@ export default function ProductDetailPage() {
             {formatCOP(product.price)}
           </p>
           <p className="mt-4 text-sm text-text-muted leading-relaxed">
-            {product.description ?? 'Live catalog product.'}
+            {product.description ?? 'Producto del catalogo de La Villa.'}
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
