@@ -50,7 +50,11 @@ Available at `/admin` after authentication:
 - **Inventory** — Stock levels with low-stock alerts
 - **Settings** — Profile editor, password change, live microservice health
 
-**Default login**: `admin@lavillasb.com` / `password`
+**Default login**: `admin@lavillasb.com`. The password comes from
+`ADMIN_PASSWORD` - `VillaAdmin2026!` by default in local compose, and a value
+generated on the server for a production deploy (`grep ADMIN_ /opt/lavillasb/.env`).
+It seeds only when the account is first created, so a password changed from the
+admin panel survives later deploys.
 
 ---
 
